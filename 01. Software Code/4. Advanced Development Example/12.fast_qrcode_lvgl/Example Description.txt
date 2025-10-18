@@ -1,0 +1,7 @@
+This example uses Espressif's official fast QR code recognition program.
+
+It uses a lot of RAM, so it requires an N8R8 module.
+
+After downloading, point your camera at the QR code. The decoded QR code data will appear on the screen.
+
+Records speed is approximately 100ms.

@@ -1,0 +1,2 @@
+This routine is USBhost readCDCequipment
+For example, insert CH340 to enable communication

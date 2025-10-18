@@ -1,0 +1,1 @@
+This example program is for reading USB flash drives. After compiling and downloading, insert the USB flash drive into the USB port.

@@ -1,0 +1,6 @@
+This example program plays an AVI video stored in a TF card.
+
+You can simply compile and download it.
+
+Please prepare an AVI file of the appropriate resolution. The file name should be badapple.avi. You can also modify it.
+#define filename "/sdcard/badapple.avi"

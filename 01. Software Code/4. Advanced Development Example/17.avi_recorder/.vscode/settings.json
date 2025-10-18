@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "app_main.h": "c",
+        "file_manager.h": "c",
+        "mjpeg.h": "c",
+        "xutility": "c",
+        "avi_player.h": "c",
+        "cstdio": "c"
+    }
+}

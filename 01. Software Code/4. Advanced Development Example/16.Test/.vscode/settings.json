@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "app_main.h": "c",
+        "mpu6050.h": "c",
+        "bsp_adc.h": "c"
+    },
+    "idf.adapterTargetName": "esp32s3"
+}

@@ -1,0 +1,32 @@
+This example tests the onboard ADC button.
+
+I use the corresponding ADC value when the button is pressed to distinguish five ranges.
+
+{0, 2500, 2800}, //Middle button 2.25v
+{1, 1150, 1350}, //Right button 1.12v
+{2, 1800, 2300}, //Left button 1.689v
+{3, 600, 650}, //Down button 0.562v
+{4, 3200, 3600}, //Up button 2.81v
+
+Then I determine which range the button falls into.
+uint8_t Get_Adc_Button()
+{
+// int adc_value = get_adc();
+// static uint64_t last_time = 0;
+for (uint8_t i = 0; i < 5; i++)
+{
+// if (adc_value >= touch_chart[i][1] && adc_value <= touch_chart[i][2] && esp_timer_get_time() - last_time > 200000) // Limit entry time
+if (adc1_get_raw(channel) >= touch_chart[i][1] && adc1_get_raw(channel) <= touch_chart[i][2])
+{
+// printf("adc_button: %d\n", i + 1);
+// last_time = esp_timer_get_time();
+return i + 1;
+}
+}
+return 0;
+}
+
+Returns the corresponding button number
+
+The states are single click, double click, long press, and long press and release
+The button driver uses the open source Jiejie

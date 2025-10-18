@@ -1,0 +1,1 @@
+This example is a USB slave emulating a CDC device. Plug it into your computer and open the serial port assistant to send data. It will respond to whatever you send. A packet should not exceed 64 bytes.

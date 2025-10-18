@@ -1,0 +1,3 @@
+This example program:
+Connects the ESP32S3 to a USB camera. By plugging the built-in USB into the camera, the camera image can be displayed on the screen. The BOOT button can be used to switch resolutions.
+Requires IDF 5.2 compilation.

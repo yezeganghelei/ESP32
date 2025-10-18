@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "app_main.h": "c",
+        "mpu6050.h": "c"
+    }
+}

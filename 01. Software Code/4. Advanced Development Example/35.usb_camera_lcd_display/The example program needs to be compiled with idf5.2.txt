@@ -1,0 +1,3 @@
+This routine function：
+ESP32S3 is connected to a USB camera. After plugging the built-in USB into the USB camera, the camera image can be displayed on the screen. The resolution can be switched by pressing the BOOT button.
+needidf5.2compile

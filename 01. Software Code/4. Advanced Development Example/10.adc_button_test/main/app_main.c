@@ -1,0 +1,170 @@
+/*
+ * @Descripttion :ADCtest routine
+ * @version      :
+ * @Author       : Kevincoooool
+ * @Date         : 2021-09-04 16:11:59
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2023-07-17 11:04:48
+ * @FilePath: \SP_V2_DEMO\10.adc_button_test\main\app_main.c
+ */
+
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/semphr.h"
+#include "lv_examples/src/lv_demo_widgets/lv_demo_widgets.h"
+#include "lv_examples/src/lv_demo_music/lv_demo_music.h"
+#include "lv_examples/src/lv_demo_benchmark/lv_demo_benchmark.h"
+#include "lvgl_helpers.h"
+#include "esp_freertos_hooks.h"
+#include "button.h"
+#include "nvs_flash.h"
+#include "esp_vfs.h"
+#include "esp_spiffs.h"
+#include "bsp_adc.h"
+#include "esp_log.h"
+#include "lv_port_indev.h"
+#include "esp_err.h"
+
+#define TAG "ESP32S3"
+
+#include "driver/gpio.h"
+static void lv_tick_task(void *arg)
+{
+	(void)arg;
+	lv_tick_inc(10);
+}
+void button_task(void *arg)
+{
+	Button_Init();
+	while (1)
+	{
+		Button_Process();
+		vTaskDelay(20 / portTICK_PERIOD_MS);
+		
+	}
+}
+lv_obj_t *label_test;
+
+void label_init(void)
+{
+
+	label_test = lv_label_create(lv_scr_act(), NULL);
+	/*Modify the Label's text*/
+
+	static lv_style_t style_label_test;
+	lv_style_init(&style_label_test);
+
+	// Write style state: LV_STATE_DEFAULT for style_label_test
+	lv_style_set_radius(&style_label_test, LV_STATE_DEFAULT, 0);
+	lv_style_set_bg_color(&style_label_test, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+	lv_style_set_bg_grad_color(&style_label_test, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+	lv_style_set_bg_grad_dir(&style_label_test, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);
+	lv_style_set_bg_opa(&style_label_test, LV_STATE_DEFAULT, 255);
+	lv_style_set_text_color(&style_label_test, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+
+	// lv_obj_set_style_local_text_font(label_test, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
+	lv_style_set_text_letter_space(&style_label_test, LV_STATE_DEFAULT, 2);
+	lv_style_set_pad_left(&style_label_test, LV_STATE_DEFAULT, 0);
+	lv_style_set_pad_right(&style_label_test, LV_STATE_DEFAULT, 0);
+	lv_style_set_pad_top(&style_label_test, LV_STATE_DEFAULT, 0);
+	lv_style_set_pad_bottom(&style_label_test, LV_STATE_DEFAULT, 0);
+
+	lv_obj_add_style(label_test, LV_LABEL_PART_MAIN, &style_label_test);
+	lv_label_set_long_mode(label_test, LV_LABEL_LONG_BREAK);
+	lv_obj_set_pos(label_test, 0, 0);
+	lv_obj_set_size(label_test, LV_HOR_RES, LV_VER_RES);
+	lv_label_set_recolor(label_test, true);
+	lv_label_set_text(label_test, "Hello World!\nPlease press down the button...");
+}
+SemaphoreHandle_t xGuiSemaphore;
+
+static void gui_task(void *arg)
+{
+	xGuiSemaphore = xSemaphoreCreateMutex();
+	lv_init(); // lvgl kernel initialization
+
+	lvgl_driver_init(); // lvglDisplay interface initialization
+	//Apply for two buffers for lvgl to refresh the screen  
+	/*externalPSRAMWay*/
+	// lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+	// lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+
+	/*internalDMAWay*/
+	lv_color_t *buf1 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
+	lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
+
+	// static lv_color_t buf1[DISP_BUF_SIZE];
+	// static lv_color_t buf2[DISP_BUF_SIZE];
+	static lv_disp_buf_t disp_buf;
+	uint32_t size_in_px = DISP_BUF_SIZE;
+	lv_disp_buf_init(&disp_buf, buf1, buf2, size_in_px);
+
+	lv_disp_drv_t disp_drv;
+	lv_disp_drv_init(&disp_drv);
+	disp_drv.flush_cb = disp_driver_flush;
+	disp_drv.buffer = &disp_buf;
+	lv_disp_drv_register(&disp_drv);
+
+	// lv_indev_drv_t indev_drv;
+	// lv_indev_drv_init(&indev_drv);
+	// indev_drv.read_cb = touch_driver_read;
+	// indev_drv.type = LV_INDEV_TYPE_POINTER;
+	// lv_indev_drv_register(&indev_drv);
+
+	// esp_register_freertos_tick_hook(lv_tick_task);
+	/* Create a timer interrupt to enter lv_tick_inc to provide a heartbeat for lvgl running. Here it is every 10ms. It is mainly used for animation running. */
+	const esp_timer_create_args_t periodic_timer_args = {
+		.callback = &lv_tick_task,
+		.name = "periodic_gui"};
+	esp_timer_handle_t periodic_timer;
+	ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
+	ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, 10 * 1000));
+	//Button initialization
+	lv_port_indev_init();
+
+	label_init();
+
+	while (1)
+	{
+		/* Delay 1 tick (assumes FreeRTOS tick is 10ms */
+		vTaskDelay(pdMS_TO_TICKS(10));
+		/* Try to take the semaphore, call lvgl related function on success */
+		if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
+		{
+
+			lv_task_handler();
+			xSemaphoreGive(xGuiSemaphore);
+		}
+	}
+}
+
+void app_main(void)
+{
+
+	esp_err_t ret = nvs_flash_init();
+	if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
+	{
+		ESP_ERROR_CHECK(nvs_flash_erase());
+		ret = nvs_flash_init();
+	}
+	ESP_ERROR_CHECK(ret);
+
+	/*createlvglTask display*/
+	xTaskCreatePinnedToCore(&gui_task, "gui task", 1024 * 5, NULL, 5, NULL, 1);
+	/*create按键任务 Scan key values ​​regularly*/
+	xTaskCreatePinnedToCore(&button_task, "button_task", 1024 * 3, NULL, 8, NULL, 0);
+	adc_init();
+	printf("adc_value: %d\n", get_adc());
+	while(1)
+	{
+        // printf("adc_value: %d\n", get_adc());
+		if(Button_Value != BT_NONE)
+		{
+			
+			lv_label_set_text(label_test, Button_Tips[Button_Value]);
+			Button_Value = BT_NONE;
+		}
+		vTaskDelay(20 / portTICK_PERIOD_MS);
+	}
+}

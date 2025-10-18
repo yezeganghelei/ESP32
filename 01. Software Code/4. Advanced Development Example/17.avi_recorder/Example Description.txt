@@ -1,0 +1,5 @@
+This example program records a video file as an AVI file and saves it to a TF card.
+
+Insert the TF card.
+
+Due to the slow write speed, complex images may cause errors and require restarting.

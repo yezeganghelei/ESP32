@@ -1,0 +1,5 @@
+This example program transmits the camera image to a webpage.
+
+Users must modify their router name and password in app_wifi.c.
+Then check the log.
+After successfully obtaining the IP address (for example, the IP I obtained is 192.168.43.1), enter "192.168.43.1/stream" in your browser to view the image.

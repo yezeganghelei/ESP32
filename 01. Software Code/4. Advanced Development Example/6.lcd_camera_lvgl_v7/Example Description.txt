@@ -1,0 +1,7 @@
+This example uses LVGL to display a camera image on the screen.
+
+Download and see it directly.
+
+fb = esp_camera_fb_get(); Get the image.
+img_dsc.data = fb->buf; Assign the image to the data of an object.
+lv_img_set_src(img_cam, &img_dsc); Refresh the display.
