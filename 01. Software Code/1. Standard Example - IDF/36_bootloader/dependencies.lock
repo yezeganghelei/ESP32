@@ -1,0 +1,15 @@
+dependencies:
+  espressif__tinyusb:
+    component_hash: null
+    source:
+      path: E:\file\bootloader\components\espressif__tinyusb
+      type: local
+    version: 0.15.0~3
+  idf:
+    component_hash: null
+    source:
+      type: idf
+    version: 5.0.2
+manifest_hash: 6e3f2c1189474ebf5d7d5c085dbcc75a4b28a3bfd59a6ae65e91735b342354e0
+target: esp32s3
+version: 1.0.0

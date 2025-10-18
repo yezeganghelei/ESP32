@@ -1,0 +1,15 @@
+dependencies:
+  espressif__tinyusb:
+    component_hash: null
+    source:
+      path: G:\360Downloads\ESP32\basic_routines\34_usb_flash_u\components\espressif__tinyusb
+      type: local
+    version: 0.15.0~3
+  idf:
+    component_hash: null
+    source:
+      type: idf
+    version: 5.1.2
+manifest_hash: 9d804e24b547e8d8fbb41c7a575c817f19fbd973d4f77516d5f65d8f4a0ccee5
+target: esp32s3
+version: 1.0.0

@@ -1,0 +1,33 @@
+/**
+ ****************************************************************************************************
+ * @file        adc1.h
+ * @author      
+ * @version     V1.0
+ * @date        2023-08-26
+ * @brief       ADCdriver code
+ * @license     Copyright (c) 2020-2032, 
+ ****************************************************************************************************
+ * @attention
+
+ ****************************************************************************************************
+ */
+
+#ifndef __ADC_H_
+#define __ADC_H_
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+#include "driver/adc.h"
+#include "esp_log.h"
+#include "esp_adc/adc_oneshot.h"
+#include "esp_adc/adc_cali.h"
+#include "esp_adc/adc_cali_scheme.h"
+
+#define ADC_ADCX_CHY   ADC1_CHANNEL_7 
+
+/* Function declaration */
+void adc_init(void);                                            /* Initialize the ADC */
+uint32_t adc_get_result_average(uint32_t ch, uint32_t times);   /* GetADCThe result after conversion and mean filtering */
+
+#endif

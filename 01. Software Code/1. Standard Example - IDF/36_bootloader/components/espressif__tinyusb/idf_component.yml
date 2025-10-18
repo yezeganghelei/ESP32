@@ -1,0 +1,8 @@
+dependencies:
+  idf:
+    version: '>=5.0'
+targets:
+- esp32s2
+- esp32s3
+url: https://docs.tinyusb.org/en/latest/
+version: 0.15.0~3
