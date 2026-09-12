@@ -1,0 +1,127 @@
+<svg width="1600" height="1200" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+
+  <desc>Copyright 2026 Waveshare. Author: Wulu. Source: https://docs.waveshare.net/ESP32-Peripheral-Tutorials/Display/LED-Matrix</desc>
+  <metadata>Copyright 2026 Waveshare. Author: Wulu. Source: https://docs.waveshare.net/ESP32-Peripheral-Tutorials/Display/LED-Matrix</metadata>
+
+  <!-- 白色背景 -->
+  <rect width="800" height="600" fill="white"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#666"/>
+    </marker>
+    <!-- 未点亮的像素：锚定平铺原点，使灰点网格与两条点亮行的像素坐标（x=204+26k, y=167+18.75k）重合 -->
+    <pattern id="dots" x="191" y="157.625" width="26" height="18.75" patternUnits="userSpaceOnUse">
+      <circle cx="13" cy="9.375" r="4" fill="#e5e7eb"/>
+    </pattern>
+  </defs>
+
+  <!-- ===== 上：三条并行移位寄存器链（上半屏） ===== -->
+  <text x="400" y="16" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#333" font-weight="bold">移位寄存器（上半屏）：<tspan fill="#dc2626">R1</tspan> / <tspan fill="#16a34a">G1</tspan> / <tspan fill="#2563eb">B1</tspan> 三条并行链，每链 64 位</text>
+  <rect x="190" y="26" width="420" height="16" rx="3" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <rect x="190" y="46" width="420" height="16" rx="3" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+  <rect x="190" y="66" width="420" height="16" rx="3" fill="#eff6ff" stroke="#2563eb" stroke-width="1"/>
+
+  <text x="98" y="38" text-anchor="end" font-family="Arial" font-size="12" font-weight="bold" fill="#dc2626">R1</text>
+  <line x1="105" y1="34" x2="184" y2="34" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="98" y="58" text-anchor="end" font-family="Arial" font-size="12" font-weight="bold" fill="#16a34a">G1</text>
+  <line x1="105" y1="54" x2="184" y2="54" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="98" y="78" text-anchor="end" font-family="Arial" font-size="12" font-weight="bold" fill="#2563eb">B1</text>
+  <line x1="105" y1="74" x2="184" y2="74" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <text x="12" y="98" text-anchor="start" font-family="Arial" font-size="10.5" fill="#666">CLK：每个时钟三条线</text>
+  <text x="12" y="112" text-anchor="start" font-family="Arial" font-size="10.5" fill="#666">同时各移入同一像素的 1 位</text>
+
+  <!-- ===== 下：三条并行移位寄存器链（下半屏） ===== -->
+  <rect x="190" y="446" width="420" height="16" rx="3" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <rect x="190" y="466" width="420" height="16" rx="3" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+  <rect x="190" y="486" width="420" height="16" rx="3" fill="#eff6ff" stroke="#2563eb" stroke-width="1"/>
+  <text x="400" y="522" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#333" font-weight="bold">移位寄存器（下半屏）：<tspan fill="#dc2626">R2</tspan> / <tspan fill="#16a34a">G2</tspan> / <tspan fill="#2563eb">B2</tspan> 三条并行链，每链 64 位</text>
+
+  <text x="98" y="458" text-anchor="end" font-family="Arial" font-size="12" font-weight="bold" fill="#dc2626">R2</text>
+  <line x1="105" y1="454" x2="184" y2="454" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="98" y="478" text-anchor="end" font-family="Arial" font-size="12" font-weight="bold" fill="#16a34a">G2</text>
+  <line x1="105" y1="474" x2="184" y2="474" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="98" y="498" text-anchor="end" font-family="Arial" font-size="12" font-weight="bold" fill="#2563eb">B2</text>
+  <line x1="105" y1="494" x2="184" y2="494" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <text x="12" y="516" text-anchor="start" font-family="Arial" font-size="10.5" fill="#666">CLK 与上半屏相同</text>
+
+  <!-- ===== LAT / OE 路由 ===== -->
+  <path d="M610,54 H760 V167 H616" fill="none" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="618" y="46" text-anchor="start" font-family="Arial" font-size="11" fill="#666">LAT 锁存，OE 点亮</text>
+  <path d="M610,474 H760 V317 H616" fill="none" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="618" y="492" text-anchor="start" font-family="Arial" font-size="11" fill="#666">LAT 锁存，OE 点亮</text>
+
+  <!-- ===== 中：点阵面板 ===== -->
+  <rect x="190" y="120" width="420" height="300" fill="#ffffff" stroke="#666" stroke-width="1.2"/>
+  <rect x="191" y="121" width="418" height="298" fill="url(#dots)"/>
+  <!-- 上下半屏分界 -->
+  <line x1="190" y1="270" x2="610" y2="270" stroke="#999" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- 当前扫描行（上半屏）：单次扫描每像素只有 8 种状态——灭 / 红 / 绿 / 蓝 / 黄 / 青 / 品红 / 白 -->
+  <rect x="191" y="158" width="418" height="18" fill="#fef3c7"/>
+  <circle cx="204" cy="167" r="5" fill="#dc2626"/><circle cx="230" cy="167" r="5" fill="#facc15"/><circle cx="256" cy="167" r="5" fill="#16a34a"/>
+  <circle cx="282" cy="167" r="5" fill="#06b6d4"/><circle cx="308" cy="167" r="5" fill="#2563eb"/><circle cx="334" cy="167" r="5" fill="#d946ef"/>
+  <circle cx="360" cy="167" r="5" fill="#ffffff" stroke="#9ca3af" stroke-width="0.8"/><circle cx="386" cy="167" r="4" fill="#e5e7eb"/><circle cx="412" cy="167" r="5" fill="#facc15"/>
+  <circle cx="438" cy="167" r="5" fill="#dc2626"/><circle cx="464" cy="167" r="5" fill="#2563eb"/><circle cx="490" cy="167" r="4" fill="#e5e7eb"/>
+  <circle cx="516" cy="167" r="5" fill="#16a34a"/><circle cx="542" cy="167" r="5" fill="#06b6d4"/><circle cx="568" cy="167" r="5" fill="#d946ef"/>
+  <circle cx="594" cy="167" r="5" fill="#ffffff" stroke="#9ca3af" stroke-width="0.8"/>
+
+  <!-- 当前扫描行（下半屏） -->
+  <rect x="191" y="308" width="418" height="18" fill="#fef3c7"/>
+  <circle cx="204" cy="317" r="5" fill="#2563eb"/><circle cx="230" cy="317" r="5" fill="#ffffff" stroke="#9ca3af" stroke-width="0.8"/><circle cx="256" cy="317" r="4" fill="#e5e7eb"/>
+  <circle cx="282" cy="317" r="5" fill="#16a34a"/><circle cx="308" cy="317" r="5" fill="#d946ef"/><circle cx="334" cy="317" r="5" fill="#facc15"/>
+  <circle cx="360" cy="317" r="5" fill="#dc2626"/><circle cx="386" cy="317" r="5" fill="#06b6d4"/><circle cx="412" cy="317" r="4" fill="#e5e7eb"/>
+  <circle cx="438" cy="317" r="5" fill="#2563eb"/><circle cx="464" cy="317" r="5" fill="#facc15"/><circle cx="490" cy="317" r="5" fill="#16a34a"/>
+  <circle cx="516" cy="317" r="5" fill="#dc2626"/><circle cx="542" cy="317" r="5" fill="#ffffff" stroke="#9ca3af" stroke-width="0.8"/><circle cx="568" cy="317" r="5" fill="#06b6d4"/>
+  <circle cx="594" cy="317" r="5" fill="#d946ef"/>
+
+  <!-- 半屏标注 -->
+  <text x="620" y="138" text-anchor="start" font-family="Arial" font-size="11" fill="#666">上半屏（32 行）</text>
+  <text x="620" y="345" text-anchor="start" font-family="Arial" font-size="11" fill="#666">下半屏（32 行）</text>
+
+  <!-- ===== 像素放大图：一个像素 = 1R1G1B ===== -->
+  <circle cx="594" cy="167" r="8.5" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <line x1="602" y1="163" x2="640" y2="186" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <line x1="602" y1="171" x2="640" y2="284" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="4,3"/>
+
+  <rect x="640" y="184" width="150" height="102" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="1"/>
+  <rect x="665" y="194" width="100" height="42" rx="8" fill="#ffffff" stroke="#666" stroke-width="1"/>
+  <circle cx="690" cy="215" r="9.5" fill="#dc2626"/>
+  <circle cx="715" cy="215" r="9.5" fill="#16a34a"/>
+  <circle cx="740" cy="215" r="9.5" fill="#2563eb"/>
+  <text x="690" y="218.5" text-anchor="middle" font-family="Arial" font-size="9" fill="#fff" font-weight="bold">R</text>
+  <text x="715" y="218.5" text-anchor="middle" font-family="Arial" font-size="9" fill="#fff" font-weight="bold">G</text>
+  <text x="740" y="218.5" text-anchor="middle" font-family="Arial" font-size="9" fill="#fff" font-weight="bold">B</text>
+  <text x="715" y="250" text-anchor="middle" font-family="Arial" font-size="10" fill="#333" font-weight="bold">1 像素 = 1R1G1B 灯珠</text>
+  <text x="715" y="265" text-anchor="middle" font-family="Arial" font-size="9.5" fill="#666">三颗芯片由 <tspan fill="#dc2626">R1</tspan> / <tspan fill="#16a34a">G1</tspan> / <tspan fill="#2563eb">B1</tspan></text>
+  <text x="715" y="279" text-anchor="middle" font-family="Arial" font-size="9.5" fill="#666">各 1 位分别控制亮 / 灭</text>
+
+  <!-- ===== 左：行译码 ===== -->
+  <text x="95" y="205" text-anchor="middle" font-family="Arial" font-size="11" fill="#666">选通当前行</text>
+  <rect x="55" y="215" width="80" height="110" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="1"/>
+  <text x="95" y="275" text-anchor="middle" font-family="Arial" font-size="13" fill="#2563eb" font-weight="bold">行译码</text>
+
+  <!-- A–E 地址线输入 -->
+  <line x1="22" y1="232" x2="55" y2="232" stroke="#666" stroke-width="1"/>
+  <text x="18" y="236" text-anchor="end" font-family="Arial" font-size="10" fill="#666">A</text>
+  <line x1="22" y1="251" x2="55" y2="251" stroke="#666" stroke-width="1"/>
+  <text x="18" y="255" text-anchor="end" font-family="Arial" font-size="10" fill="#666">B</text>
+  <line x1="22" y1="270" x2="55" y2="270" stroke="#666" stroke-width="1"/>
+  <text x="18" y="274" text-anchor="end" font-family="Arial" font-size="10" fill="#666">C</text>
+  <line x1="22" y1="289" x2="55" y2="289" stroke="#666" stroke-width="1"/>
+  <text x="18" y="293" text-anchor="end" font-family="Arial" font-size="10" fill="#666">D</text>
+  <line x1="22" y1="308" x2="55" y2="308" stroke="#666" stroke-width="1"/>
+  <text x="18" y="312" text-anchor="end" font-family="Arial" font-size="10" fill="#666">E</text>
+
+  <!-- 译码输出 → 上下半屏各选通一行 -->
+  <path d="M135,245 H160 V167 H184" fill="none" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <path d="M135,295 H160 V317 H184" fill="none" stroke="#666" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ===== 底部说明 ===== -->
+  <text x="400" y="552" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#666">任一时刻上下半屏各只有一行点亮，高速逐行扫描形成完整画面</text>
+  <text x="400" y="572" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#666">数据线上每色每像素仅 1 位，单次扫描只有图示 8 种状态（灭与 7 种直接组合色），更多色彩由多次扫描的时间调制合成</text>
+
+  <!-- Copyright 2026 Waveshare. Author: Wulu. Source: https://docs.waveshare.net/ESP32-Peripheral-Tutorials/Display/LED-Matrix -->
+</svg>
