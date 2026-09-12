@@ -4,7 +4,7 @@
  * @author      
  * @version     V1.0
  * @date        2023-08-26
- * @brief       24CXXDriver code
+ * @brief       24CXX driver code
  * @license     Copyright (c) 2020-2032, 
  ****************************************************************************************************
  * @attention
@@ -17,8 +17,8 @@
 i2c_obj_t at24cxx_master;
 
 /**
- * @brief       Initialize IICinterface
- * @param       i2c_obj_t self: IncomingIICInitialization parameters，Used to determine whether it has been completedIICinitialization
+ * @brief       Initialize IIC interface
+ * @param       i2c_obj_t self: IIC initialization parameters, used to determine whether IIC initialization has been completed
  * @retval      none
  */
 void at24cxx_init(i2c_obj_t self)
@@ -32,9 +32,9 @@ void at24cxx_init(i2c_obj_t self)
 }
 
 /**
- * @brief       existAT24CXX指定addressreadOutput a data
+ * @brief       Read one byte from the specified address of AT24CXX
  * @param       addr: Address to start reading
- * @retval      readThe data to be reached
+ * @retval      The data read
  */
 uint8_t at24cxx_read_one_byte(uint16_t addr)
 {
@@ -42,16 +42,16 @@ uint8_t at24cxx_read_one_byte(uint16_t addr)
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
-    /* According to different24CXXmodel, send highBitaddress
-     * 1, 24C16The abovemodel, point2Byte sending address
-     * 2, 24C16and belowmodel, point1Low byte address + occupies device addressbit1~bit3Bit Used to indicate highBitaddress, most11Bitaddress
-     *    for24C01/02, Its device address format(8bit)for: 1  0  1  0  A2  A1  A0  R/W
-     *    for24C04,    Its device address format(8bit)for: 1  0  1  0  A2  A1  a8  R/W
-     *    for24C08,    Its device address format(8bit)for: 1  0  1  0  A2  a9  a8  R/W
-     *    for24C16,    Its device address format(8bit)for: 1  0  1  0  a10 a9  a8  R/W
-     *    R/W      : read/Write control bit 0,Indicate writing; 1,expressread;
-     *    A0/A1/A2 : Corresponding device1,2,3Pin(only24C01/02/04/8Have these feet)
-     *    a8/a9/a10: rightThe height of the entire column should be storedBitaddress, 11bitThe address can be expressed at most2048Location,Can be addressed24C16and withinmodel
+    /* Depending on the 24CXX model, send the high address bits
+     * 1. For models above 24C16, send the address as 2 bytes
+     * 2. For 24C16 and below, send 1 low byte plus device address bits 1~3 to indicate the high address bits (up to 11 address bits)
+     *    for 24C01/02, the 8-bit device address format is: 1  0  1  0  A2  A1  A0  R/W
+     *    for 24C04,    the 8-bit device address format is: 1  0  1  0  A2  A1  a8  R/W
+     *    for 24C08,    the 8-bit device address format is: 1  0  1  0  A2  a9  a8  R/W
+     *    for 24C16,    the 8-bit device address format is: 1  0  1  0  a10 a9  a8  R/W
+     *    R/W      : Read/write control bit; 0 = write, 1 = read;
+     *    A0/A1/A2 : Corresponding device pins 1, 2, 3 (only 24C01/02/04/08 have these pins)
+     *    a8/a9/a10: High address bits; 11 address bits can address up to 2048 locations, covering 24C16 and smaller models
      */
     if(EE_TYPE > AT24C16)
     {
@@ -75,8 +75,8 @@ uint8_t at24cxx_read_one_byte(uint16_t addr)
 }
 
 /**
- * @brief       existAT24CXXWrite a data to the specified address
- * @param       addr: The destination address of the data written
+ * @brief       Write one byte to the specified address of AT24CXX
+ * @param       addr: Destination address to write
  * @param       data: Data to be written
  * @retval      none
  */
@@ -104,9 +104,9 @@ void at24cxx_write_one_byte(uint16_t addr, uint8_t data)
 }
 
 /**
- * @brief       examineAT24CXXIs it normal
- * @note        Detection principle: exist器件的末address写如0X55, 然后AgainreadPick, ifreadGet the valuefor0X55
- *              It means that the detection is normal. otherwise,It meansDetection failed.
+ * @brief       Check whether AT24CXX is working properly
+ * @note        Detection principle: write 0X55 to the last address of the device, then read it back; if the value read is 0X55
+ *              it means the check passed; otherwise the check failed.
  * @param       none
  * @retval      Test results
  *              0: Test successfully
@@ -119,14 +119,14 @@ uint8_t at24cxx_check(void)
 
     temp = at24cxx_read_one_byte(addr);     /* Avoid writing AT24CXX every time you boot */
 
-    if (temp == 0X55)                       /* readGet data正常 */
+    if (temp == 0X55)                       /* Data read back is valid */
     {
         return 0;
     }
-    else                                    /* Exclude the first initialization */
+    else                                    /* Skip on first initialization */
     {
         at24cxx_write_one_byte(addr, 0X55); /* Write data first */
-        temp = at24cxx_read_one_byte(255);  /* AgainreadGet data */
+        temp = at24cxx_read_one_byte(255);  /* Read the data again */
 
         if (temp == 0X55)
         {
@@ -138,10 +138,10 @@ uint8_t at24cxx_check(void)
 }
 
 /**
- * @brief       existAT24CXX里面的指定address开始readOutput the specified number of data
- * @param       addr    : The address to start reading right24c02for0~255
- * @param       pbuf    : Data array first address
- * @param       datalen : wantreadNumber of data output
+ * @brief       Read the specified number of bytes starting from the given address in AT24CXX
+ * @param       addr    : Start address to read (0~255 for 24c02)
+ * @param       pbuf    : Start address of the data array
+ * @param       datalen : Number of bytes to read
  * @retval      none
  */
 void at24cxx_read(uint16_t addr, uint8_t *pbuf, uint16_t datalen)
@@ -153,10 +153,10 @@ void at24cxx_read(uint16_t addr, uint8_t *pbuf, uint16_t datalen)
 }
 
 /**
- * @brief       existAT24CXXThe specified address starts writing the specified number of data
- * @param       addr    : The address to start writing right24c02for0~255
- * @param       pbuf    : Data array first address
- * @param       datalen : Number of data to be written
+ * @brief       Write the specified number of bytes starting from the given address in AT24CXX
+ * @param       addr    : Start address to write (0~255 for 24c02)
+ * @param       pbuf    : Start address of the data array
+ * @param       datalen : Number of bytes to write
  * @retval      none
  */
 void at24cxx_write(uint16_t addr, uint8_t *pbuf, uint16_t datalen)

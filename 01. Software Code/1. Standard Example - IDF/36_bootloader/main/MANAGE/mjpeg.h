@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        mjpeg.h
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK Team (ALIENTEK)
  * @version     V1.0
  * @date        2023-12-01
- * @brief       MJPEG视频处理 代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       MJPEG video processing
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -32,17 +32,17 @@
 
 struct my_error_mgr
 {
-    struct jpeg_error_mgr pub;  /* 公共”字段 */
-    jmp_buf setjmp_buffer;      /* 用于返回 */
+    struct jpeg_error_mgr pub;  /* Public fields */
+    jmp_buf setjmp_buffer;      /* Used for returning */
 };
 
-extern int Windows_Width;       /* 图像宽度 */
-extern int Windows_Height;      /* 图像高度 */
+extern int Windows_Width;       /* Image width */
+extern int Windows_Height;      /* Image height */
 #define rgb565(r, g, b) (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3))
 
 typedef void (*lcd_write_cb)(uint32_t w,uint32_t h,uint8_t *video_buf);
 
-/* 函数声明 */
+/* Function declarations */
 char mjpegdec_init(uint16_t offx, uint16_t offy);
 void mjpegdec_free(void);
 uint8_t mjpegdec_decode(uint8_t* buf, uint32_t bsize,lcd_write_cb lcd_cb);

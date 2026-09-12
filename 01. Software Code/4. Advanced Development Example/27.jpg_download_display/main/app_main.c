@@ -29,7 +29,7 @@
 #include "bili_http.h"
 
 #define TAG "ESP32S3"
-/*Give with timerLVGLProvide clock*/
+/*Use a timer to provide LVGL with its clock tick*/
 #include "driver/gpio.h"
 static void lv_tick_task(void *arg)
 {
@@ -55,12 +55,12 @@ static void gui_task(void *arg)
     xGuiSemaphore = xSemaphoreCreateMutex();
     lv_init(); // lvgl kernel initialization
 
-    lvgl_driver_init(); // lvgl显示接口initialization
-    /*externalPSRAMHow to applybufferfor screen refresh*/
+    lvgl_driver_init(); // lvgl display interface initialization
+    /*External PSRAM: how to allocate buffers for screen refresh*/
     // lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     // lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 
-    /*internalDMAWay*/
+    /*Internal DMA mode*/
     lv_color_t *buf1 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
     lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
 
@@ -70,7 +70,7 @@ static void gui_task(void *arg)
     static lv_disp_buf_t disp_buf;
     uint32_t size_in_px = DISP_BUF_SIZE;
     lv_disp_buf_init(&disp_buf, buf1, buf2, size_in_px);
-    /*Display driver interface configuration refresh function*/
+    /*Display driver interface and refresh function configuration*/
     lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
     disp_drv.flush_cb = disp_driver_flush;
@@ -99,7 +99,7 @@ static void gui_task(void *arg)
     {
         /* Delay 1 tick (assumes FreeRTOS tick is 10ms */
         vTaskDelay(pdMS_TO_TICKS(10));
-        bili_face.data = (uint8_t *)face_buffer; //Give the buffer obtained online to img
+        bili_face.data = (uint8_t *)face_buffer; //Assign the buffer obtained online to img
 
         lv_img_set_src(img_face, &bili_face); //
         // lv_img_set_src(img_face, &wallpaper_jpg); //
@@ -120,7 +120,7 @@ static void gui_task(void *arg)
 void app_main(void)
 {
 
-    // initializationnvsfor storagewifiOr other things that need to be saved after power off
+    // Initialize NVS for storing WiFi or other data that must persist across power-off
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
     {

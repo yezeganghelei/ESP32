@@ -34,9 +34,9 @@ void key_init(void)
 /**
  * @brief       Key scan function
  * @param       mode:0 / 1, The specific meaning is as follows:
- *              0,  Continuous pressing is not supported(When the button is pressed and not put, 只有第一次调用会返回key value,
- *                  Must be loosened later, 再次Press才会返回其他key value)
- *              1,  Support continuous press(When the button is pressed and not put, 每次调用该函数都会返回key value)
+ *              0,  Continuous pressing is not supported(When the button is held down, only the first call returns the key value,
+ *                  It must be released later, only then will another key value be returned)
+ *              1,  Continuous pressing is supported(When the button is held down, every call returns the key value)
  * @retval      key value, Definition is as follows:
  *              BOOT_PRES, 1, BOOTPress
  */
@@ -50,7 +50,7 @@ uint8_t key_scan(uint8_t mode)
         key_boot = 1;
     }
 
-    if (key_boot && (BOOT == 0))    /* The key release sign is1，and any button is pressed */
+    if (key_boot && (BOOT == 0))    /* Key release flag is 1 and the button is pressed */
     {
         vTaskDelay(10);             /* debounce */
         key_boot = 0;
@@ -65,5 +65,5 @@ uint8_t key_scan(uint8_t mode)
         key_boot = 1;
     }
 
-    return keyval;                  /* 返回key value */
+    return keyval;                  /* Return the key value */
 }

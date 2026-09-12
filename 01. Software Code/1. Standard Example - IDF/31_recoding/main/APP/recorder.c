@@ -14,26 +14,26 @@
 
 #include "recorder.h"
 
-uint32_t g_wav_size;    /* wavdata大小(Number of bytes,不包括文件head!!) */
+uint32_t g_wav_size;    /* WAV data size (number of bytes, excluding the file header!!) */
 
 uint8_t g_rec_sta = 0;  /**
-                         * recording状态
-                         * [7]:0,没有Openrecording;1,已经Openrecording;
-                         * [6:1]:reserve
-                         * [0]:0,正在recording;1,pauserecording;
+                         * Recording state
+                         * [7]: 0 = recording not started; 1 = recording started;
+                         * [6:1]: reserve
+                         * [0]: 0 = recording; 1 = recording paused;
                          */
 
 /**
- * @brief       EnterPCM recording模式
+ * @brief       Enter PCM recording mode
  * @param       none
  * @retval      none
  */
 void recoder_enter_rec_mode(void)
 {
     es8388_adda_cfg(0, 1);          /* Turn on the ADC */
-    es8388_input_cfg(0);            /* Open输入aisle(aisle1,MICChannel) */
+    es8388_input_cfg(0);            /* Enable input channel (channel 1, MIC channel) */
     es8388_mic_gain(8);             /* MICGain set to maximum */
-    es8388_alc_ctrl(3, 4, 4);       /* Open立体声ALCcontrol,以提高recording音量 */
+    es8388_alc_ctrl(3, 4, 4);       /* Enable stereo ALC control to increase recording volume */
     es8388_output_cfg(0, 0);        /* Close the outputs of channels 1 and 2 */
     es8388_spkvol_set(0);           /* Turn off the speaker. */
     es8388_sai_cfg(0, 3);           /* Philips standard, 16-bit data length */
@@ -52,13 +52,13 @@ void recoder_enter_play_mode(void)
     es8388_adda_cfg(1, 0);      /* OpenDAC */
     es8388_output_cfg(1, 1);    /* Openaisle1and2Output */
     es8388_spkvol_set(28);      /* Speaker volume settings */
-    i2s_trx_stop();             /* 停止recording */
+    i2s_trx_stop();             /* Stop recording */
     recoder_remindmsg_show(1);  /* Show prompt information */
 }
 
 /**
  * @brief       initializationWAVhead
- * @param       wavhead : wav文件head指针
+ * @param       wavhead : Pointer to the WAV file header
  * @retval      none
  */
 void recoder_wav_init(__WaveHeader *wavhead)
@@ -71,22 +71,22 @@ void recoder_wav_init(__WaveHeader *wavhead)
     wavhead->fmt.AudioFormat = 0x01;                     /* 0x01 means PCM; 0x00 means IMA ADPCM */
     wavhead->fmt.NumOfChannels = 2;                      /* Two-channel */
     wavhead->fmt.SampleRate = SAMPLE_RATE;               /* Sampling rate */
-    wavhead->fmt.ByteRate = wavhead->fmt.SampleRate * 4; /* byte rate=Sampling rate*aisle数*(ADCBit数/8) */
+    wavhead->fmt.ByteRate = wavhead->fmt.SampleRate * 4; /* byte rate = sampling rate * channel count * (ADC bit depth / 8) */
     wavhead->fmt.BlockAlign = 4;                         /* Block size = number of channels*(number of ADC bits/8) */
     wavhead->fmt.BitsPerSample = 16;                     /* 16BitPCM */
     wavhead->data.ChunkID = 0x61746164;                  /* "data" */
-    wavhead->data.ChunkSize = 0;                         /* data大小,Requires calculations */
+    wavhead->data.ChunkSize = 0;                         /* data size, requires calculation */
 }
 
 /**
- * @brief       显示recordingtimeandCode rate
+ * @brief       Display recording time and code rate
  * @param       tsec : time（unit : Second）
  * @param       kbps : Code rate
  * @retval      none
  */
 void recoder_msg_show(uint32_t tsec, uint32_t kbps)
 {
-    lcd_show_string(30, 210, 200, 16, 16, "TIME:", RED);    /* 显示recordingtime */
+    lcd_show_string(30, 210, 200, 16, 16, "TIME:", RED);    /* Display recording time */
     lcd_show_num(30 + 40, 210, tsec / 60, 2, 16, RED);      /* minute */
     lcd_show_char(30 + 56, 210, ':', 16, 0, RED);
     lcd_show_num(30 + 64, 210, tsec % 60, 2, 16, RED);      /* Seconds */
@@ -98,7 +98,7 @@ void recoder_msg_show(uint32_t tsec, uint32_t kbps)
 /**
  * @brief       Prompt information
  * @param       mode : Working mode
- *   @arg       0, recording模式
+ *   @arg       0, recording mode
  *   @arg       1, Playback mode
  * @retval      none
  */
@@ -106,7 +106,7 @@ void recoder_remindmsg_show(uint8_t mode)
 {
     lcd_fill(30, 120, lcd_self.width, 180, WHITE);            /* Clear the original display */
 
-    if (mode == 0)  /* recording模式 */
+    if (mode == 0)  /* recording mode */
     {
         lcd_show_string(30, 120, 200, 16, 16, "KEY0:REC/PAUSE", BLUE);
         lcd_show_string(30, 140, 200, 16, 16, "KEY2:STOP&SAVE", BLUE);
@@ -168,7 +168,7 @@ void wav_recorder(void)
     
     __WaveHeader *wavhead = 0;
     FF_DIR recdir;          /* Table of contents */
-    FIL *f_rec;             /* recording文件 */
+    FIL *f_rec;             /* recording file */
     
     uint8_t *pdatabuf;      /* Data cache pointer */
     uint8_t *pname = 0;     /* File name */
@@ -176,19 +176,19 @@ void wav_recorder(void)
     uint8_t timecnt = 0;    /* Timer */
     uint16_t bytes_read = 0;
 
-    while (f_opendir(&recdir, "0:/RECORDER"))   /* 打开recording文件夹 */
+    while (f_opendir(&recdir, "0:/RECORDER"))   /* Open the recording folder */
     {
         lcd_show_string(30, 230, 240, 16, 16, "RECORDER folder error!", RED);
         vTaskDelay(200);
         lcd_fill(30, 230, 240, 246, WHITE);     /* Clear the display */
         vTaskDelay(200);
-        f_mkdir("0:/RECORDER");                 /* 创建该Table of contents */
+        f_mkdir("0:/RECORDER");                 /* Create the directory */
     }
 
-    pdatabuf = malloc(1024 * 10);                           /* recording存储区 */
+    pdatabuf = malloc(1024 * 10);                           /* recording buffer */
     f_rec = (FIL*)malloc(sizeof(FIL));                      /* open upFILBytes memory area */
     wavhead = (__WaveHeader *)malloc(sizeof(__WaveHeader)); /* open up__WaveHeaderBytes memory area */
-    pname = malloc(30);   /* Apply30Bytes内存,File name similar"0:RECORDER/REC00001.wav" */
+    pname = malloc(30);   /* Allocate 30 bytes of memory; file name similar to "0:RECORDER/REC00001.wav" */
 
     if (!f_rec || !wavhead || !pname || !pdatabuf)
     {
@@ -197,7 +197,7 @@ void wav_recorder(void)
 
     if (rval == 0)
     {
-        recoder_enter_rec_mode();   /* Enterrecording模式,此时耳机可以听到咪head采集到的音频 */
+        recoder_enter_rec_mode();   /* Enter recording mode; the headset can now hear the audio captured by the microphone */
         pname[0] = 0;               /* pname does not have any file name */
 
         while (rval == 0)
@@ -207,13 +207,13 @@ void wav_recorder(void)
             switch (key)
             {
                 case KEY2_PRES:                                     /* STOP&SAVE */
-                    if (g_rec_sta & 0x80)                           /* 有recording */
+                    if (g_rec_sta & 0x80)                           /* Recording in progress */
                     {
                         g_rec_sta = 0;                              /* closurerecording */
                         wavhead->riff.ChunkSize = g_wav_size + 36;  /* The size of the entire file-8; */
-                        wavhead->data.ChunkSize = g_wav_size;       /* data大小 */
-                        f_lseek(f_rec, 0);                          /* 偏移到文件head. */
-                        f_write(f_rec, (const void *)wavhead, sizeof(__WaveHeader), &bw); /* 写入headdata */
+                        wavhead->data.ChunkSize = g_wav_size;       /* data size */
+                        f_lseek(f_rec, 0);                          /* Seek to the file header. */
+                        f_write(f_rec, (const void *)wavhead, sizeof(__WaveHeader), &bw); /* Write header data */
                         f_close(f_rec);
                         g_wav_size = 0;
                     }
@@ -221,43 +221,43 @@ void wav_recorder(void)
                     g_rec_sta = 0;
                     recsec = 0;
                     LED(1);        /* closureDS0 */
-                    lcd_fill(30, 190, lcd_self.width, lcd_self.height, WHITE); /* Clear the display,清除之前显示的recording文件名 */
+                    lcd_fill(30, 190, lcd_self.width, lcd_self.height, WHITE); /* Clear the display, removing the previously shown recording file name */
                     break;
  
                 case KEY0_PRES:     /* REC/PAUSE */
-                    if (g_rec_sta & 0x01)                           /* If it is pause,继续recording */
+                    if (g_rec_sta & 0x01)                           /* If paused, resume recording */
                     {
                         g_rec_sta &= 0xFE;                          /* Cancel the pause */
                     }
-                    else if (g_rec_sta & 0x80)                      /* 已经在recording了,pause */
+                    else if (g_rec_sta & 0x80)                      /* Already recording, pause */
                     {
                         g_rec_sta |= 0x01;                          /* pause */
                     }
-                    else                                            /* 还没开始recording */
+                    else                                            /* Recording not started yet */
                     {
                         recsec = 0;
                         recoder_new_pathname(pname);                /* Get a new name */
                         text_show_string(30, 190, lcd_self.width, 16, "Recording:", 16, 0, RED);
-                        text_show_string(30 + 40, 190, lcd_self.width, 16, (char *)pname + 11, 16, 0, RED);   /* 显示当前recording文件名字 */
+                        text_show_string(30 + 40, 190, lcd_self.width, 16, (char *)pname + 11, 16, 0, RED);   /* Display the current recording file name */
                         recoder_wav_init(wavhead);                  /* initializationwavdata */
                         res = f_open(f_rec, (const TCHAR*)pname, FA_CREATE_ALWAYS | FA_WRITE);    /* Open the file */
 
                         if (res)                        /* File creation failed */
                         {
-                            g_rec_sta = 0;              /* Failed to create a file,不能recording */
+                            g_rec_sta = 0;              /* Failed to create the file, cannot record */
                             rval = 0xFE;                /* Tip if the SD card exists */
                         }
                         else
                         {
-                            res = f_write(f_rec, (const void *)wavhead, sizeof(__WaveHeader), (UINT*)&bw); /* 写入headdata */
+                            res = f_write(f_rec, (const void *)wavhead, sizeof(__WaveHeader), (UINT*)&bw); /* Write header data */
                             recoder_msg_show(0, 0);
-                            g_rec_sta |= 0x80;          /* 开始recording */
+                            g_rec_sta |= 0x80;          /* Start recording */
                         }
                     }
 
                     if (g_rec_sta & 0x01)
                     {
-                        LED(0);                         /* 提示正在pause */
+                        LED(0);                         /* Indicate paused */
                     }
                     else 
                     {
@@ -265,8 +265,8 @@ void wav_recorder(void)
                     }
                     break;
 
-                case KEY3_PRES:                         /* Play最近一段recording */
-                    if (g_rec_sta != 0x80)              /* 没有在recording */
+                case KEY3_PRES:                         /* Play the most recent recording */
+                    if (g_rec_sta != 0x80)              /* Not recording */
                     {
                         if (pname[0])                   /* If the key is pressed and the pname is not empty */
                         {
@@ -274,8 +274,8 @@ void wav_recorder(void)
                             text_show_string(30 + 40, 190, lcd_self.width, 16, (char *)pname + 11, 16, 0, RED); /* Show the file name when playing */
                             recoder_enter_play_mode();  /* Enter play mode */
                             audio_play_song(pname);     /* Play pname */
-                            lcd_fill(30, 190, lcd_self.width, lcd_self.height, WHITE); /* Clear the display,清除之前显示的recording文件名 */
-                            recoder_enter_rec_mode();   /* 重新Enterrecording模式 */
+                            lcd_fill(30, 190, lcd_self.width, lcd_self.height, WHITE); /* Clear the display, removing the previously shown recording file name */
+                            recoder_enter_rec_mode();   /* Re-enter recording mode */
                         }
                     }
                     break;
@@ -308,7 +308,7 @@ void wav_recorder(void)
                 LED_TOGGLE();      /* LEDFlashing */
             }
 
-            if (recsec != (g_wav_size / wavhead->fmt.ByteRate))    /* recordingtime显示 */
+            if (recsec != (g_wav_size / wavhead->fmt.ByteRate))    /* Display recording time */
             {
                 recsec = g_wav_size / wavhead->fmt.ByteRate;       /* recordingtime */
                 recoder_msg_show(recsec, wavhead->fmt.SampleRate * wavhead->fmt.NumOfChannels * wavhead->fmt.BitsPerSample); /* Display code rate */

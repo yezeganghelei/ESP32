@@ -18,9 +18,9 @@ uint8_t frameup;
 esp_timer_handle_t esp_tim_handle;                          /* Timer callback function handle */
 
 /**
- * @brief       初始化高分辨率Timer
+ * @brief       Initialize high-resolution timer
  * @param       arr: autoreload value
- * @param       tp: Timer cycle
+ * @param       tp: timer period
  * @retval      none
  */
 void esptim_int_init(uint16_t arr, uint64_t tp)
@@ -36,17 +36,17 @@ void esptim_int_init(uint16_t arr, uint64_t tp)
     /* Configure the timer */
     esp_timx_handle.alarm_en = TIMER_ALARM_DIS;             /* Disable timer alarm */
     esp_timx_handle.counter_en = TIMER_START;               /* enable timer */
-    esp_timx_handle.intr_type = TIMER_INTR_MAX;             /* Configure the timer中断模式 */
+    esp_timx_handle.intr_type = TIMER_INTR_MAX;             /* Configure the timer interrupt mode */
     esp_timx_handle.counter_dir = TIMER_COUNT_UP;           /* Incremental Count Mode */
     esp_timx_handle.auto_reload = arr;                      /* Auto reload value */
-    esp_timx_handle.clk_src = TIMER_SRC_CLK_DEFAULT;        /* Configure the timer中断源 */
+    esp_timx_handle.clk_src = TIMER_SRC_CLK_DEFAULT;        /* Configure the timer clock source */
 
-    esp_timer_create(&tim_periodic_arg, &esp_tim_handle);   /* Create an event */
-    esp_timer_start_periodic(esp_tim_handle, tp);           /* Triggered once per cycle */
+    esp_timer_create(&tim_periodic_arg, &esp_tim_handle);   /* Create the timer */
+    esp_timer_start_periodic(esp_tim_handle, tp);           /* Trigger once per period */
 }
 
 /**
- * @brief       Timer回调函数
+ * @brief       Timer callback function
  * @param       none
  * @retval      none
  */

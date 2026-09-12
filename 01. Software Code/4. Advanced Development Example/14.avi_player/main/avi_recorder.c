@@ -62,9 +62,9 @@ static int jpeg2avi_start(jpeg2avi_data_t *j2a, const char *filename)
         return ESP_FAIL;
     }
 
-    uint32_t offset1 = sizeof(AVI_LIST_HEAD);  //riff headsize
+    uint32_t offset1 = sizeof(AVI_LIST_HEAD);  //riff head size
     uint32_t offset2 = sizeof(AVI_HDRL_LIST);  //hdrl list size
-    uint32_t offset3 = sizeof(AVI_LIST_HEAD);  //movi list headsize
+    uint32_t offset3 = sizeof(AVI_LIST_HEAD);  //movi list head size
 
     //After the AVI file offset is set to the movi list head, JPEG data is written backwards from this position.
     int ret = fseek(j2a->avifile, offset1 + offset2 + offset3, SEEK_SET);
@@ -86,11 +86,11 @@ static int jpeg2avi_add_frame(jpeg2avi_data_t *j2a, void *data, uint32_t len)
 {
     size_t ret;
     AVI_CHUNK_HEAD frame_head;
-    uint32_t align_size = MEM_ALIGN_SIZE(len);/*JPEG图像size4Byte alignment*/
+    uint32_t align_size = MEM_ALIGN_SIZE(len);/*JPEG image size, 4-byte aligned*/
 
     frame_head.FourCC = MAKE_FOURCC('0', '0', 'd', 'c'); //00dc = compressed video data
     frame_head.size = align_size;
-    ret = fwrite(&frame_head, sizeof(AVI_CHUNK_HEAD), 1, j2a->avifile);   //write4Byte alignmentback的JPEG图像size
+    ret = fwrite(&frame_head, sizeof(AVI_CHUNK_HEAD), 1, j2a->avifile);   //Write the 4-byte aligned JPEG image size
     ret = fwrite(data, align_size, 1, j2a->avifile);        //Write real JPEG data
     if (1 != ret) {
         ESP_LOGE(TAG, "frame chunk write failed");
@@ -199,7 +199,7 @@ static int write_index_chunk(jpeg2avi_data_t *j2a)
 {
     size_t ret;
     size_t i;
-    uint32_t index = MAKE_FOURCC('i', 'd', 'x', '1');  //index blockID
+    uint32_t index = MAKE_FOURCC('i', 'd', 'x', '1');  //index block ID
     uint32_t index_chunk_size = sizeof(AVI_IDX1) * j2a->nframes;   //Index block size
     uint32_t offset = 4;
     uint32_t frame_size;
@@ -218,7 +218,7 @@ static int write_index_chunk(jpeg2avi_data_t *j2a)
     idx.FourCC = MAKE_FOURCC('0', '0', 'd', 'c'); //00dc = compressed video data
     for (i = 0; i < j2a->nframes; i++) {
         fread(&frame_size, 4, 1, j2a->idxfile); //Read size of each jpeg image
-        idx.flags = 0x10;//0x10Indicates that the current frame is a keyframe
+        idx.flags = 0x10;//0x10 indicates the current frame is a keyframe
         idx.chunkoffset = offset;
         idx.chunklength = frame_size;
         ret = fwrite(&idx, sizeof(AVI_IDX1), 1, j2a->avifile);

@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        app_test.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-08-01
- * @brief       APP功能测试
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       APP function test
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  * 
  ****************************************************************************************************
  */
@@ -22,17 +22,17 @@
 
 
 /**
- * @brief       led测试
- * @param       无
- * @retval      无
+ * @brief       LED test
+ * @param       none
+ * @retval      none
  */
 int led_test(Test_Typedef * obj)
 {
     uint8_t key = 0;
     uint8_t xl_key = 0;
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
-    printf("\r\n/******************************* 1，LED测试 *******************************/\r\n");
-    printf("/********************* 注意：观察LED0和LED1是否闪烁！***********************/\r\n");
+    printf("\r\n/******************************* 1, LED Test *******************************/\r\n");
+    printf("/********************* Note: check whether LED0 and LED1 are blinking!***********************/\r\n");
     printf("/****************************** NEXT: BOOT ;Record: KEY0 *******************************/\r\n");
 
     while(1)
@@ -63,9 +63,9 @@ int led_test(Test_Typedef * obj)
 }
 
 /**
- * @brief       key测试
- * @param       无
- * @retval      无
+ * @brief       Key test
+ * @param       none
+ * @retval      none
  */
 int key_test(Test_Typedef * obj)
 {
@@ -73,8 +73,8 @@ int key_test(Test_Typedef * obj)
     uint8_t xl_key = 0;
     uint16_t key_status = 0x00;
 
-    printf("\r\n/******************************* 2，按键测试 *******************************/\r\n");
-    printf("/********************* 按下KEY0、KEY1、KEY2、KEY3和BOOT即可退出！***********************/\r\n");
+    printf("\r\n/******************************* 2, Key Test *******************************/\r\n");
+    printf("/********************* Press KEY0, KEY1, KEY2, KEY3 and BOOT to exit!***********************/\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
     lcd_draw_circle(50,lcd_self.height / 2 + 30,10,WHITE);
     lcd_draw_circle(75,lcd_self.height / 2 + 30,10,WHITE);
@@ -91,7 +91,7 @@ int key_test(Test_Typedef * obj)
         {
             key_status |= 1 << 0;
             lcd_draw_circle(50,lcd_self.height / 2 + 30,10,RED);
-            printf("按键BOOT被按下\n");
+            printf("BOOT button pressed\n");
         }
 
         switch(xl_key)
@@ -99,22 +99,22 @@ int key_test(Test_Typedef * obj)
             case KEY0_PRES:
                 key_status |= 1 << 1;
                 lcd_draw_circle(125,lcd_self.height / 2 + 30,10,RED);
-                printf("按键KEY0被按下\n");
+                printf("KEY0 button pressed\n");
                 break;
             case KEY1_PRES:
                 key_status |= 1 << 2;
                 lcd_draw_circle(100,lcd_self.height / 2 + 30,10,RED);
-                printf("按键KEY1被按下\n");
+                printf("KEY1 button pressed\n");
                 break;
             case KEY2_PRES:
                 key_status |= 1 << 3;
                 lcd_draw_circle(75,lcd_self.height / 2 + 30,10,RED);
-                printf("按键KEY2被按下\n");
+                printf("KEY2 button pressed\n");
                 break;
             case KEY3_PRES:
                 key_status |= 1 << 4;
                 lcd_draw_circle(100,lcd_self.height / 2 + 5,10,RED);
-                printf("按键KEY3被按下\n");
+                printf("KEY3 button pressed\n");
                 break;
         }
 
@@ -123,7 +123,7 @@ int key_test(Test_Typedef * obj)
             lcd_show_string(lcd_self.width - 95, 30 + obj->label * 16, lcd_self.width, 16, 16, "OK", WHITE);
             lcd_fill(30,lcd_self.height / 2 - 10,150,lcd_self.height / 2 + 50,BLACK);
             key_status = 0x00;
-            printf("按键全部按下，正常退出！\r\n");
+            printf("All buttons pressed, exiting normally!\r\n");
             return TEST_OK;
         }
 
@@ -132,21 +132,21 @@ int key_test(Test_Typedef * obj)
 }
 
 /**
- * @brief       beep测试
- * @param       无
- * @retval      无
+ * @brief       Beep test
+ * @param       none
+ * @retval      none
  */
 int beep_test(Test_Typedef * obj)
 {
     uint8_t key = 0;
     uint8_t xl_key = 0;
     
-    printf("\r\n/******************************* 3，蜂鸣器测试 *******************************/\r\n");
-    printf("/**************************** 注意：听下蜂鸣器是否鸣叫！***********************/\r\n");
+    printf("\r\n/******************************* 3, Buzzer Test *******************************/\r\n");
+    printf("/**************************** Note: listen to check whether the buzzer is beeping!***********************/\r\n");
     printf("/****************************** NEXT: BOOT ;Record: KEY0 *******************************/\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
 
-    xl9555_pin_write(BEEP_IO,0);                /* 打开蜂鸣器 */
+    xl9555_pin_write(BEEP_IO,0);                /* Turn on the buzzer */
 
     while(1)
     {
@@ -157,7 +157,7 @@ int beep_test(Test_Typedef * obj)
         {
             printf("******OK!******\r\n");
             lcd_show_string(lcd_self.width - 95, 30 + obj->label * 16, lcd_self.width, 16, 16, "OK", WHITE);
-            xl9555_pin_write(BEEP_IO,1);        /* 关闭蜂鸣器 */
+            xl9555_pin_write(BEEP_IO,1);        /* Turn off the buzzer */
             return TEST_OK;
         }
 
@@ -165,7 +165,7 @@ int beep_test(Test_Typedef * obj)
         {
             printf("******FAIL!******\r\n");
             lcd_show_string(lcd_self.width - 95, 30 + obj->label * 16, lcd_self.width, 16, 16, "FAIL", RED);
-            xl9555_pin_write(BEEP_IO,1);        /* 关闭蜂鸣器 */
+            xl9555_pin_write(BEEP_IO,1);        /* Turn off the buzzer */
             return TEST_FAIL;
         }
 
@@ -173,14 +173,14 @@ int beep_test(Test_Typedef * obj)
     }
 }
 
-const uint8_t g_text_buf[] = {"EEPROM"};        /* 要写入到24c02的字符串数组 */
-#define TEXT_SIZE   sizeof(g_text_buf)          /* TEXT字符串长度 */
+const uint8_t g_text_buf[] = {"EEPROM"};        /* String array to write to 24C02 */
+#define TEXT_SIZE   sizeof(g_text_buf)          /* Length of the TEXT string */
 uint8_t datatemp[TEXT_SIZE];
 
 /**
- * @brief       at24c02测试
- * @param       无
- * @retval      无
+ * @brief       AT24C02 test
+ * @param       none
+ * @retval      none
  */
 int at24cx_test(Test_Typedef * obj)
 {
@@ -190,11 +190,11 @@ int at24cx_test(Test_Typedef * obj)
     printf("\r\n/******************************* 4，AT24C02 *******************************/\r\n");
     printf("/********************************** NEXT: AUTO ********************************/\r\n\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
-    err = at24cxx_check();                      /* 检测AT24C02 */
+    err = at24cxx_check();                      /* Detect AT24C02 */
 
     if (err != 0)
     {
-        while (1)                               /* 检测不到24c02 */
+        while (1)                               /* 24C02 not detected */
         {
             printf("24C02 check failed, please check!\n");
             lcd_show_string(40, 30 + obj->label * 16, lcd_self.width, 16, 16, "24C02 failed", WHITE);
@@ -202,14 +202,14 @@ int at24cx_test(Test_Typedef * obj)
         }
     }
 
-    /* 写数据 */
+    /* Write data */
     at24cxx_write(0, (uint8_t *)g_text_buf, TEXT_SIZE);
     vTaskDelay(100);
-    /* 读数据 */
+    /* Read data */
     at24cxx_read(0, datatemp, TEXT_SIZE);
     vTaskDelay(100);
 
-    /* 匹配写和读数据是否一致 */
+    /* Check whether the written and read data match */
     if (strcmp((char *)datatemp, (char *)g_text_buf) == 0)
     {
         lcd_show_string(lcd_self.width - 95, 30 + obj->label * 16, lcd_self.width, 16, 16, "OK", WHITE);
@@ -225,9 +225,9 @@ int at24cx_test(Test_Typedef * obj)
 }
 
 /**
- * @brief       at24c02测试
- * @param       无
- * @retval      无
+ * @brief       ADC test
+ * @param       none
+ * @retval      none
  */
 int adc_test(Test_Typedef * obj)
 {
@@ -235,14 +235,14 @@ int adc_test(Test_Typedef * obj)
     uint8_t xl_key = 0;
     uint16_t adcdata = 0;
     float voltage = 0;
-    adc_init();     /* 初始化ADC */
+    adc_init();     /* Initialize ADC */
     
-    printf("\r\n/******************************* 5，ADC测试 *********************************/\r\n");
-    printf("/*** 注意：请接上P3处的跳线帽，将AIN与RV1进行短接，然后调节RV1观看ADC读数变化！！ ***/\r\n");
-    printf("******确认P3端的AIN和RV是否接上******\r\n");
+    printf("\r\n/******************************* 5, ADC Test *********************************/\r\n");
+    printf("/*** Note: connect the jumper at P3, short AIN to RV1, then adjust RV1 and watch the ADC reading change!! ***/\r\n");
+    printf("******Confirm whether AIN and RV at P3 are connected******\r\n");
     printf("/*********************************** NEXT: BOOT **********************************/\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
-    lcd_show_string(10 + 16 * 4, 30 + obj->label * 16, lcd_self.width, 16, 16,"P3:AIN>RV?",RED);      /* 显示电压值的整数部分 */
+    lcd_show_string(10 + 16 * 4, 30 + obj->label * 16, lcd_self.width, 16, 16,"P3:AIN>RV?",RED);      /* Display the integer part of the voltage */
 
     while(1)
     {
@@ -255,7 +255,7 @@ int adc_test(Test_Typedef * obj)
 
         vTaskDelay(100);
     }
-    printf("******确认P3端的AIN和RV已接上******\r\n");
+    printf("******Confirm AIN and RV at P3 are connected******\r\n");
     lcd_fill(10 + 16 * 4,30 + obj->label * 16,30 + obj->label * 16 + 16 * 4,30 + obj->label * 16 + 16,BLACK);
     printf("/****************************** NEXT: BOOT ;Record: KEY0 *******************************/\r\n");
 
@@ -281,23 +281,23 @@ int adc_test(Test_Typedef * obj)
         }
 
         adcdata = adc_get_result_average(ADC_ADCX_CHY, 10);
-        voltage = (float)adcdata * (3.3 / 4096);                /* 获取计算后的带小数的实际电压值 */
+        voltage = (float)adcdata * (3.3 / 4096);                /* Get the computed actual voltage with decimals */
         printf("ADC:%0.2f\r\n",voltage);
-        adcdata = voltage;                                      /* 赋值整数部分给adcx变量 */
-        lcd_show_xnum(10 + 16 * 4, 30 + obj->label * 16, adcdata, 1, 16, 0, WHITE);      /* 显示电压值的整数部分 */
+        adcdata = voltage;                                      /* Assign the integer part to the adcdata variable */
+        lcd_show_xnum(10 + 16 * 4, 30 + obj->label * 16, adcdata, 1, 16, 0, WHITE);      /* Display the integer part of the voltage */
         lcd_show_char(10 + 16 * 4 + 8, 30 + obj->label * 16,'.',16,0, WHITE);
-        voltage -= adcdata;                                     /* 把已经显示的整数部分去掉，留下小数部分 */
-        voltage *= 1000;                                        /* 小数部分乘以1000 */
-        lcd_show_xnum(10 +  16 * 4 + 16, 30 + obj->label * 16, voltage, 3, 16, 0x80, WHITE);   /* 显示小数部分 */
+        voltage -= adcdata;                                     /* Remove the integer part already displayed, leaving the fractional part */
+        voltage *= 1000;                                        /* Multiply the fractional part by 1000 */
+        lcd_show_xnum(10 +  16 * 4 + 16, 30 + obj->label * 16, voltage, 3, 16, 0x80, WHITE);   /* Display the fractional part */
 
         vTaskDelay(100);
     }
 }
 
 /**
- * @brief       ap3216c测试
- * @param       无
- * @retval      无
+ * @brief       AP3216C test
+ * @param       none
+ * @retval      none
  */
 int ap3216c_test(Test_Typedef * obj)
 {
@@ -305,8 +305,8 @@ int ap3216c_test(Test_Typedef * obj)
     uint8_t xl_key = 0;
     uint16_t ir = 0, als = 0, ps = 0;
     
-    printf("\r\n/******************************* 6，光环境传感器测试 **********************************/\r\n");
-    printf("/*** 注意：可以遮挡AP3216C，并观察环境光强度（ALS）、接近距离（PS）和红外线强度（IR）等参数 ***/\r\n");
+    printf("\r\n/******************************* 6, Ambient Light Sensor Test **********************************/\r\n");
+    printf("/*** Note: you can cover AP3216C and observe ambient light (ALS), proximity (PS) and infrared (IR) parameters ***/\r\n");
     printf("/****************************** NEXT: BOOT ;Record: KEY0 *******************************/\r\n");
     lcd_show_string(10 + 16 + 16 * 3, 30 + obj->label * 16 + 16 * 2, lcd_self.width, 16, 16, ":IR", RED);
     lcd_show_string(10 + 16 + 16 * 3, 30 + obj->label * 16 + 16 * 3, lcd_self.width, 16, 16, ":PS", RED);
@@ -334,28 +334,28 @@ int ap3216c_test(Test_Typedef * obj)
             return TEST_FAIL;
         }
 
-        ap3216c_read_data(&ir, &ps, &als);                                          /* 读取数据  */
+        ap3216c_read_data(&ir, &ps, &als);                                          /* Read data */
         printf("IR:%d,PS:%d,ALS:%d\r\n",ir, ps, als);
-        lcd_show_num(10 + 16, 30 + obj->label * 16 + 16 * 2, ir, 5, 16, WHITE);      /* 显示IR数据 */
-        lcd_show_num(10 + 16, 30 + obj->label * 16 + 16 * 3, ps, 5, 16, WHITE);      /* 显示PS数据 */
-        lcd_show_num(10 + 16, 30 + obj->label * 16 + 16 * 4, als, 5, 16, WHITE);     /* 显示ALS数据  */
+        lcd_show_num(10 + 16, 30 + obj->label * 16 + 16 * 2, ir, 5, 16, WHITE);      /* Display IR data */
+        lcd_show_num(10 + 16, 30 + obj->label * 16 + 16 * 3, ps, 5, 16, WHITE);      /* Display PS data */
+        lcd_show_num(10 + 16, 30 + obj->label * 16 + 16 * 4, als, 5, 16, WHITE);     /* Display ALS data  */
 
         vTaskDelay(100);
     }
 }
 
 /**
- * @brief       sd测试
- * @param       无
- * @retval      无
+ * @brief       SD test
+ * @param       none
+ * @retval      none
  */
 int sd_test(Test_Typedef * obj)
 {
     uint8_t key = 0;
     uint8_t xl_key = 0;
     
-    printf("\r\n/******************************* 7，SD卡测试 **********************************/\r\n");
-    printf("/*** 注意：请插入SD卡到TF卡槽当中,按下BOOT按键标志检测失败。 ***/\r\n");
+    printf("\r\n/******************************* 7, SD Card Test **********************************/\r\n");
+    printf("/*** Note: insert the SD card into the TF slot; pressing BOOT marks the test as failed. ***/\r\n");
     printf("/*************************************** NEXT: AUTO **************************************/\r\n\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
 
@@ -384,17 +384,17 @@ int sd_test(Test_Typedef * obj)
 }
 
 /**
- * @brief       qma6100p测试
- * @param       无
- * @retval      无
+ * @brief       QMA6100P test
+ * @param       none
+ * @retval      none
  */
 int qma6100p_test(Test_Typedef * obj)
 {
     static uint8_t id_data[2];
     
-    printf("\r\n/******************************* 8，QMA6100P测试测试 **********************************/\r\n");
+    printf("\r\n/******************************* 8, QMA6100P Test **********************************/\r\n");
     printf("/********************************** NEXT: AUTO ********************************/\r\n\r\n");
-    qma6100p_register_read(QMA6100P_REG_CHIP_ID, id_data, 1);    /* 读取设备ID，正常是0x90 */
+    qma6100p_register_read(QMA6100P_REG_CHIP_ID, id_data, 1);    /* Read device ID; normally 0x90 */
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
 
     if (id_data[0] == 0x90)
@@ -414,19 +414,19 @@ int qma6100p_test(Test_Typedef * obj)
 uint8_t rmt_flag;
 
 /**
- * @brief       rmt测试
- * @param       obj:句柄
- * @retval      无
+ * @brief       RMT test
+ * @param       obj: handle
+ * @retval      none
  */
 int rmt_test(Test_Typedef * obj)
 {
     uint8_t key = 0;
     rmt_flag = 0;
-    printf("\r\n/******************************* 9，红外收发 *******************************/\r\n");
-    printf("/* 注意：请接上P3处的跳线帽，将AIN与RMT进行短接，然后观看红外接收的数据是否是0~255 */\r\n");
+    printf("\r\n/******************************* 9, Infrared TX/RX *******************************/\r\n");
+    printf("/* Note: connect the jumper at P3, short AIN to RMT, then check whether the infrared received data is 0~255 */\r\n");
     printf("/****************************** NEXT: BOOT *******************************/\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
-    lcd_show_string(10 + 16 * 4, 30 + obj->label * 16, lcd_self.width, 16, 16,"P3:AIN>RMT?",RED);      /* 显示电压值的整数部分 */
+    lcd_show_string(10 + 16 * 4, 30 + obj->label * 16, lcd_self.width, 16, 16,"P3:AIN>RMT?",RED);      /* Display the integer part of the voltage */
 
     while(1)
     {
@@ -439,9 +439,9 @@ int rmt_test(Test_Typedef * obj)
 
         vTaskDelay(100);
     }
-    printf("******确认P3端的AIN和RMT已接上******\r\n");
+    printf("******Confirm AIN and RMT at P3 are connected******\r\n");
     lcd_fill(10 + 16 * 4,30 + obj->label * 16,30 + obj->label * 16 + 16 * 4,30 + obj->label * 16 + 16,BLACK);
-    printf("/****************************** NEXT: AUTO ;Record: 长按KEY0 *******************************/\r\n");
+    printf("/****************************** NEXT: AUTO ;Record: Long-press KEY0 *******************************/\r\n");
     emission_init();
 
     if (rmt_flag == 1)
@@ -460,25 +460,25 @@ extern const uint8_t music_pcm_start[] asm("_binary_canon_pcm_start");
 extern const uint8_t music_pcm_end[]   asm("_binary_canon_pcm_end");
 
 /**
- * @brief       es8388_test测试
- * @param       无
- * @retval      无
+ * @brief       ES8388 test
+ * @param       none
+ * @retval      none
  */
 int es8388_test(Test_Typedef * obj)
 {
     size_t bytes_write = 0;
     
-    printf("\r\n/******************************* 10，MP3测试 *******************************/\r\n");
-    printf("/* 注意：需插入TF卡，并且TF卡需创建MUSIC文件夹，将test.wav音乐文件拷贝进去 */\r\n");
+    printf("\r\n/******************************* 10, MP3 Test *******************************/\r\n");
+    printf("/* Note: insert the TF card, create a MUSIC folder on it, and copy the test.wav music file into it */\r\n");
     printf("/********************************** NEXT: AUTO ********************************/\r\n\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
-    i2s_init();                                         /* I2S初始化 */
-    es8388_adda_cfg(1, 0);                              /* 开启DAC关闭ADC */
-    es8388_input_cfg(0);                                /* 关闭输入 */
-    es8388_output_cfg(1, 1);                            /* DAC选择通道输出 */
-    es8388_hpvol_set(30);                               /* 设置耳机音量 */
-    es8388_spkvol_set(30);                              /* 设置喇叭音量 */
-    xl9555_pin_write(SPK_EN_IO,0);                      /* 打开喇叭 */
+    i2s_init();                                         /* Initialize I2S */
+    es8388_adda_cfg(1, 0);                              /* Enable DAC, disable ADC */
+    es8388_input_cfg(0);                                /* Disable input */
+    es8388_output_cfg(1, 1);                            /* Select DAC channel output */
+    es8388_hpvol_set(30);                               /* Set headphone volume */
+    es8388_spkvol_set(30);                              /* Set speaker volume */
+    xl9555_pin_write(SPK_EN_IO,0);                      /* Turn on the speaker */
 
     while (1)
     {
@@ -487,14 +487,14 @@ int es8388_test(Test_Typedef * obj)
         if (bytes_write > 0)
         {
             printf("******OK!******\r\n");
-            i2s_deinit();                               /* 卸载I2S */
+            i2s_deinit();                               /* Unload I2S */
             lcd_show_string(lcd_self.width - 95, 30 + obj->label * 16, lcd_self.width, 16, 16, "OK", WHITE);
             return TEST_OK;
         }
         else
         {
             printf("******FAIL!******\r\n");
-            i2s_deinit();                               /* 卸载I2S */
+            i2s_deinit();                               /* Unload I2S */
             lcd_show_string(lcd_self.width - 95, 30 + obj->label * 16, lcd_self.width, 16, 16, "FAIL", RED);
             return TEST_FAIL;
         }
@@ -507,31 +507,31 @@ int es8388_test(Test_Typedef * obj)
 
 
 static uint8_t usb_buf[CONFIG_TINYUSB_CDC_RX_BUFSIZE + 1];
-__usbdev g_usbdev;                              /* USB控制器 */
+__usbdev g_usbdev;                              /* USB controller */
 
 /**
- * @brief       SD卡模拟U盘函数初始化
- * @param       itf     :设置的简要CDC端口
- * @param       event   :CDC事件
- * @retval      无
+ * @brief       Initialize the SD-card USB mass-storage function
+ * @param       itf     : configured CDC port
+ * @param       event   : CDC event
+ * @retval      none
  */
 void tinyusb_cdc_rx_callback(int itf, cdcacm_event_t *event)
 {
     size_t rx_size = 0;
 
-    /* 读取串口的数据 */
+    /* Read data from the serial port */
     tinyusb_cdcacm_read(itf, usb_buf, CONFIG_TINYUSB_CDC_RX_BUFSIZE, &rx_size);
 
-    /* 发送数据 */
+    /* Send data */
     tinyusb_cdcacm_write_queue(itf, usb_buf, rx_size);
     tinyusb_cdcacm_write_flush(itf, 0);
 }
 
 /**
- * @brief       SD卡模拟U盘函数初始化
- * @param       itf     :设置的简要CDC端口
- * @param       event   :CDC事件
- * @retval      无
+ * @brief       Initialize the SD-card USB mass-storage function
+ * @param       itf     : configured CDC port
+ * @param       event   : CDC event
+ * @retval      none
  */
 void tinyusb_cdc_line_state_changed_callback(int itf, cdcacm_event_t *event)
 {
@@ -541,9 +541,9 @@ void tinyusb_cdc_line_state_changed_callback(int itf, cdcacm_event_t *event)
 extern esp_err_t tinyusb_cdc_deinit(int itf);
 
 /**
- * @brief       卸载USART
- * @param       无
- * @retval      无
+ * @brief       Unload USART
+ * @param       none
+ * @retval      none
  */
 void tud_usb_detint(void)
 {
@@ -552,9 +552,9 @@ void tud_usb_detint(void)
 }
 
 /**
- * @brief      USB函数初始化
- * @param       无
- * @retval      无
+ * @brief      Initialize USB
+ * @param       none
+ * @retval      none
  */
 void tud_usb_usart(void)
 {
@@ -564,21 +564,21 @@ void tud_usb_usart(void)
         .external_phy = false,
         .configuration_descriptor = NULL,
     };
-    /* USB设备登记 */
+    /* Register the USB device */
     ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
 
     tinyusb_config_cdcacm_t acm_cfg = {
-        .usb_dev = TINYUSB_USBDEV_0,                /* USB设备 */
-        .cdc_port = TINYUSB_CDC_ACM_0,              /* CDC端口 */
-        .rx_unread_buf_sz = 64,                     /* 配置RX缓冲区大小 */
-        .callback_rx = &tinyusb_cdc_rx_callback,    /* 接收回调函数 */
+        .usb_dev = TINYUSB_USBDEV_0,                /* USB device */
+        .cdc_port = TINYUSB_CDC_ACM_0,              /* CDC port */
+        .rx_unread_buf_sz = 64,                     /* Configure the RX buffer size */
+        .callback_rx = &tinyusb_cdc_rx_callback,    /* Receive callback */
         .callback_rx_wanted_char = NULL,
         .callback_line_state_changed = NULL,
         .callback_line_coding_changed = NULL
     };
-    /* USB CDC初始化 */
+    /* Initialize USB CDC */
     ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
-    /* 注册回调函数 */
+    /* Register the callback */
     ESP_ERROR_CHECK(tinyusb_cdcacm_register_callback(
                         TINYUSB_CDC_ACM_0,
                         CDC_EVENT_LINE_STATE_CHANGED,
@@ -586,19 +586,19 @@ void tud_usb_usart(void)
 }
 
 /**
- * @brief       usb_test测试
- * @param       无
- * @retval      无
+ * @brief       USB test
+ * @param       none
+ * @retval      none
  */
 int usb_test(Test_Typedef * obj)
 {
     uint8_t xl_key = 0;
 
-    printf("/******************************* 11，USB测试 *******************************/\r\n");
-    printf("/* 注意：请将USB线连接到USB_SLAVE接口上，电脑检测到USB端口自动退出 */\r\n");
+    printf("/******************************* 11, USB Test *******************************/\r\n");
+    printf("/* Note: connect the USB cable to the USB_SLAVE port; the test exits automatically when the PC detects the USB port */\r\n");
     printf("/********************************** NEXT: AUTO ********************************/\r\n\r\n");
     lcd_show_string(10, 30 + obj->label * 16, lcd_self.width, 16, 16, obj->name_test, WHITE);
-    tud_usb_usart();                                    /* USB初始化 */
+    tud_usb_usart();                                    /* Initialize USB */
 
     while(1)
     {
@@ -623,8 +623,8 @@ int usb_test(Test_Typedef * obj)
     }
 }
 
-/* 正点原子logo 图标(24*24大小)
-   PCtoLCD2002取模方式:阴码,逐行式,顺向 */
+/* ALIENTEK logo icon (24x24)
+   PCtoLCD2002 font mode: negative code, row-by-row, forward */
 const uint8_t APP_ALIENTEK_ICO2424[]=
 {
     0x00,0xFF,0x80,0x03,0xFF,0xE0,0x06,0x00,0xF0,0x18,0x70,0x38,0x07,0xFE,0x1C,0x1C,
@@ -635,9 +635,9 @@ const uint8_t APP_ALIENTEK_ICO2424[]=
 };
 
 /**
- * @brief       界面
- * @param       无
- * @retval      无
+ * @brief       UI
+ * @param       none
+ * @retval      none
  */
 void app_ui_disp(void)
 {
@@ -652,9 +652,9 @@ void app_ui_disp(void)
 const uint8_t g_clear_buf[] = {"000000"};
 
 /**
- * @brief       板载功能测试
- * @param       无
- * @retval      无
+ * @brief       On-board function test
+ * @param       none
+ * @retval      none
  */
 void func_test(void)
 {
@@ -662,20 +662,20 @@ void func_test(void)
 
     if (key_scan(0) == BOOT_PRES)
     {
-        /* 写数据 */
+        /* Write data */
         at24cxx_write(0, (uint8_t *)g_clear_buf, TEXT_SIZE);
         vTaskDelay(100);
     }
 
-    /* 读数据 */
+    /* Read data */
     at24cxx_read(0, datatemp, TEXT_SIZE);
     vTaskDelay(100);
 
-    /* 匹配写和读数据是否一致 */
+    /* Check whether the written and read data match */
     if (strcmp((char *)datatemp, (char *)g_text_buf) != 0)
     {
-        lcd_display_dir(1);                 /* 设置横屏 */
-        app_ui_disp();                      /* 界面显示 */
+        lcd_display_dir(1);                 /* Set landscape mode */
+        app_ui_disp();                      /* Display the UI */
 
         printf("\r\n**************************************\r\n");
         printf("\r\n***ESP32-S3 Full Functional Testing***\r\n");
@@ -694,9 +694,9 @@ void func_test(void)
         test_create("ES8388",es8388_test);
         test_create("USB",usb_test);
         test_handler();
-        printf("\r\n/******************************* 测试完成 *******************************/\r\n");
-        lcd_clear(WHITE);               /* 清屏 */
+        printf("\r\n/******************************* Test complete *******************************/\r\n");
+        lcd_clear(WHITE);               /* Clear the screen */
     }
 
-    lcd_display_dir(0);                 /* 设置竖屏 */
+    lcd_display_dir(0);                 /* Set portrait mode */
 }

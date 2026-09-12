@@ -4,13 +4,13 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    OLEDexperiment
+ * @brief    OLED experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：studyOLEDshow屏的使用
+ * Experiment purpose: Study the use of the OLED display screen
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1, XL9555 --> ESP32S3 IO
  *       SCL --> IO42
  *       SDA --> IO41
@@ -21,10 +21,11 @@
  *        D2 --> IO6
  *        DC --> IO38
 
- * experiment现象
- * 1.ByOLEDInsert the module into the lower left corner of the development boardOLED/CAMERAmodule接口，
- *   After successful download，按下reset之后，You can seeOLEDmodule不停的showASCIIcode and code value。
- * 2.LEDflashing ,Prompt the program to run。
+ * Experiment phenomenon
+ * 1, Plug the OLED module into the OLED/CAMERA module interface at the lower left corner of the
+ *    development board. After a successful download, press reset and you will see the OLED module
+ *    continuously displaying ASCII characters and their code values.
+ * 2, The LED flashes, indicating that the program is running.
 
  * Things to note
  * none
@@ -51,21 +52,21 @@ if __name__ == '__main__':
     # IIC Initialization
     i2c0 = I2C(0, scl = Pin(42), sda = Pin(41), freq = 400000)
     i2c1 = I2C(1, scl = Pin(4), sda = Pin(5), freq = 400000)
-    # start：The following is usedOLEDmoduleIICNecessary settings for communication,If using four-wireOLEDmodule，Can be deletedstart~endarea code
+    # start: The following are the necessary settings for IIC communication with the OLED module. If using a four-wire OLED module, the code between start and end can be deleted
     xl9555 = io_ex.init(i2c0)
     dc = Pin(38,Pin.OUT,value = 0)
 
-    # resetOLED
+    # Reset OLED
     xl9555.write_bit(io_ex.OV_RESET,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.OV_RESET,1)
     time.sleep_ms(100)
     # end
     
-    # initializationOLED,Default settings：oled.init(port = 1,sda = 5,scl = 4,freq = 200000)
+    # Initialize OLED. Default settings: oled.init(port = 1,sda = 5,scl = 4,freq = 200000)
     display = oled.init(i2c1)
     
-    # showexperiment信息
+    # Display experiment information
     display.string(0,0,str("ALIENTEK"),24)
     display.string(0,24,str("0.96' OLED TEST"),16)
     display.string(0,40,str("ATOM 2023/09/13"),12)
@@ -81,7 +82,7 @@ if __name__ == '__main__':
         display.char(36,52,t,12,1)
         # Display the code value of ASCII characters
         display.num(94,52,ord(t),3,12)
-        # Update to display to OLED
+        # Update the display
         display.refresh_gram()
 
         t = chr(ord(t) + 1)

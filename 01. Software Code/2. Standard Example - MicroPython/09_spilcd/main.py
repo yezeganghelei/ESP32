@@ -8,9 +8,9 @@
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：How to drive1.3inch或2.4inchLCDscreen
+ * Experiment purpose: How to drive a 1.3-inch or 2.4-inch LCD screen
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,     LED --> ESP32S3 IO
  *        LED --> IO1
  * 2,  XL9555 --> ESP32S3 IO
@@ -25,8 +25,8 @@
  *        PWR --> XL9555_P13
  *        RST --> XL9555_P12
 
- * experiment现象
- * 1, LCD显示experiment信息，并Refresh color。
+ * Experiment phenomenon
+ * 1, The LCD displays the experiment information and refreshes the color.
 
  * Things to note
  * none
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     
     While True:
         
-        #Create a dictionary
+        # Create a dictionary
         seasondict = {
         0: lcd.BLACK,
         1: lcd.BLUE,
@@ -80,9 +80,9 @@ if __name__ == '__main__':
         5: lcd.MAGENTA,
         6: lcd.YELLOW}
 
-        #Refresh color
+        # Refresh color
         display.clear(seasondict[x])
-        #Show fonts
+        # Display text
         display.string(0, 5, 240, 32, 32, "ESP32-S3",lcd.RED)
         display.string(0, 34, 240, 16, 16, "SPI LCD Test",lcd.RED)
         display.string(0, 50, 240, 16, 16, "ATOM@ALIENTEK",lcd.RED)

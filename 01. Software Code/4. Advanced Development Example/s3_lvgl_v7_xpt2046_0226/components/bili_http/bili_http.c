@@ -32,7 +32,7 @@ static esp_err_t bilibili_http_event_handler(esp_http_client_event_t *evt)
 	case HTTP_EVENT_ON_DATA:
 		printf("HTTP_EVENT_ON_DATA, len=%d\n", evt->data_len);
 
-		//如果404或者502
+		// If 404 or 502
 		if (evt->data_len == 150 || evt->data_len == 146)
 			return ESP_OK;
 
@@ -69,7 +69,7 @@ static esp_err_t bilibili_face_http_event_handler(esp_http_client_event_t *evt)
 	case HTTP_EVENT_ON_DATA:
 		printf("HTTP_EVENT_ON_DATA, len=%d\n", evt->data_len);
 
-		//如果404或者502
+		// If 404 or 502
 		if (evt->data_len == 150 || evt->data_len == 146)
 			return ESP_OK;
 
@@ -167,7 +167,7 @@ char data_read_buf[1024] = {0};
 bool is_recv_complete = 0;
 /*
 
-	获取B站头像JPG文件buffer
+	Get the Bilibili avatar JPG file buffer
 */
 static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 {
@@ -191,7 +191,7 @@ static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 	case HTTP_EVENT_ON_DATA:
 		printf("HTTP_EVENT_ON_DATA, len=%d\n", evt->data_len);
 
-		//如果404或者502
+		// If 404 or 502
 		// if (evt->data_len == 150 || evt->data_len == 146)
 		// 	return ESP_OK;
 
@@ -204,14 +204,14 @@ static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 		{
 			// ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA  !esp_http_client_is_chunked_response");
 			//  If user_data buffer is configured, copy the response into the buffer
-			if (face_buffer) /*如果已经申请了内存 就直接复制接收到的数据*/
+			if (face_buffer) /* If memory is already allocated, copy the received data directly */
 			{
 
 				memcpy(face_buffer + output_len, evt->data, evt->data_len);
 			}
-			else /*如果没有申请*/
+			else /* If not allocated */
 			{
-				if (face_buffer == NULL) /*申请一个http长度的内存来保存数据*/
+				if (face_buffer == NULL) /* Allocate a buffer of the HTTP content length to store the data */
 				{
 					face_buffer = (char *)malloc(esp_http_client_get_content_length(evt->client));
 					output_len = 0;
@@ -221,10 +221,10 @@ static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 						return ESP_FAIL;
 					}
 				}
-				memcpy(face_buffer + output_len, evt->data, evt->data_len); //拷贝数据
+				memcpy(face_buffer + output_len, evt->data, evt->data_len); // Copy data
 			}
 
-			output_len += evt->data_len; //记录下载进度
+			output_len += evt->data_len; // Track download progress
 		}
 
 		break;
@@ -272,21 +272,21 @@ void get_face_jpg(char *bili_uid)
 	{
 		ESP_LOGE(TAG, "HTTP GET request failed: %s", esp_err_to_name(err));
 	}
-	// if (err == ESP_OK) //请求成功
+	// if (err == ESP_OK) // request succeeded
 	// {
 	// 	printf("esp_http_client_open  DOWN\n\n\n");
 
-	// 	http_stream_len = esp_http_client_fetch_headers(client); //得到即将下载文件的大小，此处为bin文件的大小
+	// 	http_stream_len = esp_http_client_fetch_headers(client); // get the size of the file to be downloaded; this is the size of the bin file
 	// 	// face_buffer = heap_caps_malloc((sizeof(uint8_t *))*http_stream_len, MALLOC_CAP_SPIRAM);
 	// 	face_buffer = (char *)malloc(sizeof(char) * http_stream_len);
 	// 	memset(face_buffer, 0, http_stream_len);
 	// 	printf("http_stream_len= %d\n\n\n", (int)http_stream_len);
 
-	// 	if (http_stream_len > 0) //存在数据
+	// 	if (http_stream_len > 0) // data exists
 	// 	{
-	// 		while (data_read_num > 0) //循环读取数据
+	// 		while (data_read_num > 0) // read data in a loop
 	// 		{
-	// 			data_read_num = esp_http_client_read(client, data_read_buf, 1024); //每次读取1K数据，此处缓存越大通讯的次数就会越少
+	// 			data_read_num = esp_http_client_read(client, data_read_buf, 1024); // read 1K data each time; the larger the buffer here, the fewer the communication cycles
 
 	// 			if (errno == ENOTCONN || errno == ECONNRESET || errno == ECONNABORTED || data_read_num < 0)
 	// 			{
@@ -297,7 +297,7 @@ void get_face_jpg(char *bili_uid)
 	// 			{
 
 	// 				// memcpy(face_buffer + total_data_read_nums, data_read_buf, data_read_num);
-	// 				//在此处存储数据到flash,此处调用ESP_LOGI函数会导致他处重入，造成打印不出
+	// 				// store data to flash here; calling ESP_LOGI here will cause reentrancy elsewhere and prevent printing
 	// 				printf("data_read_num= %d\r\n", data_read_num);
 	// 				// for (size_t i = total_data_read_nums; i < data_read_num+total_data_read_nums; i++)
 	// 				// {
@@ -311,15 +311,15 @@ void get_face_jpg(char *bili_uid)
 	// 			{
 	// 				is_recv_complete = esp_http_client_is_complete_data_received(client);
 
-	// 				if (!is_recv_complete) //未接收完，继续接收
+	// 				if (!is_recv_complete) // not fully received; continue receiving
 	// 				{
 	// 					data_read_num = 1;
-	// 					ESP_LOGI(TAG, "未接收完，继续接收");
+	// 					ESP_LOGI(TAG, "Not finished receiving, continue to receive");
 	// 				}
 	// 				else
 	// 				{
-	// 					//此处应增加一个掉电保存的全局变量，以标记下载存储的bin文件是完整的
-	// 					ESP_LOGI(TAG, "接收头像完毕！");
+	// 					// a power-loss-saved global variable should be added here to mark that the downloaded and stored bin file is complete
+	// 					ESP_LOGI(TAG, "Completed receiving avatar!");
 	// 					esp_http_client_close(client);
 	// 					printf("esp_http_client_close DOWN \n\n\n");
 
@@ -359,11 +359,11 @@ esp_err_t cjson_bilibili(char *text)
 				wp_fans.follower = follower->valueint;
 				cJSON *following = cJSON_GetObjectItem(psub_ksdiy, "following");
 				wp_fans.following = following->valueint;
-				ESP_LOGI(TAG, "获取粉丝成功 follower:%d  following:%d\n", wp_fans.follower, wp_fans.following);
+				ESP_LOGI(TAG, "Got fans successfully follower:%d  following:%d\n", wp_fans.follower, wp_fans.following);
 			}
 			else
 			{
-				ESP_LOGI(TAG, "获取粉丝失败，请检查uid");
+				ESP_LOGI(TAG, "Failed to get fans, check uid");
 			}
 		}
 		else
@@ -396,7 +396,7 @@ esp_err_t cjson_face(char *text)
 				wp_fans.name = name->valuestring;
 				cJSON *face_url = cJSON_GetObjectItem(psub_ksdiy, "face");
 				wp_fans.face_url = face_url->valuestring;
-				ESP_LOGI(TAG, "获取头像URL成功 name:%s  face_url:%s\n", wp_fans.name, wp_fans.face_url);
+				ESP_LOGI(TAG, "Got avatar URL successfully name:%s  face_url:%s\n", wp_fans.name, wp_fans.face_url);
 				memset((char *)url_buff, 0, 256);
 				sprintf(url_buff, "%s", face_url->valuestring);
 				_get_face_url = true;
@@ -407,7 +407,7 @@ esp_err_t cjson_face(char *text)
 				memset((char *)url_buff, 0, 256);
 				// _get_face_url = false;
 				sprintf(url_buff, "%s", "http://i2.hdslb.com/bfs/face/bce14f5e3af4bca480fc7de227986ba304507078.jpg");
-				ESP_LOGI(TAG, "获取粉丝失败，使用默认头像");
+				ESP_LOGI(TAG, "Failed to get fans, using default avatar");
 			}
 		}
 		else
@@ -466,7 +466,7 @@ esp_err_t cjson_weather(char *text)
 			}
 			else
 			{
-				ESP_LOGI("HTTP", "获取天气失败，请检测是否有改接口权力");
+				ESP_LOGI("HTTP", "Failed to get weather, please check whether you have permission for this interface");
 			}
 		}
 		else
@@ -498,7 +498,7 @@ static esp_err_t weather_http_event_handler(esp_http_client_event_t *evt)
 	case HTTP_EVENT_ON_DATA:
 		printf("HTTP_EVENT_ON_DATA, len=%d\n", evt->data_len);
 
-		//如果404或者502
+		// If 404 or 502
 		if (evt->data_len == 150 || evt->data_len == 146)
 			return ESP_OK;
 
@@ -557,21 +557,21 @@ esp_err_t read_weather()
 {
 	static char city[30] = {0};
 	static char key[30] = {0};
-	if (read_nvs("city", city)) //获取哔哩哔哩uid
-		ESP_LOGI(TAG, "获取到城市:%s",city);
+	if (read_nvs("city", city)) // Get Bilibili UID
+		ESP_LOGI(TAG, "Got city: %s",city);
 	else
 	{
 		sprintf(city, "chengdu");
-		ESP_LOGI(TAG, "没有获取到城市，默认使用 成都");
+		ESP_LOGI(TAG, "No city obtained, defaulting to Chengdu");
 		save_nvs("city", "chengdu");
 	}
-	if (read_nvs("pass", key)) //获取哔哩哔哩uid
-		ESP_LOGI(TAG, "获取到心知密匙");
+	if (read_nvs("pass", key)) // Get Bilibili UID
+		ESP_LOGI(TAG, "Got the Seniverse key");
 	else
 	{
 		save_nvs("pass", "SybN2IXZM2B_vayTP");
 		sprintf(key, "SybN2IXZM2B_vayTP");
-		ESP_LOGI(TAG, "没有获取心知密匙，使用默认:SybN2IXZM2B_vayTP");
+		ESP_LOGI(TAG, "No Seniverse key obtained, using default:SybN2IXZM2B_vayTP");
 	}
 	get_weather(city, key);
 	return ESP_OK;
@@ -580,16 +580,16 @@ esp_err_t read_fans()
 {
 	static char str[20] = {0};
 	static char uid[15] = {0};
-	if (read_nvs("uid", uid)) //获取哔哩哔哩uid
+	if (read_nvs("uid", uid)) // Get Bilibili UID
 	{
 		sprintf(str, "%s", uid);
-		ESP_LOGI(TAG, "获取到uid");
+		ESP_LOGI(TAG, "Got uid");
 	}
 	else
 	{
 		sprintf(str, "%s", uid);
 		save_nvs("uid", "59041601");
-		ESP_LOGI(TAG, "没有uid，使用默认uid:59041601");
+		ESP_LOGI(TAG, "No uid, using default uid:59041601");
 	}
 	ESP_LOGI(TAG, "%s", str);
 	get_bilibili(str);

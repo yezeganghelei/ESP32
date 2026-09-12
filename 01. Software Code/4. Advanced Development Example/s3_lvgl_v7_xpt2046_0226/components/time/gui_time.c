@@ -28,7 +28,7 @@ void initialize_sntp(void)
     ESP_LOGI(TAG, "Initializing SNTP");
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     sntp_setservername(0, "ntp1.aliyun.com");
-	sntp_setservername(1, "210.72.145.44");		// 国家授时中心服务器 IP 地址
+	sntp_setservername(1, "210.72.145.44");		// National Time Service Center server IP address
     sntp_setservername(2, "1.cn.pool.ntp.org"); 
     // sntp_setservername(0, "cn.ntp.org.cn");
     // sntp_setservername(1, "0.cn.pool.ntp.org");
@@ -72,7 +72,7 @@ void time_init()
 void get_time(struct tm *timeinfo)
 {
 	time_t now;
-	//获取时间
+	// Get time
 	time(&now);
 	// Set timezone to China Standard Time
 	setenv("TZ", "CST-8", 1);

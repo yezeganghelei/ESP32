@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        lv_camera_demo.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-11-04
- * @brief       摄像头实验
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Camera example
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台: 正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -32,19 +32,19 @@ lv_img_dsc_t img_dsc = {
     .data = NULL,
 };
 
-/* TASK1 任务 配置
- * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
+/* TASK1 task configuration
+ * Includes: task handle, task priority, stack size, task creation
  */
-#define TASK1_PRIO      10                  /* 任务优先级 */
-#define TASK1_STK_SIZE  5*1024              /* 任务堆栈大小 */
-TaskHandle_t            Task1Task_Handler;  /* 任务句柄 */
-void task1(void *pvParameters);             /* 任务函数 */
+#define TASK1_PRIO      10                  /* Task priority */
+#define TASK1_STK_SIZE  5*1024              /* Task stack size */
+TaskHandle_t            Task1Task_Handler;  /* Task handle */
+void task1(void *pvParameters);             /* Task function */
 
 
 /**
-  * @brief  删除摄像头
-  * @param  无
-  * @retval 无
+  * @brief  Delete the camera
+  * @param  none
+  * @retval none
   */
 void lv_camera_del(void)
 {
@@ -71,8 +71,8 @@ void lv_camera_del(void)
 
 /**
  * @brief       task1
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
+ * @param       pvParameters : passed-in parameter (unused)
+ * @retval      none
  */
 void task1(void *pvParameters)
 {
@@ -91,7 +91,7 @@ void task1(void *pvParameters)
        
         memset(camera_video_buf,0,img_dsc.data_size);
 
-        /* 可能大小端模式，需把第八位移位到高八位，把高八位移动到第八位 */
+        /* Possibly due to endianness: move the low byte to the high byte and the high byte to the low byte */
         for (jw = 0; jw < camera_fb->width * camera_fb->height; jw++)
         {
             camera_video_buf[2 * jw] =  (camera_fb->buf[2 * iw + 1]);
@@ -102,7 +102,7 @@ void task1(void *pvParameters)
         xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
         img_dsc.data = (const uint8_t *)camera_video_buf;
         lv_img_set_src(camera.camera_buf.camera_header,&img_dsc);
-        xSemaphoreGive(xGuiSemaphore);                  /* 释放互斥信号量 */
+        xSemaphoreGive(xGuiSemaphore);                  /* Release the mutex semaphore */
 
         esp_camera_fb_return(camera_fb);
         camera_fb = NULL;
@@ -112,15 +112,15 @@ void task1(void *pvParameters)
 }
 
 /**
-  * @brief  摄像头示例
-  * @param  无
-  * @retval 无
+  * @brief  Camera example
+  * @param  none
+  * @retval none
   */
 void lv_camera_demo(void)
 {
     esp_err_t err = ESP_OK;
 
-    /* 解决重复按下 */
+    /* Handle repeated presses */
     if (app_obj_general.current_parent != NULL)
     {
         lv_obj_del(app_obj_general.current_parent);
@@ -143,7 +143,7 @@ void lv_camera_demo(void)
         lv_obj_set_style_bg_color(camera.lv_camera_cont, lv_color_make(0,0,0), LV_STATE_DEFAULT);
         lv_obj_set_size(camera.lv_camera_cont,lcd_self.width,lcd_self.height);
         lv_obj_set_pos(camera.lv_camera_cont,0,0);
-        lv_page_tile(camera.lv_camera_cont,"摄像头");                       /* 设置页面标题 */
+        lv_page_tile(camera.lv_camera_cont,"Camera");                       /* Set the page title */
 
         camera.camera_buf.camera_header = lv_img_create(camera.lv_camera_cont);
         lv_obj_set_style_bg_color(camera.camera_buf.camera_header, lv_color_make(0,0,0), LV_STATE_DEFAULT);
@@ -151,19 +151,19 @@ void lv_camera_demo(void)
         lv_group_add_obj(ctrl_g, camera.camera_buf.camera_header);
         lv_group_focus_obj(camera.camera_buf.camera_header);
         lv_obj_clear_flag(camera.lv_camera_cont, LV_OBJ_FLAG_SCROLLABLE);
-        app_obj_general.del_parent = camera.lv_camera_cont;             /* 指向当前界面容器 */
+        app_obj_general.del_parent = camera.lv_camera_cont;             /* Point to the current screen container */
         app_obj_general.Function = lv_camera_del;
 
         if (Task1Task_Handler == NULL)
         {
-            /* 创建任务1 */
-            xTaskCreatePinnedToCore((TaskFunction_t )task1,                 /* 任务函数 */
-                                    (const char*    )"task1",               /* 任务名称 */
-                                    (uint16_t       )TASK1_STK_SIZE,        /* 任务堆栈大小 */
-                                    (void*          )NULL,                  /* 传入给任务函数的参数 */
-                                    (UBaseType_t    )TASK1_PRIO,            /* 任务优先级 */
-                                    (TaskHandle_t*  )&Task1Task_Handler,    /* 任务句柄 */
-                                    (BaseType_t     ) 1);                   /* 该任务哪个内核运行 */
+            /* Create task 1 */
+            xTaskCreatePinnedToCore((TaskFunction_t )task1,                 /* Task function */
+                                    (const char*    )"task1",               /* Task name */
+                                    (uint16_t       )TASK1_STK_SIZE,        /* Task stack size */
+                                    (void*          )NULL,                  /* Parameter passed to the task function */
+                                    (UBaseType_t    )TASK1_PRIO,            /* Task priority */
+                                    (TaskHandle_t*  )&Task1Task_Handler,    /* Task handle */
+                                    (BaseType_t     ) 1);                   /* Core on which the task runs */
         }
     }
 }

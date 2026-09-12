@@ -13,7 +13,7 @@
 
 /*
 ===========================
-宏定义
+Macro definitions
 =========================== 
 */
 #define _I2C_NUMBER(num) I2C_NUM_##num
@@ -28,14 +28,14 @@
 
 #define WRITE_BIT           I2C_MASTER_WRITE 					/*!< I2C master write */
 #define READ_BIT            I2C_MASTER_READ  					/*!< I2C master read */
-#define ACK_CHECK_EN        0x1              					/*!< I2C master will check ack from slave主机检查从机的ACK*/
-#define ACK_CHECK_DIS       0x0              					/*!< I2C master will not check ack from slave 主机不检查从机的ACK*/
-#define ACK_VAL             0x0              					/*!< I2C ack value 应答*/
-#define NACK_VAL            0x1              					/*!< I2C nack value 不应答*/
+#define ACK_CHECK_EN        0x1              					/*!< I2C master checks ACK from slave*/
+#define ACK_CHECK_DIS       0x0              					/*!< I2C master does not check ACK from slave*/
+#define ACK_VAL             0x0              					/*!< I2C ACK value*/
+#define NACK_VAL            0x1              					/*!< I2C NACK value*/
 #define WRITE_CMD      			0X00
 #define WRITE_DATA     			0X40
 
-// i2c 初始化
+// Initialize I2C
 esp_err_t bsp_i2c_master_init(void);
 esp_err_t bsp_i2c_master_deinit(void);
 int bsp_oled_write_cmd(uint8_t addr,uint8_t command);

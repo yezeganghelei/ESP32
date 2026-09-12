@@ -17,18 +17,18 @@
 
 i2c_obj_t qma6100p_i2c_master;
 
-#define QMA6100P_INT                gpio_get_level(qma6100p_self.qma_int)   /* ReadQMA6100P_INTLevel of */
+#define QMA6100P_INT                gpio_get_level(qma6100p_self.qma_int)   /* Read the QMA6100P_INT level */
 #define I2C_MASTER_TIMEOUT_MS       1000
 #define M_PI                        3.141592653589793f
 #define M_G                         9.80665f
 #define RAD_TO_DEG                  (180.0f / M_PI)                         /* 0.017453292519943295 */
 
 /**
- * @brief       Readqma6100pRegister data
- * @param       reg_addr       : 要Read的寄存器地址
+ * @brief       Read QMA6100P register data
+ * @param       reg_addr       : register address to read
  * @param       data           : read data
  * @param       len           : Data size
- * @retval      Error value        ：0success，Other values：mistake
+ * @retval      Error value        : 0 on success, other values on error
  */
 esp_err_t qma6100p_register_read(const uint8_t reg, uint8_t *data, const size_t len)
 {
@@ -45,10 +45,10 @@ esp_err_t qma6100p_register_read(const uint8_t reg, uint8_t *data, const size_t 
 }
 
 /**
- * @brief       Towardsqma6100pregister write data
+ * @brief       Write data to a QMA6100P register
  * @param       reg_addr       : Register address to be written
  * @param       data           : data to write
- * @retval      Error value        ：0success，Other values：mistake
+ * @retval      Error value        : 0 on success, other values on error
  */
 static esp_err_t qma6100p_register_write_byte(uint8_t reg, uint8_t data)
 {
@@ -70,8 +70,8 @@ float accl_data[3];
 float acc_normal;
 
 /**
- * @brief       Read three-axis data(Raw data、Acceleration、Pitch and roll angles)
- * @param       rawdata：qma6100pData structure
+ * @brief       Read three-axis data (raw data, acceleration, pitch and roll angles)
+ * @param       rawdata: QMA6100P data structure
  * @retval      none
  */
 void qma6100p_read_rawdata(qma6100p_rawdata_t *rawdata)
@@ -101,10 +101,10 @@ void qma6100p_read_rawdata(qma6100p_rawdata_t *rawdata)
 }
 
 /**
- * @brief       Configure interrupt function
- * @param       int_map：Interrupt mode
- * @param       enable：enable
- * @retval      mp_const_none：initializationsuccess
+ * @brief       Configure the interrupt function
+ * @param       int_map: interrupt mode
+ * @param       enable: enable flag
+ * @retval      mp_const_none: initialized successfully
  */
 void qma6100p_step_int_config(int int_map, int enable)
 {
@@ -145,7 +145,7 @@ void qma6100p_step_int_config(int int_map, int enable)
 }
 
 /**
- * @brief       initializationqma6100p
+ * @brief       Initialize QMA6100P
  * @param       none
  * @retval      0, success;
                 1, fail;
@@ -153,7 +153,7 @@ void qma6100p_step_int_config(int int_map, int enable)
 uint8_t qma6100p_comfig(void)
 {
     static uint8_t id_data[2];
-    qma6100p_register_read(QMA6100P_REG_CHIP_ID, id_data, 1);    /* Read deviceID，Normal is0x90 */
+    qma6100p_register_read(QMA6100P_REG_CHIP_ID, id_data, 1);    /* Read device ID; normally 0x90 */
     
     /* For the initialization sequence of qma6100p, please see the "6.3 Initial sequence" chapter of the manual */
     qma6100p_register_write_byte(QMA6100P_REG_RESET, QMA6100P_RESET);
@@ -161,7 +161,7 @@ uint8_t qma6100p_comfig(void)
     qma6100p_register_write_byte(QMA6100P_REG_RESET, QMA6100P_RESET_END);
     vTaskDelay(10);
     
-    qma6100p_register_read(QMA6100P_REG_CHIP_ID, id_data, 1);    /* Read deviceID，Normal is0x90 */
+    qma6100p_register_read(QMA6100P_REG_CHIP_ID, id_data, 1);    /* Read device ID; normally 0x90 */
     
     qma6100p_register_write_byte(0x11, 0x80);
     qma6100p_register_write_byte(0x11, 0x84);
@@ -183,7 +183,7 @@ uint8_t qma6100p_comfig(void)
     if (id_data[0] == 0x90)
     {
         ESP_LOGI("qma6100p", "qma6100p success!!!");
-        return 0;                                  /* qma6100pnormal */
+        return 0;                                  /* qma6100p is normal */
     }
     else
     {
@@ -201,7 +201,7 @@ void qma6100p_init(i2c_obj_t self)
 {
     if (self.init_flag == ESP_FAIL)
     {
-        iic_init(I2C_NUM_0);    /* initializationIIC */
+        iic_init(I2C_NUM_0);    /* Initialize IIC */
     }
 
     qma6100p_i2c_master = self;

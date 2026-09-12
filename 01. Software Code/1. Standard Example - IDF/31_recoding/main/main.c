@@ -4,7 +4,7 @@
  * @author      
  * @version     V1.0
  * @date        2023-12-01
- * @brief       recording机 experiment
+ * @brief       Recorder experiment
  * @license     Copyright (c) 2020-2032, 
  ****************************************************************************************************
  * @attention
@@ -91,10 +91,10 @@ void app_main(void)
     }
     
     ret = exfuns_init();                                /* Apply for memory for fatfs-related variables */
-    vTaskDelay(500);                                    /* experiment信息显示延时 */
+    vTaskDelay(500);                                    /* Delay for experiment information display */
 
     text_show_string(30, 50, 200, 16, "ESP32Development Board", 16, 0, RED);
-    text_show_string(30, 70, 200, 16, "WAV recording机 experiment", 16, 0, RED);
+    text_show_string(30, 70, 200, 16, "WAV recording experiment", 16, 0, RED);
     text_show_string(30, 90, 200, 16, "@ALIENTEK", 16, 0, RED);
 
     while (1)

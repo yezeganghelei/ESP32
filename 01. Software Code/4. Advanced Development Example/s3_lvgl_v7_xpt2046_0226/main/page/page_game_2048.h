@@ -20,10 +20,10 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-/* 大小 */
+/* Size */
 #define SIZE 4
 
-/* 布局 */
+/* Layout */
 #define PAGE_2048_GAME_BOX_W			(200)
 #define PAGE_2048_GAME_BOX_H			(200)
 #define PAGE_2048_NUMBER_BOX_W			(40)
@@ -33,7 +33,7 @@ extern "C" {
 #define PAGE_2048_BEST_SCORE_W			(40)
 #define PAGE_2048_BEST_SCORE_H			(35)
 
-/* 颜色 */
+/* Color */
 #define PAGE_2048_GAME_BG_COLOR 		lv_color_hex(0xe8e5db) //LV_COLOR_MAKE(0xCD, 0xC1, 0xB4)
 #define PAGE_2048_GAME_BOX_COLOR 		lv_color_hex(0xBBADA0)
 #define PAGE_2048_NUMBER_BOX_COLOR 		lv_color_hex(0xCDC1B4)
@@ -54,15 +54,15 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 typedef struct _PAGE_2048_game {
-	lv_obj_t * bg;					/* 背景 */
-	lv_obj_t * canvas_stage;		/* 游戏舞台 */
-	lv_obj_t * label_best_score;	/* 展示最高分数 */
-	lv_obj_t * label_current_score;	/* 展示当前分数 */
-	lv_task_t * task_handle;		/* 任务句柄 */
+	lv_obj_t * bg;					/* Background */
+	lv_obj_t * canvas_stage;		/* Game stage */
+	lv_obj_t * label_best_score;	/* Display best score */
+	lv_obj_t * label_current_score;	/* Display current score */
+	lv_task_t * task_handle;		/* Task handle */
 									 
-	uint8_t game_board[SIZE][SIZE];	/* 2048矩阵 */
-	uint32_t current_score_value;	/* 当前分数 */
-	bool play_game;					/* 游戏状态 */
+	uint8_t game_board[SIZE][SIZE];	/* 2048 matrix */
+	uint32_t current_score_value;	/* Current score */
+	bool play_game;					/* Game state */
 } T_PAGE_2048_game, *PT_PAGE_2048_game;
 
 

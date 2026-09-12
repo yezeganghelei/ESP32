@@ -18,10 +18,10 @@ i2c_obj_t xl9555_i2c_master;
 static uint16_t xl9555_failed = 0;
 
 /**
- * @brief       ReadXL9555of16BitIOvalue
- * @param       data：ReaddataofStorage area
- * @param       len：Readdataofsize
- * @retval      ESP_OK：Readsuccess；other：Read failed
+ * @brief       Read the 16-bit IO value of XL9555
+ * @param       data: Storage area for read data
+ * @param       len: Read data size
+ * @retval      ESP_OK: read success; other: read failed
  */
 esp_err_t xl9555_read_byte(uint8_t *data, size_t len)
 {
@@ -37,11 +37,11 @@ esp_err_t xl9555_read_byte(uint8_t *data, size_t len)
 }
 
 /**
- * @brief       TowardsXL9555Write16BitIOvalue
- * @param       reg：Register address
- * @param       data：wantWriteofdata
- * @param       len：The size of the data to be written
- * @retval      ESP_OK：Readsuccess；other：Read failed
+ * @brief       Write a 16-bit IO value to XL9555
+ * @param       reg: Register address
+ * @param       data: Data to write
+ * @param       len: The size of the data to be written
+ * @retval      ESP_OK: write success; other: write failed
  */
 esp_err_t xl9555_write_byte(uint8_t reg, uint8_t *data, size_t len)
 {
@@ -98,8 +98,8 @@ uint16_t xl9555_pin_write(uint16_t pin, int val)
 
 /**
  * @brief       Get a certainIOstate
- * @param       pin     : want获取stateofIO
- * @retval      thisIOmouthofvalue(state, 0/1)
+ * @param       pin     : IO pin whose state to get
+ * @retval      Value of this IO port (state, 0/1)
  */
 int xl9555_pin_read(uint16_t pin)
 {
@@ -114,14 +114,14 @@ int xl9555_pin_read(uint16_t pin)
 }
 
 /**
- * @brief       XL9555ofIOConfiguration
- * @param       config_value：IOConfigurationInput or output
+ * @brief       XL9555 IO configuration
+ * @param       config_value: IO configuration, input or output
  * @retval      Returns the set value
  */
 uint16_t xl9555_ioconfig(uint16_t config_value)
 {
     /* Slave address + CMD + data1(P0) + data2(P1) */
-    /* P00、P01、P14、P15、P16、P17For input，The other pins are outputs -->1111 0000 0000 0011 Notice：0For output，1For input*/
+    /* P00, P01, P14, P15, P16, P17 are inputs, the other pins are outputs --> 1111 0000 0000 0011. Note: 0 = output, 1 = input */
     uint8_t data[2];
     esp_err_t err;
     int retry = 3;
@@ -158,7 +158,7 @@ uint16_t xl9555_ioconfig(uint16_t config_value)
 }
 
 /**
- * @brief       initializationXL9555
+ * @brief       Initialize XL9555
  * @param       none
  * @retval      none
  */
@@ -233,7 +233,7 @@ uint8_t xl9555_key_scan(uint8_t mode)
             keyval = KEY3_PRES;
         }
     }
-    else if (KEY0 == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1)          /* 没有任何按keypress, Mark button released */
+    else if (KEY0 == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1)          /* No button pressed, mark button released */
     {
         key_up = 1;
     }

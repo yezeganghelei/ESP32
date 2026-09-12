@@ -31,7 +31,7 @@
 #include "esp_log.h"
 
 #define TAG "ESP32S3"
-/*Give with timerLVGLProvide clock*/
+/*Use a timer to provide LVGL with its clock tick*/
 static void lv_tick_task(void *arg)
 {
     (void)arg;
@@ -45,13 +45,13 @@ static void gui_task(void *arg)
     xGuiSemaphore = xSemaphoreCreateMutex();
     lv_init(); // lvgl kernel initialization
 
-    lvgl_driver_init(); // lvglshow接口initialization
+    lvgl_driver_init(); // lvgl display interface initialization
     // Apply for two buffers for lvgl to refresh the screen
-    /*externalPSRAMWay*/
+    /*External PSRAM mode*/
     // lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     // lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 
-    /*internalDMAWay*/
+    /*Internal DMA mode*/
     lv_color_t *buf1 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
     lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
 
@@ -95,7 +95,7 @@ static void gui_task(void *arg)
         }
     }
 }
-/*showspiffsAll file names of*/
+/*Show all file names in spiffs*/
 static void SPIFFS_Directory(char *path)
 {
     DIR *dir = opendir(path);
@@ -112,7 +112,7 @@ static void SPIFFS_Directory(char *path)
 extern char *Font_buff;
 void app_main(void)
 {
-    /*initializationspiffsfor storage字体文件或者图片文件或者网页文件或者音频文件*/
+    /*Initialize SPIFFS for storing font, image, web, or audio files*/
     ESP_LOGI(TAG, "Initializing SPIFFS");
     esp_vfs_spiffs_conf_t conf = {
     	.base_path = "/spiffs",
@@ -130,10 +130,10 @@ void app_main(void)
     		ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
     	return;
     }
-    /*showspiffsfile list in*/
+    /*Show the file list in spiffs*/
     SPIFFS_Directory("/spiffs/");
 
-    /*加载external字体 N8moduleRAMIf it's not enough, use the inside.*/
+    /*Load an external font. If the N8 module RAM is insufficient, use the internal font.*/
 
     // FILE *ff = fopen("/spiffs/myFont.bin", "r");
     // if (ff == NULL)
@@ -150,7 +150,7 @@ void app_main(void)
     // printf("Bytes read %d", br);
     // fclose(ff);
 
-    // initializationnvsfor storagewifiOr other things that need to be saved after power off
+    // Initialize NVS for storing WiFi or other data that must persist across power-off
     ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
     {
@@ -159,7 +159,7 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    /*initializationWS2812 */
+    /*Initialize WS2812 */
     app_led_init(GPIO_RMT_LED);
     /*Initialize voice wake-up recognition task*/
     app_speech_wakeup_init();

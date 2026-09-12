@@ -44,7 +44,7 @@ void ksdiy_calendar(void)
     lv_calendar_set_showed_date(calendar, &today);
     // group_button=lv_group_create();
     lv_group_remove_all_objs(group_button);
-    lv_group_add_obj(group_button, calendar); //加入解码组
+    lv_group_add_obj(group_button, calendar); //Add to the decoder group
     lv_button_set_group(group_button);
 }
 static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
@@ -60,7 +60,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -77,7 +77,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -89,12 +89,12 @@ void page_calendar_load()
 {
     ksdiy_calendar();
     obj_add_anim(
-		calendar,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_WIDTH,					  //起始值
-		0,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		calendar,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_WIDTH,					  //Start value
+		0,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
    
     ANIEND
@@ -104,21 +104,21 @@ void page_calendar_load()
 static void Exit(void)
 {
     obj_add_anim(
-		calendar,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,					  //起始值
-		APP_WIN_WIDTH,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		calendar,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,					  //Start value
+		APP_WIN_WIDTH,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
     ANIEND
     lv_obj_del(calendar);
 }
 static void Setup(void)
 {
-    //获取芯片可用内存
+    //Get the available heap size
     printf("     esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-    //获取从未使用过的最小内存
+    //Get the minimum free heap size ever
     printf("     esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
     page_calendar_load();
@@ -129,23 +129,23 @@ void move_task_calendar(uint8_t move)
     switch (move)
     {
 
-    case BT1_LONG: //往上移动
+    case BT1_LONG: //Move up
 
         break;
-    case BT1_LONGFREE: //往上移动
+    case BT1_LONGFREE: //Move up
 
         break;
-    case BT3_LONG: //往下移动
+    case BT3_LONG: //Move down
 
         break;
-    case BT3_LONGFREE: //往上移动
+    case BT3_LONGFREE: //Move up
 
 
         break;
-    case BT1_DOWN: //往上移动
+    case BT1_DOWN: //Move up
         encoder_handler(2);
         break;
-    case BT3_DOWN: //往下移动
+    case BT3_DOWN: //Move down
         encoder_handler(3);
         break;
     default:
@@ -153,10 +153,10 @@ void move_task_calendar(uint8_t move)
     }
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
@@ -164,16 +164,16 @@ static void Event(void *btn, int event)
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Calendar(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Calendar至页面调度器*/\r\n");
+	printf("/* Register Calendar with the page scheduler */\r\n");
 }

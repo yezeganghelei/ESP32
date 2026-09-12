@@ -4,13 +4,13 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    QMA6100PThree-axis accelerometer sensor experiment
+ * @brief    QMA6100P three-axis accelerometer sensor experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：studyQMA6100PThree-axis accelerometer and other measurements
+ * Experiment purpose: Study the QMA6100P three-axis accelerometer and its measurements
 
- * Hardware resources and pin allocation： 
+ * Hardware resources and pin allocation: 
  * 1,     LED --> ESP32S3 IO
  *        LED --> IO1
  * 2,  XL9555 --> ESP32S3 IO
@@ -29,10 +29,12 @@
  *        SDA --> IO41
  *        INT --> XL9555_P01
 
- * experiment现象
- * 1, 本experiment,Test first when starting the machineQMA6100PDoes it exist，If not detectedAP3216C，Then the error message is displayed on the monitor。If checked
- *    MeasuredQMA6100P，It will show normal，And inside the main loop，Loop reading of three axesXYZRaw data and pitch angle、Rolling angle、Acceleration sensor data，And display inLCDon the screen。
- * 2, LEDflashing，Prompt the program to run。
+ * Experiment phenomenon
+ * 1, At power-on, this experiment first checks whether the QMA6100P exists. If it is not detected, an
+ *    error message is displayed on the monitor. If it is detected, normal operation is shown, and the
+ *    main loop repeatedly reads the raw XYZ data of the three axes, the pitch angle, the roll angle
+ *    and the accelerometer data, and displays them on the LCD screen.
+ * 2, The LED flashes, indicating that the program is running.
 
  * Things to note
  * none
@@ -62,15 +64,15 @@ if __name__ == '__main__':
     # XL9555 Initialization
     xl9555 = io_ex.init(i2c0)
     
-    # ResetLCD
+    # Reset LCD
     xl9555.write_bit(io_ex.SLCD_RST,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.SLCD_RST,1)
     time.sleep_ms(100)
     
-    # initializationSPI
+    # Initialize SPI
     spi = SPI(2,baudrate = 80000000, sck = Pin(12), mosi = Pin(11), miso = Pin(13))
-    # initializationLCD,lcd = 0for2.4inchScreen;lcd = 1for1.3inchSPILCDScreen;
+    # Initialize LCD; lcd = 0 for a 2.4-inch screen, lcd = 1 for a 1.3-inch SPI LCD screen;
     display = lcd.init(spi,dc = Pin(40,Pin.OUT,Pin.PULL_UP,value = 1),cs = Pin(21,Pin.OUT,Pin.PULL_UP,value = 1),dir = 1,lcd = 0)
     # Turn on LCD backlight
     xl9555.write_bit(io_ex.SLCD_PWR,1)
@@ -78,7 +80,7 @@ if __name__ == '__main__':
     # Initialize qma6100p
     qma6100 = qma6100p.init(i2c0)
     
-    # 显示experiment信息
+    # Display experiment information
     display.string(30, 50, 200, 16, 16, "ESP32-S3",lcd.RED)
     display.string(30, 70, 200, 16, 16, "QMA6100P TEST", lcd.RED)
     display.string(30, 90, 200, 16, 16, "ATOM@ALIENTEK", lcd.RED)
@@ -100,4 +102,4 @@ if __name__ == '__main__':
         display.string(110, 210, 200, 16, 16,str(qma6100.qma6100p_acc_roll()),lcd.BLUE)
         led_state = led.value()
         led.value(not led_state)
-        time.sleep_ms(100)         # Delay100ms
+        time.sleep_ms(100)         # Delay 100 ms

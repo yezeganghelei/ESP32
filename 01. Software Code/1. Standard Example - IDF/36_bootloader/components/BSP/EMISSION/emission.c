@@ -4,7 +4,7 @@
  * @author      
  * @version     V1.0
  * @date        2023-08-26
- * @brief       RMT红外decoding驱动代码
+ * @brief       RMT infrared decoding driver code
  * @license     Copyright (c) 2020-2032, 
  ****************************************************************************************************
  * @attention
@@ -14,7 +14,7 @@
 
 #include "emission.h"
 
-/* saveNECdecoding的Addresses and commands字节 */
+/* Save the address and command bytes decoded from NEC */
 uint16_t s_nec_code_address;
 uint16_t s_nec_code_command;
 
@@ -23,7 +23,7 @@ uint8_t tbuf[40];
 extern uint8_t rmt_flag;
 
 /**
- * @brief       initializationRMT
+ * @brief       Initialize RMT
  * @param       none
  * @retval      none
  */
@@ -36,47 +36,47 @@ void emission_init(void)
     rmt_rx_channel_config_t rx_channel_cfg = {
         .clk_src = RMT_CLK_SRC_DEFAULT,                                                                                 /* RMT receiving channel clock source */
         .resolution_hz = RMT_RESOLUTION_HZ,                                                                             /* RMT receiving channel clock resolution */
-        .mem_block_symbols = 64,                                                                                        /* The channel can be stored at one timeRMTsymbol数量 */
-        .gpio_num = RMT_RX_PIN,                                                                                         /* RMT Receive Channel Pin */
+        .mem_block_symbols = 64,                                                                                        /* Number of RMT symbols the channel can store at one time */
+        .gpio_num = RMT_RX_PIN,                                                                                         /* RMT receive channel pin */
     };
     rmt_channel_handle_t rx_channel = NULL;
-    ESP_ERROR_CHECK(rmt_new_rx_channel(&rx_channel_cfg, &rx_channel));                                                  /* Create aRMTReceive channel */
+    ESP_ERROR_CHECK(rmt_new_rx_channel(&rx_channel_cfg, &rx_channel));                                                  /* Create an RMT receive channel */
 
     /* Configure message queue */
-    QueueHandle_t receive_queue = xQueueCreate(1, sizeof(rmt_rx_done_event_data_t));                                    /* Define a message queue，Used to deal withRMTReceive callback function */
+    QueueHandle_t receive_queue = xQueueCreate(1, sizeof(rmt_rx_done_event_data_t));                                    /* Create a message queue used by the RMT receive callback */
     assert(receive_queue);
     rmt_rx_event_callbacks_t cbs = {
-        .on_recv_done = RMT_Rx_Done_Callback,                                                                           /* Event callback，When aRMTCalled when the channel receives transaction is completed */
+        .on_recv_done = RMT_Rx_Done_Callback,                                                                           /* Event callback, called when the RMT channel completes a receive transaction */
     };
-    ESP_ERROR_CHECK(rmt_rx_register_event_callbacks(rx_channel, &cbs, receive_queue));                                  /* forRMT RXChannel setting callback */
+    ESP_ERROR_CHECK(rmt_rx_register_event_callbacks(rx_channel, &cbs, receive_queue));                                  /* Register the callback for the RMT RX channel */
 
-    /* The following time requirements are based onNECprotocol */
+    /* The following timing requirements are based on the NEC protocol */
     rmt_receive_config_t receive_config = {
-        .signal_range_min_ns = 1250,                                                                                    /* NEC信号的最短持续时间for560us，1250ns＜560us，有效信号不会被视for噪声 */
-        .signal_range_max_ns = 12000000,                                                                                /* NEC信号的最长持续时间for9000us，12000000ns>9000us，Reception will not stop early */
+        .signal_range_min_ns = 1250,                                                                                    /* Minimum NEC signal duration is 560us; 1250ns < 560us so valid signals are not treated as noise */
+        .signal_range_max_ns = 12000000,                                                                                /* Maximum NEC signal duration is 9000us; 12000000ns > 9000us so reception does not stop early */
     };
 
     /* Configure the sending channel */
     rmt_tx_channel_config_t tx_channel_cfg = {
-        .clk_src = RMT_CLK_SRC_DEFAULT,                                                                                 /* RMTTransmit channel clock source */
-        .resolution_hz = RMT_RESOLUTION_HZ,                                                                             /* RMT transmission channel clock resolution */
-        .mem_block_symbols = 64,                                                                                        /* The channel can be stored at one timeRMTsymbol数量 */
-        .trans_queue_depth = 4,                                                                                         /* Number of transactions allowed to be pending in the background，This example will not queue multiple transactions，Therefore, the queue depth>1That's enough */
-        .gpio_num = RMT_TX_PIN,                                                                                         /* RMTTransmit channel pin */
+        .clk_src = RMT_CLK_SRC_DEFAULT,                                                                                 /* RMT transmit channel clock source */
+        .resolution_hz = RMT_RESOLUTION_HZ,                                                                             /* RMT transmit channel clock resolution */
+        .mem_block_symbols = 64,                                                                                        /* Number of RMT symbols the channel can store at one time */
+        .trans_queue_depth = 4,                                                                                         /* Number of transactions allowed to be pending in the background; this example does not queue multiple transactions, so a queue depth > 1 is enough */
+        .gpio_num = RMT_TX_PIN,                                                                                         /* RMT transmit channel pin */
     };
     rmt_channel_handle_t tx_channel = NULL;
-    ESP_ERROR_CHECK(rmt_new_tx_channel(&tx_channel_cfg, &tx_channel));                                                  /* Create an RMT sending channel */
+    ESP_ERROR_CHECK(rmt_new_tx_channel(&tx_channel_cfg, &tx_channel));                                                  /* Create an RMT transmit channel */
 
-    /* Configure carrier and duty cycle s */
+    /* Configure the carrier and duty cycle */
     rmt_carrier_config_t carrier_cfg = {
-        .frequency_hz = 38000,                                                                                          /* Carrier frequency，0Indicates that carrier is disabled */
+        .frequency_hz = 38000,                                                                                          /* Carrier frequency; 0 disables the carrier */
         .duty_cycle = 0.33,                                                                                             /* Carrier duty cycle */
     };
     ESP_ERROR_CHECK(rmt_apply_carrier(tx_channel, &carrier_cfg));                                                       /* Apply a modulation function to the transmit channel */
 
-    /* will not be sent in a loopNECframe */
+    /* Do not send the NEC frame in a loop */
     rmt_transmit_config_t transmit_config = {
-        .loop_count = 0,                                                                                                /* 0for不循环，-1fornone限循环 */
+        .loop_count = 0,                                                                                                /* 0 = no loop, -1 = infinite loop */
     };
 
     /* Configure the encoder */
@@ -86,21 +86,21 @@ void emission_init(void)
     rmt_encoder_handle_t nec_encoder = NULL;
     ESP_ERROR_CHECK(rmt_new_ir_nec_encoder(&nec_encoder_cfg, &nec_encoder));                                            /* Configure the encoder */
 
-    /* Enable sending、Receive channel */
-    ESP_ERROR_CHECK(rmt_enable(tx_channel));                                                                            /* Enable sending通道 */
+    /* Enable the transmit and receive channels */
+    ESP_ERROR_CHECK(rmt_enable(tx_channel));                                                                            /* Enable the transmit channel */
     ESP_ERROR_CHECK(rmt_enable(rx_channel));                                                                            /* Enable receive channel */
 
-    /* Save receivedRMTsymbol */
-    rmt_symbol_word_t raw_symbols[64];                                                                                  /* 64个symbol对于标准NECThe framework should be sufficient */
+    /* Buffer for received RMT symbols */
+    rmt_symbol_word_t raw_symbols[64];                                                                                  /* 64 symbols is sufficient for a standard NEC frame */
     rmt_rx_done_event_data_t rx_data;
 
     ESP_ERROR_CHECK(rmt_receive(rx_channel, raw_symbols, sizeof(raw_symbols), &receive_config));                        /* ready to receive */
 
     while (1)
     {
-        if (xQueueReceive(receive_queue, &rx_data, pdMS_TO_TICKS(1000)) == pdPASS)                                      /* Wait for RX to complete signal */
+        if (xQueueReceive(receive_queue, &rx_data, pdMS_TO_TICKS(1000)) == pdPASS)                                      /* Wait for the RX-done signal */
         {
-            example_parse_nec_frame(rx_data.received_symbols, rx_data.num_symbols);                                     /* 解析接收symbol并打印结果 */
+            example_parse_nec_frame(rx_data.received_symbols, rx_data.num_symbols);                                     /* Parse the received symbols and print the result */
             ESP_ERROR_CHECK(rmt_receive(rx_channel, raw_symbols, sizeof(raw_symbols), &receive_config));                /* Restart receiving */
         }
         else                                                                                                            /* Timeout, transmit predefined IR NEC packets */
@@ -132,7 +132,7 @@ void emission_init(void)
             }
             
             printf("TX CMD = %d\n", scan_code.command);
-            ESP_ERROR_CHECK(rmt_transmit(tx_channel, nec_encoder, &scan_code, sizeof(scan_code), &transmit_config));    /* passRMTSend channel transmission data */
+            ESP_ERROR_CHECK(rmt_transmit(tx_channel, nec_encoder, &scan_code, sizeof(scan_code), &transmit_config));    /* Transmit data through the RMT TX channel */
         }
     }
 
@@ -142,7 +142,7 @@ void emission_init(void)
 }
 
 /**
- * @brief       Determine whether the data timing length isNECWithin the timing tolerance range Positive or negative RMT_NEC_DECODE_MARGIN within the value of
+ * @brief       Check whether the signal duration is within the NEC timing tolerance (spec_duration +/- RMT_NEC_DECODE_MARGIN)
  * @param       none
  * @retval      none
  */
@@ -153,7 +153,7 @@ inline bool nec_check_in_range(uint32_t signal_duration, uint32_t spec_duration)
 }
 
 /**
- * @brief       对比数据时序长度判断是否for逻辑0
+ * @brief       Compare the timing length to determine whether it is logic 0
  * @param       none
  * @retval      none
  */
@@ -164,7 +164,7 @@ bool nec_parse_logic0(rmt_symbol_word_t *rmt_nec_symbols)
 }
 
 /**
- * @brief       对比数据时序长度判断是否for逻辑1
+ * @brief       Compare the timing length to determine whether it is logic 1
  * @param       none
  * @retval      none
  */
@@ -229,7 +229,7 @@ bool nec_parse_frame(rmt_symbol_word_t *rmt_nec_symbols)
         cur++;
     }
 
-    /* Save data address and command，Used to judge repeated keys */
+    /* Save the data address and command to detect repeated keys */
     s_nec_code_address = address;
     s_nec_code_command = command;
 
@@ -237,7 +237,7 @@ bool nec_parse_frame(rmt_symbol_word_t *rmt_nec_symbols)
 }
 
 /**
- * @brief       检查数据frame是否forrepeat按键：Keep holding the same key
+ * @brief       Check whether the data frame is a repeat frame: the same key is held down
  * @param       none
  * @retval      none
  */
@@ -254,9 +254,9 @@ bool nec_parse_frame_repeat(rmt_symbol_word_t *rmt_nec_symbols)
  */
 void example_parse_nec_frame(rmt_symbol_word_t *rmt_nec_symbols, size_t symbol_num)
 {
-    switch (symbol_num) /* decodingRMTreceive data */
+    switch (symbol_num) /* Decode the RMT received data */
     {
-        case 34:        /* normalNEC数据frame */
+        case 34:        /* Normal NEC data frame */
         {
             if (nec_parse_frame(rmt_nec_symbols) )
             {
@@ -266,7 +266,7 @@ void example_parse_nec_frame(rmt_symbol_word_t *rmt_nec_symbols, size_t symbol_n
             break;
         }
         
-        case 2:         /* Duplicate NEC data frame */
+        case 2:         /* Repeat NEC data frame */
         {
             if (nec_parse_frame_repeat(rmt_nec_symbols))
             {
@@ -282,7 +282,7 @@ void example_parse_nec_frame(rmt_symbol_word_t *rmt_nec_symbols, size_t symbol_n
 }
 
 /**
- * @brief       RMTData reception completion callback function
+ * @brief       RMT data reception completion callback
  * @param       none
  * @retval      none
  */
@@ -291,6 +291,6 @@ bool RMT_Rx_Done_Callback(rmt_channel_handle_t channel, const rmt_rx_done_event_
     BaseType_t high_task_wakeup = pdFALSE;
     QueueHandle_t receive_queue = (QueueHandle_t)user_data;
 
-    xQueueSendFromISR(receive_queue, edata, &high_task_wakeup); /* will be receivedRMTData is sent to parsing tasks via message queue */
+    xQueueSendFromISR(receive_queue, edata, &high_task_wakeup); /* Send the received RMT data to the parsing task via the message queue */
     return high_task_wakeup == pdTRUE;
 }

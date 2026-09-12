@@ -36,7 +36,7 @@ static x_header_t __g_xbf_hd = {
 	.bpp = 4,
 };
 char *Font_buff = NULL;
-// static uint8_t __g_font_buf[240]; //如bin文件存在SPI FLASH可使用此buff
+// static uint8_t __g_font_buf[240]; // this buffer can be used if the bin file is stored in SPI FLASH
 static void init_font(void)
 {
 	FILE *ff = fopen("/spiffs/myFont.bin", "r");
@@ -61,10 +61,10 @@ static void init_font(void)
 }
 static uint8_t *__user_font_getdata(int offset, int size)
 {
-	//如字模保存在SPI FLASH, SPIFLASH_Read(__g_font_buf,offset,size);
-	//如字模已加载到SDRAM,直接返回偏移地址即可如:return (uint8_t*)(sdram_fontddr+offset);
+	// If the font bitmap is stored in SPI FLASH: SPIFLASH_Read(__g_font_buf, offset, size);
+	// If the font bitmap is already loaded into SDRAM, just return the offset address, e.g. return (uint8_t *)(sdram_fontddr + offset);
 	static uint8_t first_in = 1;
-	if (first_in == 1)//第一次进入的时候初始化外部字体
+	if (first_in == 1) // Initialize the external font on first entry
 	{
 		first_in = 0;
 		init_font();
@@ -113,8 +113,8 @@ static bool __user_font_get_glyph_dsc(const lv_font_t *font, lv_font_glyph_dsc_t
 }
 
 //AliHYAiHei-Beta,,-1
-//字模高度：24
-//XBF字体,外部bin文件
+// Font bitmap height: 24
+// XBF font, external bin file
 lv_font_t myFont = {
 	.get_glyph_bitmap = __user_font_get_bitmap,
 	.get_glyph_dsc = __user_font_get_glyph_dsc,

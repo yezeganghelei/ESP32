@@ -41,8 +41,8 @@ static camera_config_t camera_config = {
     .fb_location = CAMERA_FB_IN_PSRAM,
     .pixel_format = PIXFORMAT_RGB565,       /* Image output mode */
     .frame_size = FRAMESIZE_HQVGA,          /* Image output size */
-    .jpeg_quality = 63,                     /* 0-63，forOVSeries camera sensors，The smaller the quantity means the higher the quality */
-    .fb_count = 1,                          /* When usingjpegIn mode，iffb_countMore than one，then the driver will work in continuous mode */
+    .jpeg_quality = 63,                     /* 0-63 for OV-series camera sensors; a smaller value means higher quality */
+    .fb_count = 1,                          /* In JPEG mode, if fb_count is greater than one, the driver works in continuous mode */
     .grab_mode = CAMERA_GRAB_WHEN_EMPTY,
 };
 
@@ -78,16 +78,16 @@ uint8_t camera_init(void)
 
     sensor_t * s = esp_camera_sensor_get();
 
-    /* if摄像头模块是OV3660OrOV5640，The following configuration is required */
+    /* If the camera module is OV3660 or OV5640, the following configuration is required */
     if (s->id.PID == OV3660_PID)
     {
-        s->set_vflip(s, 1);         /* Flip backward */
-        s->set_brightness(s, 1);    /* Improved brightness */
+        s->set_vflip(s, 1);         /* Vertical flip */
+        s->set_brightness(s, 1);    /* Increase brightness */
         s->set_saturation(s, -2);   /* Reduce saturation */
     }
     else if (s->id.PID == OV5640_PID)
     {
-        s->set_vflip(s, 1);         /* Flip backward */
+        s->set_vflip(s, 1);         /* Vertical flip */
     }
 
     return err;
@@ -98,9 +98,9 @@ unsigned long j = 0;
 camera_fb_t *fb = NULL;
 
 /**
- * @brief       Display camera data（RGB565）
- * @param       x：xAxis coordinates
- * @param       y：yAxis coordinates
+ * @brief       Display camera data (RGB565)
+ * @param       x: x-axis coordinate
+ * @param       y: y-axis coordinate
  * @retval      none
  */
 void camera_show(uint16_t x, uint16_t y)
@@ -115,7 +115,7 @@ void camera_show(uint16_t x, uint16_t y)
 
     lcd_set_window(x, y, x + fb->width - 1, y + fb->height - 1);
 
-    /* lcd_bufStore an entire frame of the cameraRGBdata */
+    /* Store an entire frame of camera RGB data in lcd_buf */
     for (j = 0; j < fb->width * fb->height; j++)
     {
         lcd_buf[2 * j] = (fb->buf[2 * i]) ;
@@ -123,10 +123,10 @@ void camera_show(uint16_t x, uint16_t y)
         i ++;
     }
     
-    /* For example：96*96*2/1536 = 12;point12SendRGBdata */
+    /* For example: 96*96*2/1536 = 12; send RGB data 12 times */
     for(j = 0; j < (fb->width * fb->height * 2 / LCD_BUF_SIZE); j++)
     {
-        /* &lcd_buf[j * LCD_BUF_SIZE] 偏移地址发送data */
+        /* Send data at offset address &lcd_buf[j * LCD_BUF_SIZE] */
         lcd_write_data(&lcd_buf[j * LCD_BUF_SIZE] , LCD_BUF_SIZE);
     }
 err:

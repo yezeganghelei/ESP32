@@ -25,25 +25,25 @@
 
 #include "lv_gif.h"
 
-/*此页面窗口*/
+/*This page's window*/
 static lv_obj_t *appWindow;
-/*标题栏*/
+/*Title bar*/
 static lv_obj_t *labelTitle;
 
-/*标题栏分隔线*/
+/*Title bar separator line*/
 static lv_obj_t *lineTitle;
-/*图标显示容器，用于裁剪显示*/
+/*Icon display container, used for clipped display*/
 static lv_obj_t *contDisp;
 
 /**
-  * @brief  创建标题栏
-  * @param  无
-  * @retval 无
+  * @brief  Create the title bar
+  * @param  None
+  * @retval None
   */
 
 extern const uint8_t myeye_map[]; /*Use the example gif*/
 /**
- * @Descripttion: 创建标题栏
+ * @Descripttion: Create the title bar
  * @param {*}
  * @return {*}
  * @Author: Kevincoooool
@@ -59,7 +59,7 @@ static void Title_Create()
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(appWindow, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_pos(appWindow, 0, 0);
 	lv_obj_set_size(appWindow, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -90,7 +90,7 @@ static void Title_Create()
 	lv_obj_set_size(labelTitle, APP_WIN_WIDTH, 55);
 	lv_label_set_recolor(labelTitle, true);
 
-	/*默认选中的是第二个图标*/
+	/*The second icon is selected by default*/
 	lv_label_set_static_text(labelTitle, "About");
 	lv_obj_align(labelTitle, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 	lv_obj_set_auto_realign(labelTitle, true);
@@ -109,7 +109,7 @@ static void Title_Create()
 }
 
 /**
- * @Descripttion: 创建下方布局
+ * @Descripttion: Create the lower layout
  * @param {*}
  * @return {*}
  * @Author: Kevincoooool
@@ -125,14 +125,14 @@ static void Cont_create(void)
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(contDisp, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_size(contDisp, APP_WIN_WIDTH, APP_WIN_HEIGHT - 60);
 	lv_obj_set_pos(contDisp, 0, 60);
 	lv_obj_t *img_gif = lv_gif_create_from_data(contDisp, myeye_map);
 	lv_obj_set_size(img_gif, 150, 150);
 	lv_obj_set_pos(img_gif, APP_WIN_WIDTH / 2 - 75, 0);
-	// lv_obj_align(img_gif, contDisp, LV_ALIGN_IN_TOP_MID, 0, 40); //设置图片显示顶端
+	// lv_obj_align(img_gif, contDisp, LV_ALIGN_IN_TOP_MID, 0, 40); // set image top alignment
 
 	lv_obj_t *label_version = lv_label_create(contDisp, NULL);
 
@@ -160,7 +160,7 @@ static void Cont_create(void)
 	lv_obj_set_size(label_version, APP_WIN_WIDTH, 100);
 	// lv_label_set_recolor(label_version, true);
 
-	/*默认选中的是第二个图标*/
+	/*The second icon is selected by default*/
 	lv_label_set_static_text(label_version, "KS-ESP32-MASTER\nKevincoooool\n"__DATE__);
 	lv_obj_align(label_version, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0);
 	lv_obj_set_auto_realign(label_version, true);
@@ -178,7 +178,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -195,7 +195,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -207,12 +207,12 @@ static void Exit(void)
 {
 
 	obj_add_anim(
-		appWindow,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,								   //起始值
-		APP_WIN_WIDTH,						   //结束值
-		lv_anim_path_ease_out			   //动画特效:模拟弹性物体下落
+		appWindow,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,								   //Start value
+		APP_WIN_WIDTH,						   //End value
+		lv_anim_path_ease_out			   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(appWindow);
@@ -221,30 +221,30 @@ static void Exit(void)
 
 static void Setup(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" %s    esp_get_free_heap_size : %d  \n", __func__,esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" %s    esp_get_minaboutm_free_heap_size : %d  \n", __func__,esp_get_minimum_free_heap_size());
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
 		Title_Create();
 	Cont_create();
 	obj_add_anim(
-		appWindow,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_WIDTH,						   //起始值
-		0,								   //结束值
-		lv_anim_path_ease_out			   //动画特效:模拟弹性物体下落
+		appWindow,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_WIDTH,						   //Start value
+		0,								   //End value
+		lv_anim_path_ease_out			   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 		lv_obj_set_click(lv_layer_top(), true);
 	lv_obj_set_event_cb(lv_layer_top(), event_handler_touch);
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
@@ -252,16 +252,16 @@ static void Event(void *btn, int event)
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_About(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册About至页面调度器*/\r\n");
+	printf("/* Register About with the page scheduler */\r\n");
 }

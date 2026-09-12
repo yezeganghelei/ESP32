@@ -25,10 +25,10 @@ const static char *TAG = "RMT_ENCEncoder";
 
 typedef struct {
 	rmt_encoder_t base;                     /* Base "class" that declares the standard encoder interface */
-	rmt_encoder_t *copy_encoder;            /* usecopy_encoderEncode the leading and ending pulses */
-	rmt_encoder_t *bytes_encoder;           /* use字节编码器对地址和命令数据进行编码 */
-	rmt_symbol_word_t nec_leading_symbol;   /* haveRMTExpressedNECleading code */
-	rmt_symbol_word_t nec_ending_symbol;    /* haveRMTExpressedNECend code */
+	rmt_encoder_t *copy_encoder;            /* Use copy_encoder to encode the leading and ending pulses */
+	rmt_encoder_t *bytes_encoder;           /* Use the byte encoder to encode the address and command data */
+	rmt_symbol_word_t nec_leading_symbol;   /* NEC leading code expressed as RMT symbols */
+	rmt_symbol_word_t nec_ending_symbol;    /* NEC ending code expressed as RMT symbols */
 	int state;
 } rmt_ir_nec_encoder_t;
 

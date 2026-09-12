@@ -3,7 +3,7 @@
 #include "page_menu.h"
 
 
-/*页面注册器*/
+/* Page registrar */
 #define PAGE_REG(name)                               \
   do                                                 \
   {                                                  \
@@ -12,9 +12,9 @@
   } while (0)
 
 /**
-  * @brief  页面初始化
-  * @param  无
-  * @retval 无
+  * @brief  Page initialization
+  * @param  none
+  * @retval none
   */
 static void Pages_Init()
 {
@@ -36,28 +36,28 @@ static void Pages_Init()
   PAGE_REG(Setting);
   PAGE_REG(About);
 
-  page.PagePush(Disp_Home); //打开表盘
+  page.PagePush(Disp_Home); //Open the home page
 }
 
 /**
-  * @brief  显示初始化
-  * @param  无
-  * @retval 无
+  * @brief  Display initialization
+  * @param  none
+  * @retval none
   */
 void Display_Init()
 {
 
-  /*APP窗口初始化*/
+  /*APP window initialization*/
   // AppWindow_Create();
 
-  /*页面初始化*/
+  /*Page initialization*/
   Pages_Init();
 }
 
 /**
-  * @brief  显示更新
-  * @param  无
-  * @retval 无
+  * @brief  Display update
+  * @param  none
+  * @retval none
   */
 void Display_Update()
 {
@@ -66,9 +66,9 @@ void Display_Update()
 }
 
 /**
-  * @brief  页面阻塞延时，保持lvgl更新
-  * @param  无
-  * @retval 无
+  * @brief  Blocking page delay that keeps LVGL updating
+  * @param  none
+  * @retval none
   */
 void PageDelay(uint32_t ms)
 {

@@ -4,13 +4,13 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    RGBscreen Touch experiment
+ * @brief    RGB screen touch experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * Purpose of the experiment：drive4.3inchRGBscreen touch
+ * Purpose of the experiment: Drive the touch function of a 4.3-inch RGB screen
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,     LED --> ESP32S3 IO
  *        LED --> IO1
  * 2,  XL9555 --> ESP32S3 IO
@@ -45,10 +45,11 @@
  *  TOUCH_INT --> IO40
  *  TOUCH_RST --> XL9555_P11
 
- * experimental phenomenon
- * 1, This experiment code,开机的时候先InitializeRGBscreen and touch，Then enter the relevant test。
- *    如果是电容screen，Then directly enter the handwriting test program，Capacitive touch screen support4.3inchscreen模块。
- * 2, LEDflashing，Prompt program to run。
+ * Experimental phenomenon
+ * 1, At power-on, this experiment code first initializes the RGB screen and touch, then enters the
+ *    relevant test. For a capacitive screen, it directly enters the handwriting test program. The
+ *    capacitive touch screen supports the 4.3-inch screen module.
+ * 2, The LED flashes, indicating that the program is running.
 
  * Things to note
  * none
@@ -64,7 +65,7 @@ import atk_ltdc as ltdc
 import atk_touch as touch
 import time
 
-# Set the horizontal and vertical screen of the screen: 0 is a vertical screen; 1 is a horizontal screen
+# Set the screen orientation: 0 is portrait; 1 is landscape
 atk_dir = 1
 
 if atk_dir == 1:
@@ -75,7 +76,7 @@ else:
     LCD_HEIGHT = 800
 
 """
- * @brief Clear the screen and display it in the upper right corner"RST"
+ * @brief Clear the screen and display "RST" in the upper right corner
  * @param None
  * @retval None
 """
@@ -113,7 +114,7 @@ def lcd_draw_bline(x1,y1,x2,y2,size,color):
     if delta_x > 0:
         incx = 1                            # Set single step direction  
     elif delta_x == 0:
-        incx = 0                            #vertical line
+        incx = 0                            # Vertical line
     else:
         incx = -1
         delta_x = -delta_x
@@ -131,7 +132,7 @@ def lcd_draw_bline(x1,y1,x2,y2,size,color):
     else:
         distance = delta_y
 
-    for t in range(0,distance + 1):         # Line drawing output
+    for t in range(0,distance + 1):         # Draw the line
         display.circle(row, col, size, color)   # Draw points
         xerr += delta_x
         yerr += delta_y
@@ -145,7 +146,7 @@ def lcd_draw_bline(x1,y1,x2,y2,size,color):
             col += incy
 
 """
- * @brief       电容screen测试
+ * @brief       Capacitive screen test
  * @param None
  * @retval None
 """
@@ -153,7 +154,7 @@ def ctp_test():
     
     t = 0
     i = 0
-    lastpos = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0]]    #last data
+    lastpos = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0]]    # Last data
 
     while True:
         
@@ -207,18 +208,18 @@ if __name__ == '__main__':
     x = 0
     # Initialize LED and output high level
     led = Pin(1,Pin.OUT,value = 1)
-    #IIC initialization
+    # IIC initialization
     i2c0 = I2C(0, scl = Pin(42), sda = Pin(41), freq = 400000)
     # XL9555 initialization
     xl9555 = io_ex.init(i2c0)
 
-    #Initialize RGB
+    # Initialize RGB
     display = ltdc.init(dir = atk_dir)
     # Turn on RGB screen backlight
     xl9555.write_bit(io_ex.LCD_BL,1)
     time.sleep_ms(100)
     
-    #Reset touch chip
+    # Reset touch chip
     xl9555.write_bit(io_ex.CT_RST,0)
     time.sleep_ms(10)
     xl9555.write_bit(io_ex.CT_RST,1)
@@ -227,7 +228,7 @@ if __name__ == '__main__':
     # Initialize touch driver
     touch.init()
     
-    #Clear the screen and display it in the upper right corner"RST"
+    # Clear the screen and display "RST" in the upper right corner
     load_draw_dialog()
     
     while True:

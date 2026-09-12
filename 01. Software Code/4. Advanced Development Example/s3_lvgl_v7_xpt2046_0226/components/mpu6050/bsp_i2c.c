@@ -2,24 +2,24 @@
 
 /*
 ===========================
-函数定义
+Function definitions
 =========================== 
 */
 
 /** 
- * bsp_i2c 初始化
+ * Initialize bsp_i2c
  * @param[in]   NULL
  * @retval      
  *              NULL                              
- * @par         修改日志 
+ * @par         Revision history 
  *               Ver0.0.1:
-                     hans, 2019/09/08, 初始化版本\n 
+                     hans, 2019/09/08, Initial version\n 
  *               Ver0.0.2:
-                     hans, 2019/09/08, 统一编程风格\n 
+                     hans, 2019/09/08, Unified coding style\n 
  */
 esp_err_t bsp_i2c_master_init(void)
 {
-    //i2c配置结构体
+    // I2C configuration structure
 
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
@@ -38,29 +38,29 @@ esp_err_t bsp_i2c_master_deinit(void)
 }
 
 /** 
- * 向oled写命令
+ * Write command to OLED
  * @param[in]   command
  * @retval      
  *              - ESP_OK                              
- * @par         修改日志 
+ * @par         Revision history 
  *               Ver0.0.1:
-                     XinC_Guo, 2018/07/18, 初始化版本\n 
+                     XinC_Guo, 2018/07/18, Initial version\n 
  *               Ver0.0.2:
-                     hx-zsj, 2018/08/07, 统一编程风格\n 
+                     hx-zsj, 2018/08/07, Unified coding style\n 
  */
 
 int bsp_oled_write_cmd(uint8_t addr, uint8_t command)
 {
     int ret;
-    //配置oled的寄存器
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();                            //新建操作I2C句柄
-    ret = i2c_master_start(cmd);                                             //启动I2C
-    ret = i2c_master_write_byte(cmd, addr | WRITE_BIT, ACK_CHECK_EN);        //发地址+写+检查ack
-    ret = i2c_master_write_byte(cmd, WRITE_CMD, ACK_CHECK_EN);               //发数据高8位+检查ack
-    ret = i2c_master_write_byte(cmd, command, ACK_CHECK_EN);                 //发数据低8位+检查ack
-    ret = i2c_master_stop(cmd);                                              //停止I2C
-    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 100 / portTICK_RATE_MS); //I2C发送
-    i2c_cmd_link_delete(cmd);                                                //删除I2C句柄
+    // Configure the OLED register
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();                            //Create I2C command handle
+    ret = i2c_master_start(cmd);                                             //Start I2C
+    ret = i2c_master_write_byte(cmd, addr | WRITE_BIT, ACK_CHECK_EN);        //Send address + write + check ACK
+    ret = i2c_master_write_byte(cmd, WRITE_CMD, ACK_CHECK_EN);               //Send data high byte + check ACK
+    ret = i2c_master_write_byte(cmd, command, ACK_CHECK_EN);                 //Send data low byte + check ACK
+    ret = i2c_master_stop(cmd);                                              //Stop I2C
+    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 100 / portTICK_RATE_MS); //Send I2C command
+    i2c_cmd_link_delete(cmd);                                                //Delete I2C command handle
     if (ret != ESP_OK)
     {
         return ret;
@@ -69,13 +69,13 @@ int bsp_oled_write_cmd(uint8_t addr, uint8_t command)
 }
 
 /** 
- * 向oled写数据
+ * Write data to OLED
  * @param[in]   data
  * @retval      
  *              - ESP_OK                              
- * @par         修改日志 
+ * @par         Revision history 
  *               Ver0.0.1:
-                     XinC_Guo, 2018/07/18, 初始化版本\n 
+                     XinC_Guo, 2018/07/18, Initial version\n 
  */
 int bsp_oled_write_data(uint8_t addr, uint8_t data)
 {
@@ -96,14 +96,14 @@ int bsp_oled_write_data(uint8_t addr, uint8_t data)
 }
 
 /** 
- * 向oled写长数据
- * @param[in]   data   要写入的数据
- * @param[in]   len     数据长度
+ * Write long data to OLED
+ * @param[in]   data   data to write
+ * @param[in]   len     data length
  * @retval      
  *              - ESP_OK                              
- * @par         修改日志 
+ * @par         Revision history 
  *               Ver0.0.1:
-                     XinC_Guo, 2018/07/18, 初始化版本\n 
+                     XinC_Guo, 2018/07/18, Initial version\n 
  */
 int bsp_oled_write_long_data(uint8_t addr, uint8_t *data, uint16_t len)
 {

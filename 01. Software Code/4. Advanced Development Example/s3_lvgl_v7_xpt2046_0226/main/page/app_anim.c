@@ -11,12 +11,12 @@
 
 /**
  * @descripttion: 1
- * @param {lv_obj_t} *动画对象
- * @param {lv_anim_exec_xcb_t} 动画函数
- * @param {uint16_t} 动画速度
- * @param {lv_coord_t} 开始位置
- * @param {lv_coord_t} 结束位置
- * @param {lv_anim_path_cb_t} 动画形式
+ * @param {lv_obj_t} * Animation object
+ * @param {lv_anim_exec_xcb_t} Animation function
+ * @param {uint16_t} Animation duration
+ * @param {lv_coord_t} Start position
+ * @param {lv_coord_t} End position
+ * @param {lv_anim_path_cb_t} Animation path
  * @return {*}
  */
 void obj_add_anim(lv_obj_t *obj, lv_anim_exec_xcb_t exec_cb, uint16_t time, lv_coord_t start, lv_coord_t end, lv_anim_path_cb_t path_cb)
@@ -36,14 +36,14 @@ void obj_add_anim(lv_obj_t *obj, lv_anim_exec_xcb_t exec_cb, uint16_t time, lv_c
 #else /* Before v7 */
 	lv_anim_t a;
 	lv_anim_init(&a);
-	lv_anim_set_var(&a, obj);							  //动画对象
-	lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)exec_cb); //动画函数
+	lv_anim_set_var(&a, obj);							  // Animation object
+	lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)exec_cb); // Animation function
 	lv_anim_set_time(&a, time);
-	a.start = start;	 //起始值
-	a.end = end;		 //结束值
-	a.path.cb = path_cb; //动画计算方法
-	a.playback_time = 0; //回放时间设为0不执行动画回放
-	lv_anim_start(&a);	 //开启动画
+	a.start = start;	 // Start value
+	a.end = end;		 // End value
+	a.path.cb = path_cb; // Animation calculation method
+	a.playback_time = 0; // Set playback time to 0 to disable animation playback
+	lv_anim_start(&a);	 // Start the animation
 
 #endif
 }

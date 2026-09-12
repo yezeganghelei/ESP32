@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        jpeg.h
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK Team (ALIENTEK)
  * @version     V1.0
  * @date        2023-12-01
- * @brief       图片解码-jpeg/jpg解码 代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Image decoding - JPEG/JPG decoder
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -34,12 +34,12 @@
 #include "mjpeg.h"
 
 
-/* rgb565格式 */
+/* rgb565 format */
 typedef uint16_t pixel_jpeg;
 
-/* 函数声明 */
+/* Function declarations */
 esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int screenHeight, int * imageWidth, int * imageHeight);
 esp_err_t release_image(pixel_jpeg ***pixels, int screenWidth, int screenHeight);
-TickType_t jpeg_decode(const char *filename, int width, int height,lcd_write_cb lcd_cb); /* JPEG解码 */
+TickType_t jpeg_decode(const char *filename, int width, int height,lcd_write_cb lcd_cb); /* JPEG decoding */
 
 #endif

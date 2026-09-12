@@ -136,7 +136,7 @@ void audio_play(void)
     FF_DIR wavdir;                                              /* Table of contents */
     FILINFO *wavfileinfo;                                       /* File information */
     uint8_t *pname;                                             /* File name with path */
-    uint16_t totwavnum;                                         /* musicdocument总number */
+    uint16_t totwavnum;                                         /* Total number of music files */
     uint16_t curindex;                                          /* Current index */
     uint8_t key;                                                /* Key value */
     uint32_t temp;
@@ -145,9 +145,9 @@ void audio_play(void)
     es8388_adda_cfg(1, 0);                                      /* Turn on DAC to turn off ADC */
     es8388_output_cfg(1, 1);                                    /* DAC Select Channel 1 Output */
 
-    while (f_opendir(&wavdir, "0:/MUSIC"))                      /* Openmusicdocument夹 */
+    while (f_opendir(&wavdir, "0:/MUSIC"))                      /* Open the music folder */
     {
-        text_show_string(30, 190, 240, 16, "MUSICdocument夹mistake!", 16, 0, BLUE);
+        text_show_string(30, 190, 240, 16, "MUSIC folder error!", 16, 0, BLUE);
         vTaskDelay(200);
         lcd_fill(30, 190, 240, 206, WHITE);                     /* Clear the display */
         vTaskDelay(200);
@@ -155,7 +155,7 @@ void audio_play(void)
 
     totwavnum = audio_get_tnum((uint8_t *)"0:/MUSIC");          /* Get the total number of valid files */
     
-    while (totwavnum == NULL)                                   /* musicdocument总numberfor0 */
+    while (totwavnum == NULL)                                   /* Total number of music files is 0 */
     {
         text_show_string(30, 190, 240, 16, "Nomusicdocument!", 16, 0, BLUE);
         vTaskDelay(200);

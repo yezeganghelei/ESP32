@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        png.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK Team (ALIENTEK)
  * @version     V1.0
  * @date        2023-12-01
- * @brief       图片解码-png解码 代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Image decoding - PNG decoder
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -22,11 +22,11 @@
 
 
 /**
- * @brief       PNG解码数据存储到指定存储区
- * @param       pngle   : PNG句柄
- * @param       w       : 宽度
- * @param       h       : 高度
- * @retval      无
+ * @brief       Store PNG decoded data into the specified storage area
+ * @param       pngle   : PNG handle
+ * @param       w       : Width
+ * @param       h       : Height
+ * @retval      None
  */
 void png_init(pngle_t *pngle, uint32_t w, uint32_t h)
 {
@@ -35,7 +35,7 @@ void png_init(pngle_t *pngle, uint32_t w, uint32_t h)
     pngle->reduction = false;
     pngle->scale_factor = 1.0;
 
-    /* 计算折减 */
+    /* Calculate the reduction */
     if (pngle->screenWidth < pngle->imageWidth || pngle->screenHeight < pngle->imageHeight)
     {
         pngle->reduction = true;
@@ -49,14 +49,14 @@ void png_init(pngle_t *pngle, uint32_t w, uint32_t h)
 }
 
 /**
- * @brief       PNG解码数据存储到指定存储区
- * @param       pngle   : PNG句柄
- * @param       x       : x坐标
- * @param       y       : y坐标
- * @param       w       : 宽度
- * @param       h       : 高度
- * @param       rgb     : RGB颜色值
- * @retval      无
+ * @brief       Store PNG decoded data into the specified storage area
+ * @param       pngle   : PNG handle
+ * @param       x       : X coordinate
+ * @param       y       : Y coordinate
+ * @param       w       : Width
+ * @param       h       : Height
+ * @param       rgb     : RGB color value
+ * @retval      None
  */
 void png_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
 {
@@ -76,9 +76,9 @@ void png_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, ui
 }
 
 /**
- * @brief       PNG解码完成回调函数
- * @param       pngle   : PNG句柄
- * @retval      无
+ * @brief       PNG decode completion callback function
+ * @param       pngle   : PNG handle
+ * @retval      None
  */
 void png_finish(pngle_t *pngle)
 {
@@ -86,10 +86,10 @@ void png_finish(pngle_t *pngle)
 }
 
 /**
- * @brief       PNG图片解码
- * @param       filename      : 包含路径的文件名(.bmp/.jpg/.jpeg/.gif/.png等)
- * @param       width, height : 显示区域
- * @retval      返回BMP解码速度
+ * @brief       Decode a PNG image
+ * @param       filename      : File name with path (.bmp/.jpg/.jpeg/.gif/.png, etc.)
+ * @param       width, height : Display area
+ * @retval      Decoding speed
  */
 TickType_t png_decode(const char *filename, int width, int height,lcd_write_cb lcd_cb)
 {
@@ -103,11 +103,11 @@ TickType_t png_decode(const char *filename, int width, int height,lcd_write_cb l
     uint16_t _rows = 0;
     double display_gamma = 2.2;
     
-    /* 打开PNG文件 */
+    /* Open PNG file */
     FIL* fp;
     uint16_t len;
-    fp = (FIL *)malloc(sizeof(FIL));                /* 申请内存 */
-    f_open(fp, (const TCHAR *)filename, FA_READ);   /* 打开文件 */
+    fp = (FIL *)malloc(sizeof(FIL));                /* Allocate memory */
+    f_open(fp, (const TCHAR *)filename, FA_READ);   /* Open file */
 
     if (fp == NULL)
     {
@@ -115,7 +115,7 @@ TickType_t png_decode(const char *filename, int width, int height,lcd_write_cb l
         return 0;
     }
 
-    /* 初始化解码库并设置回调函数 */
+    /* Initialize the decoding library and set the callback functions */
     pngle_t *pngle = pngle_new(width, height);
     pngle_set_init_callback(pngle, png_init);
     pngle_set_draw_callback(pngle, png_draw);

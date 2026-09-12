@@ -17,13 +17,13 @@
 _calendar_obj calendar;         /* Time structure */
 
 /**
- * @brief       RTCSet time
+ * @brief       RTC set time
  * @param       year    :Year
- * @param       mon     :moon
+ * @param       mon     : Month
  * @param       mday    :day
  * @param       hour    :hour
- * @param       min     :point
- * @param       sec     :Second
+ * @param       min     : Minute
+ * @param       sec     : Second
  * @retval      none
  */
 void rtc_set_time(int year,int mon,int mday,int hour,int min,int sec)
@@ -37,10 +37,10 @@ void rtc_set_time(int year,int mon,int mday,int hour,int min,int sec)
     datetime.tm_min = min;
     datetime.tm_sec = sec;
     datetime.tm_isdst = -1;
-    /* Get1970.1.1Total seconds since */
+    /* Get total seconds since 1970-01-01 */
     time_t second = mktime(&datetime);
     struct timeval val = { .tv_sec = second, .tv_usec = 0 };
-    /* Set the currenthourbetween */
+    /* Set the current time */
     settimeofday(&val, NULL);
 }
 
@@ -53,28 +53,28 @@ void rtc_get_time(void)
 {
     struct tm *datetime;
     time_t second;
-    /* Returns the elapsed time (seconds) from (1970.1.1 00:00:00 UTC) */
+    /* Return the elapsed seconds since 1970-01-01 00:00:00 UTC */
     time(&second);
     datetime = localtime(&second);
 
-    calendar.hour = datetime->tm_hour;          /* hour */
-    calendar.min = datetime->tm_min;            /* point */
-    calendar.sec = datetime->tm_sec;            /* Second */
-    /* Gregorian calendarYearmoondayweek */
+    calendar.hour = datetime->tm_hour;          /* Hours */
+    calendar.min = datetime->tm_min;            /* Minutes */
+    calendar.sec = datetime->tm_sec;            /* Seconds */
+    /* Gregorian calendar year, month, day, week */
     calendar.year = datetime->tm_year + 1900;   /* Year */
-    calendar.month = datetime->tm_mon + 1;      /* moon */
-    calendar.date = datetime->tm_mday;          /* day */
-    /* week */
+    calendar.month = datetime->tm_mon + 1;      /* Month */
+    calendar.date = datetime->tm_mday;          /* Day */
+    /* Week */
     calendar.week = rtc_get_week(calendar.year, calendar.month, calendar.date);
 }
 
 /**
- * @brief       WillYearmoondayhourpointSecondConvert toSecondNumber of clocks
- *   @note      Enter the Gregorian calendardateGet the week(Starthourbetween为: A.D.0Year3moon1daystart, Enter any futuredate, All can get the correct week)
- *              use Kim Larsoncalculateformula calculate, See this post for explanation of the principle:
+ * @brief       Convert year, month, day, hour, minute, second to seconds
+ *   @note      Given a Gregorian date, get the day of week (epoch: 0 AD, March 1; any future date yields the correct weekday)
+ *              Calculated using Kim Larson's formula; see this post for the principle:
  *              https://www.cnblogs.com/fengbohello/p/3264300.html
  * @param       syear : years
- * @param       smon  : moonshare
+ * @param       smon  : Month
  * @param       sday  : date
  * @retval      0, Sunday; 1 ~ 6: Monday ~ Saturday
  */

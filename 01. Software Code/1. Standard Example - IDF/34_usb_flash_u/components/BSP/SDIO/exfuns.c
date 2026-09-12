@@ -189,9 +189,9 @@ uint8_t exfuns_get_free(uint8_t *pdrv, uint32_t *total, uint32_t *free)
  *                  pname:document/Foldersname
  *                  pct:percentage
  *                  mode:
- *                      bit0 : 更newdocumentname
- *                      bit1 : 更newpercentagepct
- *                      bit2 : 更newFolders
+ *                      bit0 : update file name
+ *                      bit1 : update percentage pct
+ *                      bit2 : update folder
  *                      other : reserve
  *                  Return value: 0, normal; 1, Mandatoryquit;
 
@@ -245,7 +245,7 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
 
         if (res == 0)           /* Both have been successfully opened */
         {
-            if (totsize == 0)   /* 仅仅yessingleFile Copy */
+            if (totsize == 0)   /* Single file copy only */
             {
                 totsize = fsrc->obj.objsize;
                 lcpdsize = 0;
@@ -256,7 +256,7 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
                 curpct = (lcpdsize * 100) / totsize;            /* have toarrivenewpercentage */
             }
             
-            fcpymsg(psrc, curpct, 0X02);                        /* 更newpercentage */
+            fcpymsg(psrc, curpct, 0X02);                        /* Update percentage */
 
             while (res == 0)    /* Start copying */
             {
@@ -271,7 +271,7 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
                 {
                     curpct = (lcpdsize * 100) / totsize;
 
-                    if (fcpymsg(psrc, curpct, 0X02))            /* 更newpercentage */
+                    if (fcpymsg(psrc, curpct, 0X02))            /* Update percentage */
                     {
                         res = 0XFF;                             /* Mandatoryquit */
                         break;
@@ -297,7 +297,7 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
  *   @note      Remove all the paths, Leave only the folder name.
  * @param       pname : Detailed path 
  * @retval      0   , The path is a volume number.
- *              other, Foldersname字首地址
+ *              other, starting address of the folder name
  */
 uint8_t *exfuns_get_src_dname(uint8_t *pname)
 {
@@ -318,7 +318,7 @@ uint8_t *exfuns_get_src_dname(uint8_t *pname)
 
 /**
  * @brief       have toarriveFolderssize
- *   @note      Notice: Folderssize不要超过4GB.
+ *   @note      Note: folder size must not exceed 4GB.
  * @param       pname : Detailed path 
  * @retval      0   , Folderssizefor0, orAn error occurred during reading.
  *              other, Folderssize
@@ -402,9 +402,9 @@ uint32_t exfuns_get_folder_size(uint8_t *fdname)
  *                  pname:document/Foldersname
  *                  pct:percentage
  *                  mode:
- *                      bit0 : 更newdocumentname
- *                      bit1 : 更newpercentagepct
- *                      bit2 : 更newFolders
+ *                      bit0 : update file name
+ *                      bit1 : update percentage pct
+ *                      bit2 : update folder
  *                      other : reserve
  *                  Return value: 0, normal; 1, Mandatoryquit;
 
@@ -473,7 +473,7 @@ uint8_t exfuns_folder_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_
                 }
                 else strcat((char *)dstpathname, (const char *)fn); /* Add file name */
 
-                fcpymsg(fn, 0, 0X04);   /* 更newFoldersname */
+                fcpymsg(fn, 0, 0X04);   /* Update folder name */
                 res = f_mkdir((const TCHAR *)dstpathname);  /* ifFoldersAlready exists,Do not create.Create a new folder if it does not exist. */
 
                 if (res == FR_EXIST)res = 0;
@@ -487,7 +487,7 @@ uint8_t exfuns_folder_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_
                     if (finfo->fname[0] == '.')continue;    /* Ignore the previous directory */
 
                     fn = (uint8_t *)finfo->fname;           /* get filename */
-                    dstpathlen = strlen((const char *)dstpathname); /* have toarrivewhen前target path的long度 */
+                    dstpathlen = strlen((const char *)dstpathname); /* Get the current target path length */
                     srcpathlen = strlen((const char *)srcpathname); /* have toarriveSource path length */
 
                     strcat((char *)srcpathname, (const char *)"/"); /* source pathAdd slashes */
@@ -502,7 +502,7 @@ uint8_t exfuns_folder_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_
                         strcat((char *)dstpathname, (const char *)"/"); /* target pathAdd slashes */
                         strcat((char *)dstpathname, (const char *)fn);  /* target pathAdd file name */
                         strcat((char *)srcpathname, (const char *)fn);  /* source pathAdd file name */
-                        fcpymsg(fn, 0, 0X01);       /* 更newdocumentname */
+                        fcpymsg(fn, 0, 0X01);       /* Update file name */
                         res = exfuns_file_copy(fcpymsg, srcpathname, dstpathname, *totsize, *cpdsize, fwmode);  /* Copy the file */
                         *cpdsize += finfo->fsize;   /* Increase a file size */
                     }

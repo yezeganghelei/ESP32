@@ -40,19 +40,19 @@ extern "C"
 
 	struct _ksdiy_ico
 	{
-		lv_obj_t *lv_wifi;	 //wifi图标
-		lv_obj_t *lv_clock;	 //闹钟图标
-		lv_obj_t *lv_button; //按键图标
-		lv_obj_t *lv_web;	 //mqtt图标
-		lv_obj_t *lv_temp;	 //mqtt图标
-		lv_obj_t *lv_kv;	 //mqtt图标
+		lv_obj_t *lv_wifi;	 //WiFi icon
+		lv_obj_t *lv_clock;	 //Alarm icon
+		lv_obj_t *lv_button; //Button icon
+		lv_obj_t *lv_web;	 //MQTT icon
+		lv_obj_t *lv_temp;	 //MQTT icon
+		lv_obj_t *lv_kv;	 //MQTT icon
 	};
 	struct _ksdiy_state
 	{
 		/* data */
 
-		uint8_t wifi : 4;		//wifi连接情况
-		uint8_t sys_button : 6; //切换button使用权
+		uint8_t wifi : 4;		//WiFi connection status
+		uint8_t sys_button : 6; //Switch button ownership
 		uint8_t clock : 1;
 		uint8_t web_set : 1;
 		uint8_t web_cam : 1;
@@ -87,12 +87,12 @@ extern "C"
 	struct _ksdiy_sys_t
 	{
 
-		struct _ksdiy_ico ico;	   //状态栏图标
-		struct _ksdiy_state state; //系统状态信息
-		lv_obj_t *lv_bsgbox;	   //信息通知盒
-		uint32_t user_data;		   //切换界面
-		lv_group_t *group;		   //按键组
-		struct _ksdiy_clock clock; //闹钟
+		struct _ksdiy_ico ico;	   //Status bar icons
+		struct _ksdiy_state state; //System state information
+		lv_obj_t *lv_bsgbox;	   //Notification box
+		uint32_t user_data;		   //Switch screen
+		lv_group_t *group;		   //Button group
+		struct _ksdiy_clock clock; //Alarm
 		struct tm timeinfo;
 		struct _ksdiy_fensi wp;
 	};

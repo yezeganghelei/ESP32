@@ -211,7 +211,7 @@ uint8_t gt9xxx_scan(uint8_t mode)
 
             if (tp_dev.x[0] > ltdcdev.width || tp_dev.y[0] > ltdcdev.height)            /* Illegal data(Coordinates exceed) */
             {
-                if ((mode & 0XF) > 1)                                                   /* There are other points and data,则复第二个触pointData of到第一个触point. */
+                if ((mode & 0XF) > 1)                                                   /* There are other points; copy the second touch point data to the first touch point */
                 {
                     tp_dev.x[0] = tp_dev.x[1];
                     tp_dev.y[0] = tp_dev.y[1];

@@ -18,7 +18,7 @@ struct jpeg_decompress_struct *cinfo;
 struct my_error_mgr *jerr;
 int Windows_Width = 0;
 int Windows_Height = 0;
-uint16_t imgoffx, imgoffy;                  /* Images inx,yDirection offset量 */
+uint16_t imgoffx, imgoffy;                  /* Image offset in the x and y directions */
 typedef struct my_error_mgr* my_error_ptr;
 
 /**
@@ -53,7 +53,7 @@ static portMUX_TYPE my_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
 /**
  * @brief       Decode a pairJPEGpicture
- * @param       buf: jpegdata流数组
+ * @param       buf: JPEG data stream array
  * @param       bsize: Array size
  * @retval      0,success; 1,fail
  */
@@ -113,10 +113,10 @@ uint8_t mjpegdec_decode(uint8_t* buf, uint32_t bsize)
 
     lcd_set_window(imgoffx, imgoffy - 30, imgoffx + cinfo->output_width - 1, imgoffy - 30 + cinfo->output_height - 1);
     taskENTER_CRITICAL(&my_spinlock);
-    /* For example：96*96*2/1536 = 12;point12SendRGBdata */
+    /* For example: 96*96*2/1536 = 12; send RGB data in 12 chunks */
     for(int x = 0; x < (cinfo->output_width * cinfo->output_height * 2 / LCD_BUF_SIZE); x++)
     {
-        /* &lcd_buf[j * LCD_BUF_SIZE] 偏移地址发送data */
+        /* Send data at offset address &lcd_buf[j * LCD_BUF_SIZE] */
         lcd_write_data(&lcd_buf[x * LCD_BUF_SIZE] , LCD_BUF_SIZE);
     }
     

@@ -4,7 +4,7 @@
  * @author      
  * @version     V1.0
  * @date        2023-08-26
- * @brief       RTCDriver code
+ * @brief       RTC driver code
  * @license     Copyright (c) 2020-2032, 
  ****************************************************************************************************
  * @attention
@@ -20,24 +20,24 @@
 #include "freertos/task.h"
 #include <sys/time.h>
 
-/* hourbetween结构体, includeYearmoondayweekhourpointSecondWait for information */
+/* Time structure containing year, month, day, week, hour, minute, second, etc. */
 typedef struct
 {
-    uint8_t hour;       /* hour */
-    uint8_t min;        /* point */
-    uint8_t sec;        /* Second */
-    /* Gregorian calendarYearmoondayweek */
+    uint8_t hour;       /* Hours */
+    uint8_t min;        /* Minutes */
+    uint8_t sec;        /* Seconds */
+    /* Gregorian calendar year, month, day, week */
     uint16_t year;      /* Year */
-    uint8_t  month;     /* moon */
-    uint8_t  date;      /* day */
-    uint8_t  week;      /* week */
+    uint8_t  month;     /* Month */
+    uint8_t  date;      /* Day */
+    uint8_t  week;      /* Week */
 } _calendar_obj;
 
-extern _calendar_obj calendar;      /* hourbetween结构体 */
+extern _calendar_obj calendar;      /* Time structure */
 
 /* Function declaration */
-void rtc_set_time(int year,int mon,int mday,int hour,int min,int sec);  /* set uphourbetween */
-void rtc_get_time(void);                                                /* Gethourbetween */
-uint8_t rtc_get_week(uint16_t year, uint8_t month, uint8_t day);        /* GetweekSeveral */
+void rtc_set_time(int year,int mon,int mday,int hour,int min,int sec);  /* Set time */
+void rtc_get_time(void);                                                /* Get time */
+uint8_t rtc_get_week(uint16_t year, uint8_t month, uint8_t day);        /* Get day of week */
 
 #endif

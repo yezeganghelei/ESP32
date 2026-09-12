@@ -15,12 +15,12 @@
 #ifndef __LTDCFONT_H
 #define __LTDCFONT_H
 
-/* Commonly usedASCIIsurface
- * Offset32 
- * ASCIICharacter Set: !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
- * PC2LCD2002Modification method setting：Occurrence code+Listed formula+Direct+C51Format
- * Total：3indivualCharacter Set（12*12、16*16、24*24and32*32），Users can add other resolutionsCharacter Set。
- * The number of bytes occupied by each character is:(size/8+((size%8)?1:0))*(size/2),insize:yesFont library生成时的lattice大小(12/16/24/32...) */
+/* Commonly used ASCII dot matrix
+ * Offset 32
+ * ASCII character set: !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+ * PC2LCD2002 extraction settings: negative code + column-by-column + forward + C51 format
+ * Total: 4 character sets (12*12, 16*16, 24*24 and 32*32); users can add other resolutions.
+ * The number of bytes occupied by each character is: (size/8+((size%8)?1:0))*(size/2), where size is the dot matrix size used when generating the font (12/16/24/32...) */
 
 /* 12*12 ASCII character set dot matrix */
 const unsigned char asc2_1206[95][12]={

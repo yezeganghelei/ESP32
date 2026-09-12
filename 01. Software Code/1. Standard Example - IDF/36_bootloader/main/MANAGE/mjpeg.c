@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        mjpeg.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK Team (ALIENTEK)
  * @version     V1.0
  * @date        2023-12-01
- * @brief       MJPEG视频处理 代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       MJPEG video processing
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -26,13 +26,13 @@ struct jpeg_decompress_struct *cinfo;
 struct my_error_mgr *jerr;
 int Windows_Width = 0;
 int Windows_Height = 0;
-uint16_t imgoffx, imgoffy;                  /* 图像在x,y方向的偏移量 */
+uint16_t imgoffx, imgoffy;                  /* Image offset in the x and y directions */
 typedef struct my_error_mgr* my_error_ptr;
 
 /**
- * @brief       错误退出
- * @param       cinfo   : JPEG编码解码控制结构体
- * @retval      无
+ * @brief       Error exit
+ * @param       cinfo   : JPEG codec control structure
+ * @retval      None
  */
 METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 {
@@ -42,10 +42,10 @@ METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 }
 
 /**
- * @brief       发出消息
- * @param       cinfo       : JPEG编码解码控制结构体
- * @param       msg_level   : 消息等级
- * @retval      无
+ * @brief       Emit a message
+ * @param       cinfo       : JPEG codec control structure
+ * @param       msg_level   : Message level
+ * @retval      None
  */
 METHODDEF(void) my_emit_message(j_common_ptr cinfo, int msg_level)
 {
@@ -58,9 +58,9 @@ METHODDEF(void) my_emit_message(j_common_ptr cinfo, int msg_level)
 }
 
 /**
- * @brief       申请视频内存
- * @param       无
- * @retval      无
+ * @brief       Allocate video memory
+ * @param       None
+ * @retval      None
  */
 void mjpegdec_malloc(void)
 {
@@ -68,9 +68,9 @@ void mjpegdec_malloc(void)
 }
 
 /**
- * @brief       释放视频内存
- * @param       无
- * @retval      无
+ * @brief       Free video memory
+ * @param       None
+ * @retval      None
  */
 void mjpegdec_video_free(void)
 {
@@ -79,25 +79,25 @@ void mjpegdec_video_free(void)
 }
 
 /**
- * @brief       解码一副JPEG图片
- * @param       buf: jpeg数据流数组
- * @param       bsize: 数组大小
- * @retval      0,成功; 1,失败
+ * @brief       Decode one JPEG image
+ * @param       buf: JPEG data stream array
+ * @param       bsize: Array size
+ * @retval      0, success; 1, failure
  */
 uint8_t mjpegdec_decode(uint8_t* buf, uint32_t bsize,lcd_write_cb lcd_cb)
 {
     JSAMPARRAY buffer;
     if (bsize == 0) return 1;
     int row_stride = 0;
-    int j = 0;                      /* 记录当前解码的行数 */
-    int lineR = 0;                  /* 每一行R分量的起始位置 */
+    int j = 0;                      /* Record the current decoded row count */
+    int lineR = 0;                  /* Start position of the R component in each row */
     
     cinfo->err = jpeg_std_error(&jerr->pub);
     jerr->pub.error_exit = my_error_exit;
     jerr->pub.emit_message = my_emit_message;
     cinfo->out_color_space = JCS_RGB;
 
-    if (setjmp(jerr->setjmp_buffer)) /* 错误处理 */
+    if (setjmp(jerr->setjmp_buffer)) /* Error handling */
     {
         jpeg_abort_decompress(cinfo);
         jpeg_destroy_decompress(cinfo);
@@ -106,14 +106,14 @@ uint8_t mjpegdec_decode(uint8_t* buf, uint32_t bsize,lcd_write_cb lcd_cb)
 
     jpeg_create_decompress(cinfo);
 
-    jpeg_mem_src(cinfo, buf, bsize);    /* 测试正常 */
+    jpeg_mem_src(cinfo, buf, bsize);    /* Works as expected */
     jpeg_read_header(cinfo, TRUE);
 
     jpeg_start_decompress(cinfo); 
 
     row_stride = cinfo->output_width * cinfo->output_components;
 
-    /* 计算buffer大小并申请相应空间 */
+    /* Calculate the buffer size and allocate the corresponding space */
     buffer = (*cinfo->mem->alloc_sarray)
         ((j_common_ptr)cinfo, JPOOL_IMAGE, row_stride, 1);
     
@@ -124,7 +124,7 @@ uint8_t mjpegdec_decode(uint8_t* buf, uint32_t bsize,lcd_write_cb lcd_cb)
         jpeg_read_scanlines(cinfo, buffer, 1);
         unsigned short tmp_color565;
 
-        /* 为上述图像数据赋值 */
+        /* Assign values for the above image data */
         for (int k = 0; k < Windows_Width * 2; k += 2)
         {
             tmp_color565 = rgb565(buffer[0][i],buffer[0][i + 1],buffer[0][i + 2]);
@@ -146,9 +146,9 @@ uint8_t mjpegdec_decode(uint8_t* buf, uint32_t bsize,lcd_write_cb lcd_cb)
 }
 
 /**
- * @brief       mjpeg 解码初始化
- * @param       offx,offy:x,y方向的偏移
- * @retval      0,成功; 1,失败
+ * @brief       MJPEG decoding initialization
+ * @param       offx,offy: Offset in the x and y directions
+ * @retval      0, success; 1, failure
  */
 char mjpegdec_init(uint16_t offx, uint16_t offy)
 {
@@ -164,7 +164,7 @@ char mjpegdec_init(uint16_t offx, uint16_t offy)
         return -1;
     }
 
-    /* 保存图像在x,y方向的偏移量 */
+    /* Save the image offset in the x and y directions */
     imgoffx = offx;
     imgoffy = offy;
 
@@ -172,9 +172,9 @@ char mjpegdec_init(uint16_t offx, uint16_t offy)
 }
 
 /**
- * @brief       mjpeg结束,释放内存
- * @param       无
- * @retval      无
+ * @brief       MJPEG end, free memory
+ * @param       None
+ * @retval      None
  */
 void mjpegdec_free(void)
 {

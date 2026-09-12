@@ -19,7 +19,7 @@ QueueHandle_t queue;
 /**
  * @brief       Initialize the general timer
  * @param       counts: Count value
- * @param       resolution: Timer cycle，resolution = 1s = 1000000μs（Here，The timer takes microseconds as the calculation unit，）
+ * @param       resolution: Timer period; resolution = 1s = 1000000us (the timer uses microseconds as its unit)
  * @retval      none
  */
 void gptim_int_init(uint16_t counts, uint32_t resolution)
@@ -34,16 +34,16 @@ void gptim_int_init(uint16_t counts, uint32_t resolution)
     gptimer_handle_t g_tim = NULL;
     gptimer_config_t g_tim_handle = {
         .clk_src = GPTIMER_CLK_SRC_DEFAULT,                                             /* Select the timer clock source */   
-        .direction = GPTIMER_COUNT_UP,                                                  /* Incremental Count Mode */
+        .direction = GPTIMER_COUNT_UP,                                                  /* Count-up mode */
         .resolution_hz = resolution,                                                    /* Counter resolution */
     };
         gptimer_event_callbacks_t g_tim_callbacks = {
         .on_alarm = gptimer_callback,                                                   /* Register user callback function */ 
     };
-    alarm_config.alarm_count = 1000000;                                                 /* Alarm targetCount value */
-    ESP_ERROR_CHECK(gptimer_new_timer(&g_tim_handle, &g_tim));                          /* Create a new universal timer，and return the handle */
+    alarm_config.alarm_count = 1000000;                                                 /* Alarm target count value */
+    ESP_ERROR_CHECK(gptimer_new_timer(&g_tim_handle, &g_tim));                          /* Create a new general-purpose timer and return the handle */
 
-    queue = xQueueCreate(10, sizeof(gptimer_event_t));                                  /* Create a queue，and introduce an event */
+    queue = xQueueCreate(10, sizeof(gptimer_event_t));                                  /* Create a queue to carry events */
 
     if (!queue)
     {
@@ -52,11 +52,11 @@ void gptim_int_init(uint16_t counts, uint32_t resolution)
         return;
     }
 
-    /* set up和GetCount value */
+    /* Set and get the count value */
     ESP_LOGI("GPTIMER_ALARM", "set upCount value");
-    ESP_ERROR_CHECK(gptimer_set_raw_count(g_tim, counts));                              /* set upCount value */
+    ESP_ERROR_CHECK(gptimer_set_raw_count(g_tim, counts));                              /* Set the count value */
     ESP_LOGI("GPTIMER_ALARM", "GetCount value");
-    ESP_ERROR_CHECK(gptimer_get_raw_count(g_tim, &count));                              /* GetCount value */
+    ESP_ERROR_CHECK(gptimer_get_raw_count(g_tim, &count));                              /* Get the count value */
     ESP_LOGI("GPTIMER_ALARM", "Timer Count value: %llu", count);
 
     /* Register event callback function */
@@ -65,7 +65,7 @@ void gptim_int_init(uint16_t counts, uint32_t resolution)
     /* Set alarm action */
     ESP_LOGI("GPTIMER_ALARM", "Enable general-purpose timer");
     ESP_ERROR_CHECK(gptimer_enable(g_tim));                                             /* Enable general-purpose timer */
-    ESP_ERROR_CHECK(gptimer_set_alarm_action(g_tim, &alarm_config));                    /* Configure a universal timerAlarm incident */
+    ESP_ERROR_CHECK(gptimer_set_alarm_action(g_tim, &alarm_config));                    /* Configure the general-purpose timer alarm event */
     ESP_ERROR_CHECK(gptimer_start(g_tim));                                              /* Start the universal timer */
 }
 
@@ -79,7 +79,7 @@ bool IRAM_ATTR gptimer_callback(gptimer_handle_t timer, const gptimer_alarm_even
     BaseType_t high_task_awoken = pdFALSE;
     queue = (QueueHandle_t)user_data;
 
-    /* Search from event dataCount value */
+    /* Extract the count value from the event data */
     gptimer_event_t ele = {
         .event_count = edata->count_value
     };
@@ -93,6 +93,6 @@ bool IRAM_ATTR gptimer_callback(gptimer_handle_t timer, const gptimer_alarm_even
     };
     gptimer_set_alarm_action(timer, &alarm_config);
     
-    /* Returns whether it is necessary to make concessions at the end of the ISR */ 
+    /* Return whether a context switch is required at the end of the ISR */ 
     return high_task_awoken == pdTRUE;
 }

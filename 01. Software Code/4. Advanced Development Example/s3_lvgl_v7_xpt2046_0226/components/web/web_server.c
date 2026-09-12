@@ -11,7 +11,7 @@
 static const char *TAG = "WEB";
 
 
-httpd_handle_t server ;//文件服务句柄
+httpd_handle_t server ;// File server handle
 
 esp_err_t index_html_get_handler(httpd_req_t *req)
 {
@@ -138,7 +138,7 @@ esp_err_t http_resp_dir_html(httpd_req_t *req, const char *dirpath)
         httpd_resp_sendstr_chunk(req, "<form method=\"post\" action=\"/delete");
         httpd_resp_sendstr_chunk(req, req->uri);
         httpd_resp_sendstr_chunk(req, entry->d_name);
-        httpd_resp_sendstr_chunk(req, "\"><button type=\"submit\">删除</button></form>");
+        httpd_resp_sendstr_chunk(req, "\"><button type=\"submit\">Delete</button></form>");
         httpd_resp_sendstr_chunk(req, "</td></tr>\n");
     }
     closedir(dir);
@@ -204,13 +204,13 @@ const char* get_path_from_uri(char *dest, const char *base_path, const char *uri
 }
 
 /* Handler to download a file kept on the server */
-esp_err_t download_get_handler(httpd_req_t *req)//下载回调函数
+esp_err_t download_get_handler(httpd_req_t *req)// Download callback function
 {
-    char filepath[FILE_PATH_MAX];//文件路径
-    FILE *fd = NULL;//文件
+    char filepath[FILE_PATH_MAX];// File path
+    FILE *fd = NULL;// File
     struct stat file_stat;
 
-    const char *filename = get_path_from_uri(filepath, ((struct file_server_data *)req->user_ctx)->base_path,//从url中获取路径
+    const char *filename = get_path_from_uri(filepath, ((struct file_server_data *)req->user_ctx)->base_path,// Get the path from the URL
                                              req->uri, sizeof(filepath));
     if (!filename) {
         ESP_LOGE(TAG, "Filename is too long");
@@ -224,13 +224,13 @@ esp_err_t download_get_handler(httpd_req_t *req)//下载回调函数
         return http_resp_dir_html(req, filepath);
     }
 
-    if (stat(filepath, &file_stat) == -1) {//判断是否存在该文件，如果不存在则为特殊请求
+    if (stat(filepath, &file_stat) == -1) {// Check whether the file exists; if not, treat as a special request
         /* If file not present on SPIFFS check if URI
          * corresponds to one of the hardcoded paths */
         if (strcmp(filename, "/index.html") == 0) {
-            return index_html_get_handler(req);//主界面
+            return index_html_get_handler(req);// Main page
         } else if (strcmp(filename, "/favicon.ico") == 0) {
-            return favicon_get_handler(req);//图标
+            return favicon_get_handler(req);// Icon
         }
         ESP_LOGE(TAG, "Failed to stat file : %s", filepath);
         /* Respond with 404 Not Found */
@@ -238,7 +238,7 @@ esp_err_t download_get_handler(httpd_req_t *req)//下载回调函数
         return ESP_FAIL;
     }
 
-    fd = fopen(filepath, "r");//存在该文件
+    fd = fopen(filepath, "r");// File exists
     if (!fd) {
         ESP_LOGE(TAG, "Failed to read existing file : %s", filepath);
         /* Respond with 500 Internal Server Error */
@@ -431,13 +431,13 @@ esp_err_t delete_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-/* 开启文件服务 */
+/* Start the file service */
 struct file_server_data *server_data = NULL;
-esp_err_t start_file_server(const char *base_path)//开启文件服务
+esp_err_t start_file_server(const char *base_path)// Start the file service
 {
 
 
-    /* 检查路径 */
+    /* Check the path */
     if (!base_path || strcmp(base_path, "/spiffs") != 0) {
         ESP_LOGE(TAG, "File server presently supports only '/spiffs' as base path");
         return ESP_ERR_INVALID_ARG;
@@ -448,39 +448,39 @@ esp_err_t start_file_server(const char *base_path)//开启文件服务
         return ESP_ERR_INVALID_STATE;
     }
 
-    /* 分配动态内存 */
+    /* Allocate dynamic memory */
     server_data = calloc(1, sizeof(struct file_server_data));
     if (!server_data) {
         ESP_LOGE(TAG, "Failed to allocate memory for server data");
         return ESP_ERR_NO_MEM;
     }
     strlcpy(server_data->base_path, base_path,
-            sizeof(server_data->base_path));//拷贝文件路径到结构体
+            sizeof(server_data->base_path));// Copy the file path into the structure
 
     
-    httpd_config_t config = HTTPD_DEFAULT_CONFIG();//http配置
+    httpd_config_t config = HTTPD_DEFAULT_CONFIG();// HTTP configuration
 
     /* Use the URI wildcard matching function in order to
      * allow the same handler to respond to multiple different
      * target URIs which match the wildcard scheme */
-    config.uri_match_fn = httpd_uri_match_wildcard;//匹配函数
+    config.uri_match_fn = httpd_uri_match_wildcard;// Matching function
 
     ESP_LOGI(TAG, "Starting HTTP Server");
-    if (httpd_start(&server, &config) != ESP_OK) {//http服务开启
+    if (httpd_start(&server, &config) != ESP_OK) {// Start the HTTP service
         ESP_LOGE(TAG, "Failed to start file server!");
         return ESP_FAIL;
     }
 
-    /* 下载文件配置 */
+    /* Download file configuration */
     httpd_uri_t file_download = {
         .uri       = "/*",  // Match all URIs of type /path/to/file
         .method    = HTTP_GET,
         .handler   = download_get_handler,
         .user_ctx  = server_data    // Pass server data as context
     };
-    httpd_register_uri_handler(server, &file_download);//注册回调函数
+    httpd_register_uri_handler(server, &file_download);// Register callback function
 
-    /* 上传文件配置 */
+    /* Upload file configuration */
     httpd_uri_t file_upload = {
         .uri       = "/upload/*",   // Match all URIs of type /upload/path/to/file
         .method    = HTTP_POST,
@@ -489,7 +489,7 @@ esp_err_t start_file_server(const char *base_path)//开启文件服务
     };
     httpd_register_uri_handler(server, &file_upload);
 
-    /* 删除文件配置 */
+    /* Delete file configuration */
     httpd_uri_t file_delete = {
         .uri       = "/delete/*",   // Match all URIs of type /delete/path/to/file
         .method    = HTTP_POST,
@@ -513,13 +513,13 @@ void stop_webserver()
     {
         //httpd_unregister_uri_handler();
         httpd_stop(server); 
-        free(server_data);//释放内存
+        free(server_data);// Free memory
         server=NULL;
         server_data=NULL;
-        ESP_LOGI("WEB","web服务关闭");       
+        ESP_LOGI("WEB","Web service stopped");       
     }else
     {
-        ESP_LOGI("WEB","web服务已关闭"); 
+        ESP_LOGI("WEB","Web service already stopped"); 
     }
     
 }

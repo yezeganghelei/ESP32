@@ -35,7 +35,7 @@
 
 lv_obj_t *cont_time;
 uint8_t lvgl_init_finish = 0;
-/*Give with timerLVGLProvide clock*/
+/*Use a timer to provide LVGL with its clock tick*/
 static void lv_tick_task(void *arg)
 {
     (void)arg;
@@ -51,7 +51,7 @@ void button_task(void *arg)
     }
 }
 camera_fb_t *fb;
-lv_obj_t *img_cam; // 要show图像
+lv_obj_t *img_cam; // Image to display
 lv_img_dsc_t img_dsc = {
     .header.always_zero = 0,
     .header.w = 96,
@@ -121,7 +121,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         printf("Toggled\n");
     }
 }
-/*create一个按钮*/
+/*Create a button*/
 void lv_ex_btn_1(void)
 {
     lv_obj_t *btn1 = lv_btn_create(cont_time, NULL);
@@ -149,13 +149,13 @@ static void gui_task(void *arg)
     xGuiSemaphore = xSemaphoreCreateMutex();
     lv_init(); // lvgl kernel initialization
 
-    lvgl_driver_init(); // lvglshow接口initialization
+    lvgl_driver_init(); // lvgl display interface initialization
     // Apply for two buffers for lvgl to refresh the screen
-    /*externalPSRAMWay*/
+    /*External PSRAM mode*/
     // lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     // lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 
-    /*internalDMAWay*/
+    /*Internal DMA mode*/
     lv_color_t *buf1 = heap_caps_malloc(DISP_BUF_SIZE * 2 * sizeof(lv_color_t), MALLOC_CAP_DMA);
     lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * 2 * sizeof(lv_color_t), MALLOC_CAP_DMA);
 
@@ -209,7 +209,7 @@ static void gui_task(void *arg)
         }
     }
 }
-/*showspiffsAll file names of*/
+/*Show all file names in spiffs*/
 static void SPIFFS_Directory(char *path)
 {
     DIR *dir = opendir(path);
@@ -239,7 +239,7 @@ void app_main(void)
         .gyro_y = 0,
         .gyro_z = 0,
     };
-    /*initializationspiffsfor storage字体文件或者图片文件或者网页文件*/
+    /*Initialize SPIFFS for storing font, image, or web files*/
     ESP_LOGI(TAG, "Initializing SPIFFS");
     esp_vfs_spiffs_conf_t conf = {
         .base_path = "/spiffs",
@@ -257,10 +257,10 @@ void app_main(void)
             ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
         return;
     }
-    /*showspiffsfile list in*/
+    /*Show the file list in spiffs*/
     SPIFFS_Directory("/spiffs/");
 
-    // initializationnvsfor storagewifiOr other things that need to be saved after power off
+    // Initialize NVS for storing WiFi or other data that must persist across power-off
     ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
     {
@@ -285,7 +285,7 @@ void app_main(void)
 
             vTaskDelay(100);
             // bsp_i2c_master_deinit();
-            /*initializationWS2812 */
+            /*Initialize WS2812 */
             app_led_init(GPIO_RMT_LED);
             vTaskDelay(500);
             app_led_set_all(255, 0, 0);
@@ -337,7 +337,7 @@ void app_main(void)
     }
     adc_init();
     printf("adc_value: %d\n", get_adc());
-    /*create按键任务 Scan key values ​​regularly*/
+    /*create button task; scan key values regularly*/
     xTaskCreatePinnedToCore(&button_task, "button_task", 1024 * 3, NULL, 8, NULL, 0);
     lv_label_set_text(label_test, strcat(init_str, "Speech Init ok...\nPlease say 'Hi Lexin'\n"));
     /*Initialize voice wake-up recognition task*/

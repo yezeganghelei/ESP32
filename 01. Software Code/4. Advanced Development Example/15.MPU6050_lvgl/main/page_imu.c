@@ -22,7 +22,7 @@ static lv_obj_t *labelTitle;
 
 /*Title bar divider*/
 static lv_obj_t *lineTitle;
-/*Icon display container，for cropped display*/
+/*Icon display container, for cropped display*/
 static lv_obj_t *contDisp;
 
 uint8_t imu_en = 0;
@@ -47,11 +47,11 @@ static void imu_tick_inc_cb(void *arg)
 {
     mpu6050_get_motion(&accel, &gyro);
     // printf("ax:%d;ay:%d;az:%d", accel.accel_x, accel.accel_y, accel.accel_z);
-    Gyro_deg.x = gyro.gyro_x * 0.0610361f; //  /65535 * 4000; +-2000Spend
+    Gyro_deg.x = gyro.gyro_x * 0.0610361f; //  /65535 * 4000; +-2000 deg/s
     Gyro_deg.y = gyro.gyro_y * 0.0610361f;
     Gyro_deg.z = gyro.gyro_z * 0.0610361f;
 
-    /*加速Spend计转换到毫米每平方秒*/
+    /*Convert accelerometer readings to mm/s^2*/
     Acc_mmss.x = accel.accel_x * 2.392615f; //   /65535 * 16*9800; +-8G
     Acc_mmss.y = accel.accel_y * 2.392615f;
     Acc_mmss.z = accel.accel_z * 2.392615f;
@@ -109,7 +109,7 @@ void Imu_Task(void *pvParameters)
             // Gyro_deg.y = gyro.gyro_y * 0.0610361f;
             // Gyro_deg.z = gyro.gyro_z * 0.0610361f;
 
-            // /*加速Spend计转换到毫米每平方秒*/
+            // /*Convert accelerometer readings to mm/s^2*/
             // Acc_mmss.x = accel.accel_x * 2.392615f; //   /65535 * 16*9800; +-8G
             // Acc_mmss.y = accel.accel_y * 2.392615f;
             // Acc_mmss.z = accel.accel_z * 2.392615f;
@@ -146,7 +146,7 @@ static void Title_Create()
     lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
     lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
     lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-    lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); // set up屏幕背景
+    lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); // Set the screen background
     lv_obj_add_style(appWindow, LV_BTN_PART_MAIN, &style_cont);           /*Default button style*/
     lv_obj_set_pos(appWindow, 0, 0);
     lv_obj_set_size(appWindow, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -206,7 +206,7 @@ static void Cont_create(void)
     lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
     lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
     lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-    lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); // set up屏幕背景
+    lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); // Set the screen background
     lv_obj_add_style(contDisp, LV_BTN_PART_MAIN, &style_cont);            /*Default button style*/
     lv_obj_set_size(contDisp, APP_WIN_WIDTH, APP_WIN_HEIGHT - 60);
     lv_obj_set_pos(contDisp, 0, 60);
@@ -233,7 +233,7 @@ static void Cont_create(void)
     lv_obj_set_style_local_bg_main_stop(chart_imu, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, 0); /*Max opa on the top*/
     lv_obj_set_style_local_bg_grad_stop(chart_imu, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, 0); /*Transparent on the bottom*/
 
-    // 6.13 set up y 轴的主刻Spend标题和每个主刻Spend标题间的刻Spend数
+    // 6.13 Set the y-axis major tick labels and the number of ticks between each major tick
 
     lv_chart_set_y_tick_texts(chart_imu, "180\n150\n120\n90\n60\n30\n0", 7, LV_CHART_AXIS_DRAW_LAST_TICK);
     series = lv_chart_add_series(chart_imu, LV_COLOR_RED);

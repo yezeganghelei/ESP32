@@ -26,86 +26,86 @@ LV_IMG_DECLARE(weather35);
 LV_IMG_DECLARE(weather36);
 LV_IMG_DECLARE(weather40);
 // const struct WEATHER weather[40]={//https://docs.seniverse.com/api/start/code.html
-//     {"晴","0.png"},//0
-//     {"晴","1.png"},
-//     {"晴","0.png"},
-//     {"晴","1.png"},//3
-//     {"多云","4.png"},//4
-//     {"晴间多云","5.png"},//5
-//     {"晴间多云","6.png"},//6
-//     {"大部多云","5.png"},//7
-//     {"大部多云","6.png"},//8
-//     {"阴","4.png"},//9
-//     {"阵雨","10.png"},//10
-//     {"雷阵雨","11.png"},//11
-//     {"雷雨冰雹","12.png"},//12
-//     {"小雨","13.png"},//13
-//     {"中雨","14.png"},//14
-//     {"大雨","16.png"},//15
-//     {"暴雨","16.png"},//16
-//     {"大暴雨","15.png"},//17
-//     {"特大暴雨","18.png"},//18
-//     {"冻雨","19.png"},//19
-//     {"雨夹雪","20.png"},//20
-//     {"阵雪","21.png"},//21
-//     {"小雪","22.png"},//22
-//     {"中雪","23.png"},//23
-//     {"大雪","24.png"},//24
-//     {"暴雪","24.png"},//25
-//     {"浮尘","26.png"},//26
-//     {"扬沙","26.png"},//27
-//     {"沙尘暴","28.png"},//28
-//     {"强沙尘暴","28.png"},//29
-//     {"雾","30.png"},//30
-//     {"霾","31.png"},//31
-//     {"风","32.png"},//32
-//     {"大风","32.png"},//33
-//     {"飓风","32.png"},//34
-//     {"热带风","35.png"},//35
-//     {"龙卷风","36.png"},//36
-//     {"冷","40.png"},//37
-//     {"热","40.png"},//38
-//     {"未知","40.png"},//39
+//     {"Sunny","0.png"},//0
+//     {"Sunny","1.png"},
+//     {"Sunny","0.png"},
+//     {"Sunny","1.png"},//3
+//     {"Cloudy","4.png"},//4
+//     {"Partly Cloudy","5.png"},//5
+//     {"Partly Cloudy","6.png"},//6
+//     {"Mostly Cloudy","5.png"},//7
+//     {"Mostly Cloudy","6.png"},//8
+//     {"Overcast","4.png"},//9
+//     {"Shower","10.png"},//10
+//     {"Thunder Shower","11.png"},//11
+//     {"Thunderstorm with Hail","12.png"},//12
+//     {"Light Rain","13.png"},//13
+//     {"Moderate Rain","14.png"},//14
+//     {"Heavy Rain","16.png"},//15
+//     {"Rainstorm","16.png"},//16
+//     {"Heavy Rainstorm","15.png"},//17
+//     {"Severe Rainstorm","18.png"},//18
+//     {"Freezing Rain","19.png"},//19
+//     {"Sleet","20.png"},//20
+//     {"Snow Shower","21.png"},//21
+//     {"Light Snow","22.png"},//22
+//     {"Moderate Snow","23.png"},//23
+//     {"Heavy Snow","24.png"},//24
+//     {"Snowstorm","24.png"},//25
+//     {"Dust","26.png"},//26
+//     {"Sand","26.png"},//27
+//     {"Sandstorm","28.png"},//28
+//     {"Severe Sandstorm","28.png"},//29
+//     {"Fog","30.png"},//30
+//     {"Haze","31.png"},//31
+//     {"Windy","32.png"},//32
+//     {"Strong Wind","32.png"},//33
+//     {"Hurricane","32.png"},//34
+//     {"Tropical Storm","35.png"},//35
+//     {"Tornado","36.png"},//36
+//     {"Cold","40.png"},//37
+//     {"Hot","40.png"},//38
+//     {"Unknown","40.png"},//39
 // };
 const struct LV_WEATHER lv_weather[40]={//https://docs.seniverse.com/api/start/code.html
-    {"晴",&weather0},//0
-    {"晴",&weather1},
-    {"晴",&weather0},
-    {"晴",&weather1},//3
-    {"多云",&weather4},//4
-    {"晴间多云",&weather5},//5
-    {"晴间多云",&weather6},//6
-    {"大部多云",&weather5},//7
-    {"大部多云",&weather6},//8
-    {"阴",&weather4},//9
-    {"阵雨",&weather10},//10
-    {"雷阵雨",&weather11},//11
-    {"雷雨冰雹",&weather11},//12
-    {"小雨",&weather13},//13
-    {"中雨",&weather14},//14
-    {"大雨",&weather16},//15
-    {"暴雨",&weather16},//16
-    {"大暴雨",&weather15},//17
-    {"特大暴雨",&weather15},//18
-    {"冻雨",&weather19},//19
-    {"雨夹雪",&weather20},//20
-    {"阵雪",&weather21},//21
-    {"小雪",&weather22},//22
-    {"中雪",&weather23},//23
-    {"大雪",&weather24},//24
-    {"暴雪",&weather24},//25
-    {"浮尘",&weather26},//26
-    {"扬沙",&weather26},//27
-    {"沙尘暴",&weather28},//28
-    {"强沙尘暴",&weather28},//29
-    {"雾",&weather30},//30
-    {"霾",&weather32},//31
-    {"风",&weather32},//32
-    {"大风",&weather32},//33
-    {"飓风",&weather32},//34
-    {"热带风",&weather35},//35
-    {"龙卷风",&weather36},//36
-    {"冷",&weather40},//37
-    {"热",&weather40},//38
-    {"未知",&weather40},//39
+    {"Sunny",&weather0},//0
+    {"Sunny",&weather1},
+    {"Sunny",&weather0},
+    {"Sunny",&weather1},//3
+    {"Cloudy",&weather4},//4
+    {"Partly Cloudy",&weather5},//5
+    {"Partly Cloudy",&weather6},//6
+    {"Mostly Cloudy",&weather5},//7
+    {"Mostly Cloudy",&weather6},//8
+    {"Overcast",&weather4},//9
+    {"Shower",&weather10},//10
+    {"Thunder Shower",&weather11},//11
+    {"Thunderstorm with Hail",&weather11},//12
+    {"Light Rain",&weather13},//13
+    {"Moderate Rain",&weather14},//14
+    {"Heavy Rain",&weather16},//15
+    {"Rainstorm",&weather16},//16
+    {"Heavy Rainstorm",&weather15},//17
+    {"Severe Rainstorm",&weather15},//18
+    {"Freezing Rain",&weather19},//19
+    {"Sleet",&weather20},//20
+    {"Snow Shower",&weather21},//21
+    {"Light Snow",&weather22},//22
+    {"Moderate Snow",&weather23},//23
+    {"Heavy Snow",&weather24},//24
+    {"Snowstorm",&weather24},//25
+    {"Dust",&weather26},//26
+    {"Sand",&weather26},//27
+    {"Sandstorm",&weather28},//28
+    {"Severe Sandstorm",&weather28},//29
+    {"Fog",&weather30},//30
+    {"Haze",&weather32},//31
+    {"Windy",&weather32},//32
+    {"Strong Wind",&weather32},//33
+    {"Hurricane",&weather32},//34
+    {"Tropical Storm",&weather35},//35
+    {"Tornado",&weather36},//36
+    {"Cold",&weather40},//37
+    {"Hot",&weather40},//38
+    {"Unknown",&weather40},//39
 };

@@ -24,18 +24,18 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-/* 字体信息保存首address
- * occupy33bytes,The1bytes用于标记Font library是否存在.Follow-up each8group of bytes,分别保存起始addressand文件大小
+/* Starting address where font information is saved
+ * Occupies 33 bytes; the first byte marks whether the font library exists. Each subsequent 8-byte group saves the starting address and file size respectively
  */
 extern uint32_t FONTINFOADDR;
 
-/* Font library information structure定义
- * 用来保存Font library基本信息，address，Size, etc.
+/* Font library information structure definition
+ * Used to save basic font library information: address, size, etc.
  */
 typedef struct
 {
-    uint8_t fontok;             /* Font library存在标志，0XAA，Font library正常；other，Font library不存在 */
-    uint32_t ugbkaddr;          /* unigbk的address */
+    uint8_t fontok;             /* Font library presence flag: 0XAA = normal; other = font library missing */
+    uint32_t ugbkaddr;          /* unigbk address */
     uint32_t ugbksize;          /* unigbkThe size of */
     uint32_t f12addr;           /* gbk12address */
     uint32_t gbk12size;         /* gbk12 size */
@@ -52,7 +52,7 @@ extern _font_info ftinfo;
 esp_err_t fonts_partition_read(void * buffer, uint32_t offset, uint32_t length);                                /* Partition reading */
 esp_err_t fonts_partition_write(void * buffer, uint32_t offset, uint32_t length);                               /* Partition writing */
 esp_err_t fonts_partition_erase_sector(uint32_t offset);                                                        /* Partition erase */
-uint8_t fonts_update_font(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, uint16_t color);                  /* 更新全部Font library */
+uint8_t fonts_update_font(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, uint16_t color);                  /* Update all font libraries */
 void fonts_progress_show(uint16_t x, uint16_t y, uint8_t size, uint32_t totsize, uint32_t pos, uint16_t color); /* Show current font update progress */
 uint8_t fonts_init(void);                                                                                       /* Initialize the font library */
 

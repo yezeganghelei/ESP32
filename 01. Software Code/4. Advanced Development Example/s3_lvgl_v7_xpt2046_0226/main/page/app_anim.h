@@ -14,7 +14,7 @@
 #define DISP_MAX_HOR        LV_HOR_RES
 #define DISP_MAX_VER        LV_VER_RES 
 
-#define ANIEND  while(lv_anim_count_running())lv_task_handler();//等待动画完成
+#define ANIEND  while(lv_anim_count_running())lv_task_handler();// Wait for the animation to complete
 
 void obj_add_anim(lv_obj_t *obj, lv_anim_exec_xcb_t exec_cb, uint16_t time, lv_coord_t start, lv_coord_t end, lv_anim_path_cb_t path_cb);
 

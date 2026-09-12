@@ -50,7 +50,7 @@ void app_main(void)
     xl9555_init(i2c0_master);                           /* initializationIOExpanding chip */
     lcd_init();                                         /* Initialize LCD */
     
-    /* 显示experiment信息 */
+    /* Display experiment information */
     lcd_show_string(30, 50, 200, 16, 16, "ESP32-S3", RED);
     lcd_show_string(30, 70, 200, 16, 16, "USB FLASH TEST", RED);
     lcd_show_string(30, 90, 200, 16, 16, "ATOM@ALIENTEK", RED);

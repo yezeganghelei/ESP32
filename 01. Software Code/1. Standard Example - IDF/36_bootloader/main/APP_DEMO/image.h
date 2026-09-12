@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        image.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-12-01
- * @brief       图片库 代码(提供image_update_image和images_init用于图片库更新和初始化)
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Image library code (provides image_update_image and images_init for updating and initializing the image library)
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -25,17 +25,17 @@
 #include "spi_flash_mmap.h"
 #include "esp_log.h"
 
-/* 字体信息保存首地址
- * 占33个字节,第1个字节用于标记字库是否存在.后续每8个字节一组,分别保存起始地址和文件大小
+/* Font information start address
+ * Occupies 33 bytes; the first byte marks whether the font library exists. Each following group of 8 bytes stores a start address and file size.
  */
 extern uint32_t IMAGEINFOADDR;
 
-/* 字库信息结构体定义
- * 用来保存字库基本信息，地址，大小等
+/* Font library information structure definition
+ * Stores basic font library information, addresses, sizes, etc.
  */
 typedef struct
 {
-    uint8_t imageok;             /* 图片库存在标志，0XBB，图片库正常；其他，图片库不存在 */
+    uint8_t imageok;             /* Image library presence flag: 0XBB = normal; other = missing */
     
     uint32_t lvgl_camera_addr;
     uint32_t lvgl_camera_size;
@@ -68,14 +68,14 @@ typedef struct
     uint32_t lvgl_background_size;
 } _image_info;
 
-/* 字库信息结构体 */
+/* Font library information structure */
 extern _image_info g_ftinfo;
 
-/* 函数声明 */
-uint8_t images_init(void);                                                                          /* 初始化图片 */
-uint8_t images_update_image(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, uint16_t color);    /* 更新图片文件 */
-esp_err_t images_partition_write(void *buffer, uint32_t offset, uint32_t length);                   /* 分区表写入数据 */
-esp_err_t images_partition_read(void *buffer, uint32_t offset, uint32_t length);                    /* 分区表读取数据 */
-esp_err_t images_partition_erase_sector(uint32_t offset);                                           /* 擦除某个扇区 */
+/* Function declarations */
+uint8_t images_init(void);                                                                          /* Initialize images */
+uint8_t images_update_image(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, uint16_t color);    /* Update image files */
+esp_err_t images_partition_write(void *buffer, uint32_t offset, uint32_t length);                   /* Write data to the partition table */
+esp_err_t images_partition_read(void *buffer, uint32_t offset, uint32_t length);                    /* Read data from the partition table */
+esp_err_t images_partition_erase_sector(uint32_t offset);                                           /* Erase a sector */
 
 #endif

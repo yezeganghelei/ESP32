@@ -4,7 +4,7 @@
  * @author      
  * @version     V1.0
  * @date        2023-12-01
- * @brief       SDCard模拟Uplate experiment
+ * @brief       SD card emulation U disk experiment
  * @license     Copyright (c) 2020-2032, 
  ****************************************************************************************************
  * @attention
@@ -50,7 +50,7 @@ void app_main(void)
     spi2_init();                                        /* Initialize SPI */
     xl9555_init(i2c0_master);                           /* initializationIOexpansion chip */  
     lcd_init();                                         /* Initialize LCD */
-    /* 显示experiment信息 */
+    /* Display experiment information */
     lcd_show_string(30, 50, 200, 16, 16, "ESP32-S3", RED);
     lcd_show_string(30, 70, 200, 16, 16, "USB SD TEST", RED);
     lcd_show_string(30, 90, 200, 16, 16, "ATOM@ALIENTEK", RED);

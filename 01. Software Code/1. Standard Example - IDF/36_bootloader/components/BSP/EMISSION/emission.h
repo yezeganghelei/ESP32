@@ -4,7 +4,7 @@
  * @author      
  * @version     V1.0
  * @date        2023-08-26
- * @brief       RMTInfrared decoding driver code
+ * @brief       RMT infrared decoding driver code
  * @license     Copyright (c) 2020-2032, 
  ****************************************************************************************************
  * @attention
@@ -33,9 +33,9 @@
 #define RMT_RX_PIN                  GPIO_NUM_2  /* Connect the GPIO port of RX_PIN */
 #define RMT_TX_PIN                  GPIO_NUM_8  /* Connect the GPIO port of TX_PIN */
 #define RMT_RESOLUTION_HZ           1000000     /* 1MHz, 1 tick = 1us */
-#define RMT_NEC_DECODE_MARGIN       200         /* judgeNEC时序时长of容差value，less than（value+this value），greater than（value-this value）For correct */
+#define RMT_NEC_DECODE_MARGIN       200         /* NEC timing tolerance: correct if within (value - margin, value + margin) */
 
-/* NEC Protocol timing，Header of agreement9.5ms 4.5ms logic0Two levels of time，logic1Two levels of time，Repeat code two level duration */
+/* NEC protocol timing: 9.5ms/4.5ms header, two-level times for logic 0 and logic 1, and repeat-code level durations */
 #define NEC_LEADING_CODE_DURATION_0 9000
 #define NEC_LEADING_CODE_DURATION_1 4500
 #define NEC_PAYLOAD_ZERO_DURATION_0 560

@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        lv_file.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-11-04
- * @brief       文件管理系统
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       File management system
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台: 正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -21,16 +21,16 @@
 #include "lv_file_demo.h"
 
 
-LV_FONT_DECLARE(myFont12)           /* 声明myFont24字体,这个字体已经烧写到SPIFLASH中 */
+LV_FONT_DECLARE(myFont12)           /* Declare the myFont24 font, which is already flashed to SPIFLASH */
 LV_FONT_DECLARE(myFont24)
 LV_FONT_DECLARE(myFont18)
 
-extern lv_indev_t *indev_keypad;                            /* 按键组 */
+extern lv_indev_t *indev_keypad;                            /* Button group */
 
 lv_file_struct lv_flie;
-/* 文件的后缀名，可以在这个数组添加未知的后缀 */
+/* File suffixes; unknown suffixes can be added to this array */
 char *lv_suffix [] ={".txt", ".avi", ".png", "jpeg", ".jpg", ".bin", ".gif", ".bmp", ".FON", ".dat", ".sif", ".BIN", ".xbf", ".ttf", ".wav", ".WAV"};
-#define LV_SUFFIX(x)    (int)(sizeof(x)/sizeof(x[0])) /* 计算lv_suffix数组的大小 */
+#define LV_SUFFIX(x)    (int)(sizeof(x)/sizeof(x[0])) /* Calculate the size of the lv_suffix array */
 
 uint16_t lv_scan_files (const char *path, lv_obj_t *parent);
 void lv_del_list(lv_obj_t *parent);
@@ -40,9 +40,9 @@ lv_obj_t *lv_create_page(lv_obj_t *parent);
 char *lv_pash_joint(void);
 
 /**
- * @brief  告诉文件的位置
- * @param  fd：文件指针
- * @return 返回位置
+ * @brief  Tell the file position
+ * @param  fd: file pointer
+ * @return Return the position
  */
 long lv_tell(lv_fs_file_t *fd)
 {
@@ -53,9 +53,9 @@ long lv_tell(lv_fs_file_t *fd)
 }
 
 /**
- * @brief  读取文件内容
- * @param  path：文件路径
- * @return LV_FS_RES_OK：读取成功
+ * @brief  Read file contents
+ * @param  path: file path
+ * @return LV_FS_RES_OK: read success
  */
 lv_fs_res_t lv_file_read(const char *path)
 {
@@ -90,10 +90,10 @@ lv_fs_res_t lv_file_read(const char *path)
 }
 
 /**
-  * @brief  页面返回按键回调函数
-  * @param  obj  : 对象
-  * @param  event: 事件
-  * @retval 无
+  * @brief  Page back button callback
+  * @param  obj  : object
+  * @param  event: event
+  * @retval none
   */
 void lv_btn_close_event(lv_event_t *event)
 {
@@ -101,51 +101,51 @@ void lv_btn_close_event(lv_event_t *event)
 
     if (code == LV_EVENT_RELEASED)
     {
-        if (lv_flie.lv_image_read != NULL)     /* 判断图片路径释放为空 */
+        if (lv_flie.lv_image_read != NULL)     /* Check whether the image path to free is empty */
         {
-            lv_obj_del(lv_flie.lv_image_read); /* 删除图片对象 */
-            lv_flie.lv_image_read = NULL;      /* 设置图片对象为空 */
+            lv_obj_del(lv_flie.lv_image_read); /* Delete the image object */
+            lv_flie.lv_image_read = NULL;      /* Set the image object to NULL */
         }
         
-        lv_flie.lv_prev_file_flag -- ;         /* 文件返回标志位减一 */
+        lv_flie.lv_prev_file_flag -- ;         /* Decrement the file back flag */
         
-        lv_obj_del(lv_flie.lv_page_cont);      /* 当按下返回时，删除页面 */
+        lv_obj_del(lv_flie.lv_page_cont);      /* Delete the page when back is pressed */
     }
 }
 
 /**
-  * @brief  创建page页面
-  * @param  parent:父类
-  * @retval 无
+  * @brief  Create the page
+  * @param  parent: parent object
+  * @retval none
   */
 lv_obj_t *lv_create_page(lv_obj_t *parent)
 {
-    lv_flie.lv_page_cont = lv_obj_create(parent);                           /* 创建容器 */
+    lv_flie.lv_page_cont = lv_obj_create(parent);                           /* Create the container */
     lv_obj_set_size(lv_flie.lv_page_cont, lcd_self.width, lcd_self.height);
-    lv_obj_set_style_radius(lv_flie.lv_page_cont, 0, LV_STATE_DEFAULT);       /* 设置圆半径为0 */
+    lv_obj_set_style_radius(lv_flie.lv_page_cont, 0, LV_STATE_DEFAULT);       /* Set the corner radius to 0 */
     lv_obj_clear_flag(lv_flie.lv_page_cont, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
     lv_obj_clear_flag(lv_flie.lv_page_cont, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
     lv_obj_align_to(lv_flie.lv_page_cont, parent, LV_ALIGN_CENTER, 0, 0);
   
-    lv_obj_t *lv_page_obj = lv_obj_create(lv_flie.lv_page_cont);    /* 创建返回按键的区域 */
+    lv_obj_t *lv_page_obj = lv_obj_create(lv_flie.lv_page_cont);    /* Create the back-button area */
     lv_obj_set_style_bg_color(lv_page_obj, lv_palette_main(LV_PALETTE_BLUE), LV_STATE_DEFAULT);
     lv_obj_align(lv_page_obj, LV_ALIGN_BOTTOM_MID, 0, 10);
     lv_obj_set_size(lv_page_obj, lcd_self.width, myFont24.line_height);
 
-    lv_obj_t *lv_page_back_btn = lv_label_create(lv_page_obj);      /* 创建lable作为返回的对象 */
+    lv_obj_t *lv_page_back_btn = lv_label_create(lv_page_obj);      /* Create a label as the back object */
     lv_obj_set_style_text_font(lv_page_back_btn, &myFont24, LV_STATE_DEFAULT);
-    lv_label_set_text(lv_page_back_btn, "返回");
+    lv_label_set_text(lv_page_back_btn, "Back");
     lv_obj_align_to(lv_page_back_btn, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_add_flag(lv_page_back_btn, LV_OBJ_FLAG_CLICKABLE);       /* 设置标签可点击 */
-    lv_obj_add_event_cb(lv_page_back_btn, lv_btn_close_event, LV_EVENT_ALL, NULL); /* 设置回调函数 */
+    lv_obj_add_flag(lv_page_back_btn, LV_OBJ_FLAG_CLICKABLE);       /* Make the label clickable */
+    lv_obj_add_event_cb(lv_page_back_btn, lv_btn_close_event, LV_EVENT_ALL, NULL); /* Set the callback */
 
     return lv_flie.lv_page_cont;
 }
 
 /**
-  * @brief  显示.txt文件
-  * @param  parent:父类
-  * @retval 无
+  * @brief  Display a .txt file
+  * @param  parent: parent object
+  * @retval none
   */
 void lv_show_filetxt(lv_obj_t *parent)
 {
@@ -153,43 +153,43 @@ void lv_show_filetxt(lv_obj_t *parent)
     lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
     lv_obj_set_style_text_font(label, &lv_font_montserrat_14, LV_STATE_DEFAULT);
     lv_obj_set_width(label, lv_obj_get_width(parent));
-    lv_label_set_text(label, (char *)lv_flie.rbuf); /* 显示读取的数据 */
+    lv_label_set_text(label, (char *)lv_flie.rbuf); /* Display the read data */
     memset(lv_flie.rbuf, 0, sizeof(lv_flie.rbuf));
 }
 
 /**
-  * @brief  显示.bin图片
-  * @param  parent:父类
-  * @param  path:路径
-  * @retval 无
+  * @brief  Display a .bin image
+  * @param  parent: parent object
+  * @param  path: path
+  * @retval none
   */
 void lv_show_imgbin(lv_obj_t *parent, const char *path)
 {
-    lv_flie.lv_image_read = lv_img_create(parent);                          /* 创建 image 控件 */   
-    lv_img_set_src(lv_flie.lv_image_read,path);                             /* 为控件设置图片 */
-    lv_obj_align_to(lv_flie.lv_image_read, parent, LV_ALIGN_CENTER, 0, 0);  /* 设置控件的对齐方式,相对坐标 */
+    lv_flie.lv_image_read = lv_img_create(parent);                          /* Create the image widget */   
+    lv_img_set_src(lv_flie.lv_image_read,path);                             /* Set the image for the widget */
+    lv_obj_align_to(lv_flie.lv_image_read, parent, LV_ALIGN_CENTER, 0, 0);  /* Set the widget alignment and relative coordinates */
 }
 
 /**
-  * @brief  文件路径拼接
-  * @param  无
-  * @retval 无
+  * @brief  Concatenate file paths
+  * @param  none
+  * @retval none
   */
 char *lv_pash_joint(void)
 {
-    lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag] = (char *)lv_flie.lv_pash;/* 把上一个路径保存到这个数组里 */
-    lv_flie.lv_prev_file_flag ++;                              /* 前一个路径数量标志位加一 */
+    lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag] = (char *)lv_flie.lv_pash;/* Save the previous path in this array */
+    lv_flie.lv_prev_file_flag ++;                              /* Increment the previous-path count flag */
   
-    strcpy((char *)lv_flie.pname, lv_flie.lv_pash);            /* 复制路径(目录) */ 
-    strcat((char *)lv_flie.pname, "/");                        /* 复制路径(目录) */ 
-    strcat((char *)lv_flie.pname, (char *)lv_flie.lv_pname);   /* 将文件名接在后面 */
+    strcpy((char *)lv_flie.pname, lv_flie.lv_pash);            /* Copy the path (directory) */ 
+    strcat((char *)lv_flie.pname, "/");                        /* Copy the path (directory) */ 
+    strcat((char *)lv_flie.pname, (char *)lv_flie.lv_pname);   /* Append the file name */
     return lv_flie.pname;
 }
 
 /**
-  * @brief  列表按键回调函数
-  * @param  event: 事件
-  * @retval 无
+  * @brief  List button callback
+  * @param  event: event
+  * @retval none
   */
 static void lv_list_btn_event(lv_event_t *event)
 {
@@ -198,33 +198,33 @@ static void lv_list_btn_event(lv_event_t *event)
   
     if(code == LV_EVENT_CLICKED)
     {
-        for (int i = 0; i <= lv_flie.list_flie_nuber ;i++)  /* 轮询列表项 */
+        for (int i = 0; i <= lv_flie.list_flie_nuber ;i++)  /* Poll the list items */
         {
-            if (obj == lv_flie.list_btn[i]) /* 判断列表项的那个按键按下 */
+            if (obj == lv_flie.list_btn[i]) /* Check which list item button was pressed */
             {   
-                lv_flie.lv_pname = malloc(255);         /* 获取文件名分配内存 */
-                lv_flie.pname = malloc(255);               /* 为带路径的文件名分配内存 */
+                lv_flie.lv_pname = malloc(255);         /* Allocate memory for the file name */
+                lv_flie.pname = malloc(255);               /* Allocate memory for the file name with path */
 
-                lv_flie.lv_pname = (char *)lv_list_get_btn_text(lv_flie.list, lv_flie.list_btn[i]);  /* 获取列表项的值 */
+                lv_flie.lv_pname = (char *)lv_list_get_btn_text(lv_flie.list, lv_flie.list_btn[i]);  /* Get the list item value */
                 
-                for (int suffix = 0; suffix < LV_SUFFIX(lv_suffix); suffix ++)      /* 轮询文件后缀 */
+                for (int suffix = 0; suffix < LV_SUFFIX(lv_suffix); suffix ++)      /* Poll the file suffixes */
                 {
-                    if (strstr(lv_flie.lv_pname, lv_suffix[suffix]) != NULL)        /* 如果不是文件夹 */
+                    if (strstr(lv_flie.lv_pname, lv_suffix[suffix]) != NULL)        /* If it is not a folder */
                     {
-                        lv_flie.lv_suffix_flag = 0;                                 /* 设置后缀的标志位为0 */
+                        lv_flie.lv_suffix_flag = 0;                                 /* Set the suffix flag to 0 */
                         break;
                     }
                 }
 
-                if (lv_flie.lv_suffix_flag == 1)                                  /* 该标志位不为0就是文件夹操作 */
+                if (lv_flie.lv_suffix_flag == 1)                                  /* A non-zero flag means folder handling */
                 {   
-                    lv_flie.lv_pash = lv_pash_joint();                            /* 把文件路径转递给lv_pash参数 */
-                    lv_del_list(lv_flie.list);                                    /* 删除列表 */
-                    lv_scan_files(lv_flie.pname, lv_scr_act());                   /* 重新创建文件列表 */
+                    lv_flie.lv_pash = lv_pash_joint();                            /* Pass the file path to the lv_pash parameter */
+                    lv_del_list(lv_flie.list);                                    /* Delete the list */
+                    lv_scan_files(lv_flie.pname, lv_scr_act());                   /* Recreate the file list */
                 }
                 else
                 {
-                    lv_flie.lv_suffix_flag = 1; /* 恢复文件夹点击 */
+                    lv_flie.lv_suffix_flag = 1; /* Restore folder click handling */
                 }
             }
         }
@@ -232,35 +232,35 @@ static void lv_list_btn_event(lv_event_t *event)
 }
 
 /**
-  * @brief  读取文件名
-  * @param  char* path: 要扫描的文件路径
-  * @retval FR_OK：成功，否则失败
+  * @brief  Read file names
+  * @param  char* path: file path to scan
+  * @retval FR_OK: success, otherwise failure
   */
 uint16_t lv_scan_files (const char *path, lv_obj_t *parent)
 {
-    lv_flie.fr = f_opendir(&lv_flie.lv_dir, path);         /* 打开文件目录* */
-    memset(lv_flie.list_btn, 0, sizeof(lv_flie.list_btn));   /* 清除列表项的数组 */
+    lv_flie.fr = f_opendir(&lv_flie.lv_dir, path);         /* Open the file directory */
+    memset(lv_flie.list_btn, 0, sizeof(lv_flie.list_btn));   /* Clear the list item array */
 
-    lv_flie.list_flie_nuber = 0;                           /* 设置文件索引为0 */
-    lv_create_list(parent);                                /* 创建列表 */
+    lv_flie.list_flie_nuber = 0;                           /* Set the file index to 0 */
+    lv_create_list(parent);                                /* Create the list */
 
     if (lv_flie.fr == FR_OK)
-    {   /* 如果打开成功循环读出文件名字到buff中 */
+    {   /* If opened successfully, read file names into the buffer in a loop */
         while(1)
-        {   /* 循环读出文件名字，循环次数等于SD卡根目录下的文件数目 */
-            lv_flie.fr = f_readdir(&lv_flie.lv_dir, &lv_flie.SD_fno);   /* 读取文件名* */
+        {   /* Read file names in a loop; the number of iterations equals the number of files in the SD card root directory */
+            lv_flie.fr = f_readdir(&lv_flie.lv_dir, &lv_flie.SD_fno);   /* Read the file name */
 
-            if ((lv_flie.fr) || lv_flie.SD_fno.fname[0] == 0) break;    /* 读取错误或者读完所有文件结束就跳出循环 */
-            lv_flie.list_flie_nuber++;              /* 文件数量加1 */
+            if ((lv_flie.fr) || lv_flie.SD_fno.fname[0] == 0) break;    /* Break the loop on a read error or after all files have been read */
+            lv_flie.list_flie_nuber++;              /* Increment the file count */
 
-            if (lv_flie.SD_fno.fattrib & AM_DIR)    /* 读取的是文件夹名字 */
+            if (lv_flie.SD_fno.fattrib & AM_DIR)    /* A folder name was read */
             {
-                /* 复制文件名字到缓存并打印文件名 */
-                lv_flie.list_btn[lv_flie.list_flie_nuber] = lv_list_add_btn(lv_flie.list, LV_SYMBOL_DIRECTORY, lv_flie.SD_fno.fname);      /* 添加列表项(文件夹) */
+                /* Copy the file name to the buffer and print it */
+                lv_flie.list_btn[lv_flie.list_flie_nuber] = lv_list_add_btn(lv_flie.list, LV_SYMBOL_DIRECTORY, lv_flie.SD_fno.fname);      /* Add a list item (folder) */
             }
-            else /* 读取的是文件名称 */
+            else /* A file name was read */
             {
-                if (  strstr(lv_flie.SD_fno.fname,".png")  != NULL  /* 判断文件名称 */
+                if (  strstr(lv_flie.SD_fno.fname,".png")  != NULL  /* Check the file name */
                     ||strstr(lv_flie.SD_fno.fname,".jpeg") != NULL
                     ||strstr(lv_flie.SD_fno.fname,".jpg")  != NULL
                     ||strstr(lv_flie.SD_fno.fname,".bmp")  != NULL
@@ -274,57 +274,57 @@ uint16_t lv_scan_files (const char *path, lv_obj_t *parent)
                     lv_flie.image_scr = "\xEF\x80\x96";
                 }
                 
-                lv_flie.list_btn[lv_flie.list_flie_nuber] = lv_list_add_btn(lv_flie.list, lv_flie.image_scr, lv_flie.SD_fno.fname);         /* 添加列表项(文件) */ 
+                lv_flie.list_btn[lv_flie.list_flie_nuber] = lv_list_add_btn(lv_flie.list, lv_flie.image_scr, lv_flie.SD_fno.fname);         /* Add a list item (file) */ 
             }
             
-            lv_obj_set_style_pad_left(lv_flie.list_btn[lv_flie.list_flie_nuber], 5, LV_STATE_DEFAULT);   /* 设置列表项与列表左边的距离 */
-            lv_obj_set_style_pad_right(lv_flie.list_btn[lv_flie.list_flie_nuber], 5, LV_STATE_DEFAULT);  /* 设置列表项与列表右边的距离 */
-            lv_obj_add_event_cb(lv_flie.list_btn[lv_flie.list_flie_nuber], lv_list_btn_event, LV_EVENT_ALL, NULL); /* 设置列表回调函数 */
+            lv_obj_set_style_pad_left(lv_flie.list_btn[lv_flie.list_flie_nuber], 5, LV_STATE_DEFAULT);   /* Set the left padding of the list item */
+            lv_obj_set_style_pad_right(lv_flie.list_btn[lv_flie.list_flie_nuber], 5, LV_STATE_DEFAULT);  /* Set the right padding of the list item */
+            lv_obj_add_event_cb(lv_flie.list_btn[lv_flie.list_flie_nuber], lv_list_btn_event, LV_EVENT_ALL, NULL); /* Set the list callback */
         }
         
-        f_closedir(&lv_flie.lv_dir); /* 关闭文件目录 */
+        f_closedir(&lv_flie.lv_dir); /* Close the file directory */
     }
     
-    return lv_flie.fr;  /* 返回 */
+    return lv_flie.fr;  /* Return */
 }
 
 /**
-  * @brief  删除列表
-  * @param  parent: 父类
-  * @retval 无
+  * @brief  Delete the list
+  * @param  parent: parent object
+  * @retval none
   */
 void lv_del_list(lv_obj_t *parent)
 {
-    lv_obj_del(parent);   /* 删除对象 */
-    lv_flie.list = NULL;  /* 设置列表为空 */
+    lv_obj_del(parent);   /* Delete the object */
+    lv_flie.list = NULL;  /* Set the list to NULL */
 }
 
 /**
-  * @brief  创建列表
-  * @param  parent: 父类
-  * @retval 无
+  * @brief  Create the list
+  * @param  parent: parent object
+  * @retval none
   */
 void lv_create_list(lv_obj_t *parent)
 {
-    lv_flie.list = lv_list_create(parent);  /* 创建列表 */
+    lv_flie.list = lv_list_create(parent);  /* Create the list */
     app_obj_general.del_parent = lv_flie.list;
-    lv_obj_set_size(lv_flie.list, lcd_self.width, lcd_self.height - myFont24.line_height * 2 - 28);     /* 设置列表的大小 */
-    lv_obj_align_to(lv_flie.list, lv_flie.lv_page_obj, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);                 /* 设置列表的对齐模式 */
-    lv_obj_set_style_text_font(lv_flie.list, &myFont12, LV_STATE_DEFAULT);                              /* 设置字体 */
-    lv_obj_set_style_radius(lv_flie.list, 0, LV_STATE_DEFAULT);                                         /* 设置圆半径为0 */
+    lv_obj_set_size(lv_flie.list, lcd_self.width, lcd_self.height - myFont24.line_height * 2 - 28);     /* Set the list size */
+    lv_obj_align_to(lv_flie.list, lv_flie.lv_page_obj, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);                 /* Set the list alignment */
+    lv_obj_set_style_text_font(lv_flie.list, &myFont12, LV_STATE_DEFAULT);                              /* Set font */
+    lv_obj_set_style_radius(lv_flie.list, 0, LV_STATE_DEFAULT);                                         /* Set the corner radius to 0 */
 }
 
 /**
-  * @brief  创建页面标题
-  * @param  parent: 父类
-  * @retval 无
+  * @brief  Create the page title
+  * @param  parent: parent object
+  * @retval none
   */
 void lv_page_tile(lv_obj_t *parent,char * tile_name)
 {
     lv_flie.lv_page_obj = lv_obj_create(parent);
     lv_obj_set_size(lv_flie.lv_page_obj, lcd_self.width + 5, myFont12.line_height + 5);
     lv_obj_set_style_bg_color(lv_flie.lv_page_obj,lv_palette_main(LV_PALETTE_BLUE), LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(lv_flie.lv_page_obj, 0, LV_STATE_DEFAULT);          /* 设置圆半径为0 */
+    lv_obj_set_style_radius(lv_flie.lv_page_obj, 0, LV_STATE_DEFAULT);          /* Set the corner radius to 0 */
     lv_obj_set_pos(lv_flie.lv_page_obj, -2,18);
     lv_obj_set_style_bg_opa(lv_flie.lv_page_obj,LV_OPA_90,LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(lv_flie.lv_page_obj,LV_GRAD_DIR_VER,LV_STATE_DEFAULT);
@@ -338,10 +338,10 @@ void lv_page_tile(lv_obj_t *parent,char * tile_name)
 }
 
 /**
-  * @brief  返回按键回调函数
-  * @param  obj:对象
-  * @param  event:事件
-  * @retval 无
+  * @brief  Back button callback
+  * @param  obj: object
+  * @param  event: event
+  * @retval none
   */
 void lv_back_btn_event_handler(lv_event_t *event)
 {
@@ -352,94 +352,94 @@ void lv_back_btn_event_handler(lv_event_t *event)
     {
         if (obj == lv_flie.lv_back_btn)
         {
-            lv_del_list(lv_flie.list);      /* 删除列表 */
-            list_init(lv_scr_act());        /* 返回菜单 */
+            lv_del_list(lv_flie.list);      /* Delete the list */
+            list_init(lv_scr_act());        /* Return to the menu */
         }
         if (obj == lv_flie.lv_prev_btn)
         { 
-            lv_flie.lv_prev_file_flag--;    /* 文件返回标志位减一 */
+            lv_flie.lv_prev_file_flag--;    /* Decrement the file back flag */
 
             if (lv_flie.lv_prev_file_flag <= 0)
             {
-                lv_flie.lv_prev_file_flag = 0; /* 如果小于等于0，就强制设置为0 */
+                lv_flie.lv_prev_file_flag = 0; /* If less than or equal to 0, force it to 0 */
             }
           
-            lv_del_list(lv_flie.list);         /* 立刻删除列表控件 */
-            lv_flie.lv_pash = lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag];              /* 上级路径复制到lv_pash参数 */
-            lv_scan_files(lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag], lv_scr_act());   /* 读取文件路径 */
+            lv_del_list(lv_flie.list);         /* Delete the list widget immediately */
+            lv_flie.lv_pash = lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag];              /* Copy the parent path to the lv_pash parameter */
+            lv_scan_files(lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag], lv_scr_act());   /* Read the file path */
         }
     }
 }
 
 /**
-  * @brief  返回按键
-  * @param  parent:父类
-  * @retval 无
+  * @brief  Back button
+  * @param  parent: parent object
+  * @retval none
   */
 void lv_general_win_create(lv_obj_t *parent)
 {
     lv_flie.lv_back_btn = lv_label_create(parent);
-    lv_obj_set_style_text_font(lv_flie.lv_back_btn, &myFont24, LV_STATE_DEFAULT);   /* 设置字体 */
+    lv_obj_set_style_text_font(lv_flie.lv_back_btn, &myFont24, LV_STATE_DEFAULT);   /* Set font */
 
-    lv_label_set_text(lv_flie.lv_back_btn, "菜单");
+    lv_label_set_text(lv_flie.lv_back_btn, "Menu");
     lv_obj_set_style_text_color(lv_flie.lv_back_btn,lv_color_white(),LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(lv_flie.lv_back_btn,lv_palette_main(LV_PALETTE_RED),LV_STATE_FOCUSED);
     lv_obj_align_to(lv_flie.lv_back_btn, parent, LV_ALIGN_RIGHT_MID, -10, 0);
-    lv_obj_add_flag(lv_flie.lv_back_btn, LV_OBJ_FLAG_CLICKABLE);                    /* 设置标签可点击 */
-    lv_obj_add_event_cb(lv_flie.lv_back_btn, lv_back_btn_event_handler, LV_EVENT_ALL, NULL); /* 设置回调函数 */
+    lv_obj_add_flag(lv_flie.lv_back_btn, LV_OBJ_FLAG_CLICKABLE);                    /* Make the label clickable */
+    lv_obj_add_event_cb(lv_flie.lv_back_btn, lv_back_btn_event_handler, LV_EVENT_ALL, NULL); /* Set the callback */
 
     
     lv_flie.lv_prev_btn = lv_label_create(parent);
     lv_obj_set_style_text_font(lv_flie.lv_prev_btn, &myFont24, LV_STATE_DEFAULT);
-    lv_label_set_text(lv_flie.lv_prev_btn, "返回");
+    lv_label_set_text(lv_flie.lv_prev_btn, "Back");
     lv_obj_set_style_text_color(lv_flie.lv_prev_btn,lv_color_white(),LV_STATE_DEFAULT);
     lv_obj_set_style_text_color(lv_flie.lv_prev_btn,lv_palette_main(LV_PALETTE_RED),LV_STATE_FOCUSED);
     lv_obj_align_to(lv_flie.lv_prev_btn, parent, LV_ALIGN_LEFT_MID, 10, 0);
-    lv_obj_add_flag(lv_flie.lv_prev_btn, LV_OBJ_FLAG_CLICKABLE);        /* 设置标签可点击 */
+    lv_obj_add_flag(lv_flie.lv_prev_btn, LV_OBJ_FLAG_CLICKABLE);        /* Make the label clickable */
     lv_obj_add_event_cb(lv_flie.lv_prev_btn, lv_back_btn_event_handler, LV_EVENT_ALL, NULL);
 
     lv_group_add_obj(ctrl_g, lv_flie.lv_prev_btn);
     lv_group_add_obj(ctrl_g, lv_flie.lv_back_btn);
-    lv_group_focus_obj(lv_flie.lv_prev_btn);                            /* 聚焦 */
+    lv_group_focus_obj(lv_flie.lv_prev_btn);                            /* Focus */
 }
 
 /**
-  * @brief  文件系统返回/菜单按键的区域
-  * @param  parent: 父类
-  * @retval 无
+  * @brief  File system back/menu button area
+  * @param  parent: parent object
+  * @retval none
   */
 void lv_page_back(lv_obj_t *parent)
 {
-    lv_flie.lv_back_obj = lv_obj_create(parent);                                                            /* 创建文件返回对象区域 */
-    lv_obj_set_size(lv_flie.lv_back_obj, lcd_self.width, myFont24.line_height + 10);                        /* 设置改区域的大小 */
+    lv_flie.lv_back_obj = lv_obj_create(parent);                                                            /* Create the file back object area */
+    lv_obj_set_size(lv_flie.lv_back_obj, lcd_self.width, myFont24.line_height + 10);                        /* Set the size of this area */
     lv_obj_set_style_bg_color(lv_flie.lv_back_obj,lv_palette_main(LV_PALETTE_BLUE), LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(lv_flie.lv_back_obj, 0, LV_STATE_DEFAULT);                                      /* 设置圆半径为0 */
-    lv_obj_align_to(lv_flie.lv_back_obj, parent, LV_ALIGN_BOTTOM_MID, 0, 5);                                /* 设置对齐模式 */
+    lv_obj_set_style_radius(lv_flie.lv_back_obj, 0, LV_STATE_DEFAULT);                                      /* Set the corner radius to 0 */
+    lv_obj_align_to(lv_flie.lv_back_obj, parent, LV_ALIGN_BOTTOM_MID, 0, 5);                                /* Set the alignment */
     lv_obj_set_style_bg_opa(lv_flie.lv_back_obj,LV_OPA_90,LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(lv_flie.lv_back_obj,LV_GRAD_DIR_VER,LV_STATE_DEFAULT);
-    lv_general_win_create(lv_flie.lv_back_obj);                                                             /* 创建返回和菜单按键 */
+    lv_general_win_create(lv_flie.lv_back_obj);                                                             /* Create the back and menu buttons */
     lv_obj_set_style_border_opa(lv_flie.lv_back_obj,LV_OPA_0,LV_STATE_DEFAULT);
 }
 
 /**
-  * @brief  列表初始化
-  * @param  parent: 父类
-  * @retval 无
+  * @brief  List initialization
+  * @param  parent: parent object
+  * @retval none
   */
 void list_init(lv_obj_t *parent)
 {
-    lv_flie.lv_pash = "0:";                                 /* 初始路径 */
-    lv_flie.lv_prev_file_flag = 0;                          /* 上一个文件路径标志位清0 */
-    lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag] = "0:"; /* 初始上个文件夹路径 */
-    lv_flie.list_flie_nuber = 0;                            /* 初始文件数量 */
-    lv_flie.lv_suffix_flag = 1;                             /* 文件后缀标志位 */
-    lv_scan_files(lv_flie.lv_pash,parent);                  /* 读取文件路径 */
+    lv_flie.lv_pash = "0:";                                 /* Initial path */
+    lv_flie.lv_prev_file_flag = 0;                          /* Clear the previous file path flag */
+    lv_flie.lv_prev_file[lv_flie.lv_prev_file_flag] = "0:"; /* Initial previous folder path */
+    lv_flie.list_flie_nuber = 0;                            /* Initial file count */
+    lv_flie.lv_suffix_flag = 1;                             /* File suffix flag */
+    lv_scan_files(lv_flie.lv_pash,parent);                  /* Read the file path */
 }
 
 /**
-  * @brief  删除文件demo
-  * @param  无
-  * @retval 无
+  * @brief  Delete the file demo
+  * @param  none
+  * @retval none
   */
 void lv_file_del(void)
 {
@@ -459,19 +459,19 @@ void lv_file_del(void)
 }
 
 /**
-  * @brief  控件测试函数
-  * @param  无
-  * @retval 无
+  * @brief  Widget test function
+  * @param  none
+  * @retval none
   */
 void lv_file_demo(void)
 {
     esp_err_t err = ESP_OK;
 
-    /* 初始化SD卡 */
+    /* Initialize the SD card */
     err = sd_spi_init();
     vTaskDelay(200);
 
-    /* 解决重复按下 */
+    /* Handle repeated presses */
     if (app_obj_general.current_parent != NULL)
     {
         lv_obj_del(app_obj_general.current_parent);
@@ -485,7 +485,7 @@ void lv_file_demo(void)
     else
     {
         lv_app_del();
-        /* 创建该界面的主容器 */
+        /* Create the main container of this screen */
         lv_obj_t *file_obj = lv_obj_create(lv_scr_act());
         lv_obj_set_style_radius(file_obj, 0, LV_STATE_DEFAULT);
         lv_obj_set_size(file_obj,lv_obj_get_width(lv_scr_act()),lv_obj_get_height(lv_scr_act()));
@@ -493,10 +493,10 @@ void lv_file_demo(void)
         lv_obj_set_pos(file_obj,0,0);
         lv_obj_clear_flag(file_obj, LV_OBJ_FLAG_SCROLLABLE);
 
-        app_obj_general.current_parent = file_obj;              /* 指向当前界面容器 */
-        app_obj_general.Function = lv_file_del;                 /* 删除此界面 */
-        lv_page_tile(file_obj,"TF卡浏览器");                           /* 设置页面标题 */
-        lv_page_back(file_obj);                                 /* 设置页面返回 */
-        list_init(file_obj);                                    /* 列表初始化 */
+        app_obj_general.current_parent = file_obj;              /* Point to the current screen container */
+        app_obj_general.Function = lv_file_del;                 /* Delete this screen */
+        lv_page_tile(file_obj,"TF Card Browser");                           /* Set the page title */
+        lv_page_back(file_obj);                                 /* Set the page back */
+        list_init(file_obj);                                    /* List initialization */
     }
 }

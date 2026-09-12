@@ -23,8 +23,8 @@
 #define RMT_TX_GPIO_NUM   48     /*!< GPIO number for transmitter signal */
 #define RMT_RX_CHANNEL    3     /*!< RMT channel for receiver */
 #define RMT_RX_GPIO_NUM  4     /*!< GPIO number for receiver */
-#define RMT_CLK_DIV      100    /*!< RMT counter clock divider  计数器每80M/100=1.25us计数1次*/
-#define RMT_TICK_10_US    (80000000/RMT_CLK_DIV/100000)   /*!< RMT counter value for 10 us.(Source clock is APB clock) 可以定时10us*/
+#define RMT_CLK_DIV      100    /*!< RMT counter clock divider; the counter increments every 80M/100=1.25us */
+#define RMT_TICK_10_US    (80000000/RMT_CLK_DIV/100000)   /*!< RMT counter value for 10 us. (Source clock is APB clock); can time 10 us */
 
 #define HEADER_HIGH_9000US    9000                         /*!< NEC protocol header: positive 9ms */
 #define HEADER_LOW_4500US     4500                         /*!< NEC protocol header: negative 4.5ms*/
@@ -50,7 +50,7 @@
 #define NEC_ITEM_DURATION(d)  ((d & 0x7fff)*10/RMT_TICK_10_US)  /*!< Parse duration time from memory register value */
 #define NEC_DATA_ITEM_NUM   70  /*!< NEC code item number: header + 35bit data + connect +32bit +end*/
 #define RMT_TX_DATA_NUM  3    /*!< NEC tx test data number */
-#define rmt_item32_tIMEOUT_US  21000   /*!< RMT receiver timeout value(us) 由于连接码的时间长度大约为20600us所以设置时间长点 */
+#define rmt_item32_tIMEOUT_US  21000   /*!< RMT receiver timeout value (us); the connect code lasts about 20600 us, so set a longer time */
 
 
 enum ac_band
@@ -75,24 +75,24 @@ enum ac_pro_code
     code_maxa
 };
 
-//品牌+协议编码 = 红外码库
+// Brand + protocol code = IR code library
 struct AC_Control
 {
     uint8_t code;
-    t_remote_ac_status status;  //空调控制结构体
+    t_remote_ac_status status;  // Air conditioner control structure
 };
 
-//空调结构体，用于控制空调
+// Air conditioner structure, used to control the air conditioner
 static struct AC_Control ac_handle; 
 
-//接收到的红外信号
+// Received IR signal
 struct RX_signal
 {
-    uint32_t item_num;  //item数量
-    uint32_t lowlevel;  //低电平时间 us
-    uint32_t highlevel_1;   //高电平1的时间
-    uint32_t highlevel_0;   //高电平0的时间
-    uint32_t encode;    //由0和1组成的编码
+    uint32_t item_num;  // Number of items
+    uint32_t lowlevel;  // Low-level time (us)
+    uint32_t highlevel_1;   // High-level-1 time
+    uint32_t highlevel_0;   // High-level-0 time
+    uint32_t encode;    // Code composed of 0s and 1s
 };
 
 
@@ -106,9 +106,9 @@ int ac_set_wind_speed(int speed);
 int ac_set_swing(bool open);
 void ac_set_type(uint8_t ac);
 void ac_set_type1(uint8_t ac,uint8_t code);
-void ir_study();    //开启学习
-int IR_init();  //初始化
-int storage_init(); //存储系统，文件系统初始化
+void ir_study();    // Start learning
+int IR_init();  // Initialize
+int storage_init(); // Initialize the storage system and file system
 
 
 void rmt_ir_txTask(void *agr);

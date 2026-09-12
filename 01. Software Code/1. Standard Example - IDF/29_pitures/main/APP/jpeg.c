@@ -228,7 +228,7 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
 
 /**
  * @brief       Release memory after display is completed
- * @param       pixels          : Pixelspoint地址
+ * @param       pixels          : Pixel buffer address
  * @param       screenWidth     : Screen width
  * @param       screenHeight    : Screen height
  * @retval      ESP_OK:success;other:fail

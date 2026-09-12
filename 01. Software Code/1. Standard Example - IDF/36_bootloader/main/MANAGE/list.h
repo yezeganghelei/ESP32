@@ -10,8 +10,8 @@
 
 struct atk_list_node
 {
-    struct atk_list_node *next;      /* 下一个节点 */
-    struct atk_list_node *prev;      /* 上一个节点 */
+    struct atk_list_node *next;      /* Next node */
+    struct atk_list_node *prev;      /* Previous node */
 };
 typedef struct atk_list_node atk_list_node_t;
 
@@ -32,14 +32,14 @@ typedef struct atk_list_node atk_list_node_t;
 #define atk_list_first_entry(head, type, member)                             \
 atk_list_entry((head)->next, type, member)
     
-/* 列表初始化 */
+/* List initialization */
 static __inline void atk_list_init(atk_list_node_t *node)
 {
     node->next = node;
     node->prev = node;
 }
 
-/* 首部添加列表项 */
+/* Add a list item at the head */
 static __inline void atk_list_add(atk_list_node_t *head, atk_list_node_t *entry)
 {
     head->next->prev = entry;
@@ -51,7 +51,7 @@ static __inline void atk_list_add(atk_list_node_t *head, atk_list_node_t *entry)
     return;
 }
 
-/* 尾部添加列表项 */
+/* Add a list item at the tail */
 static __inline void atk_list_add_tail(atk_list_node_t *head, atk_list_node_t *entry)
 { 
     head->prev->next = entry;
@@ -63,7 +63,7 @@ static __inline void atk_list_add_tail(atk_list_node_t *head, atk_list_node_t *e
     return;
 }
 
-/* 删除列表项 */
+/* Delete a list item */
 static __inline void atk_list_del(atk_list_node_t *entry)
 {
     entry->next->prev = entry->prev;
@@ -75,13 +75,13 @@ static __inline void atk_list_del(atk_list_node_t *entry)
     return;
 }
 
-/* 判断是否为空 */
+/* Check whether the list is empty */
 static __inline char atk_list_empty(const atk_list_node_t *head)
 {
     return (head->next == head);
 }
 
-/* 返回最后一个节点 */
+/* Return the last node */
 static __inline atk_list_node_t *atk_list_tail(atk_list_node_t *head)
 {
     atk_list_node_t *node;
@@ -100,7 +100,7 @@ static __inline atk_list_node_t *atk_list_tail(atk_list_node_t *head)
     return node;
 }
 
-/* 获取某个节点的下一个节点 */
+/* Get the next node of a node */
 static __inline atk_list_node_t *atk_list_node_next(atk_list_node_t *head)
 {
         atk_list_node_t *node;
@@ -108,7 +108,7 @@ static __inline atk_list_node_t *atk_list_node_next(atk_list_node_t *head)
         return node;
 }
 
-/* 获取某个节点的上一个节点 */
+/* Get the previous node of a node */
 static __inline atk_list_node_t *atk_list_node_prv(atk_list_node_t *head)
 {
         atk_list_node_t *node;
@@ -116,7 +116,7 @@ static __inline atk_list_node_t *atk_list_node_prv(atk_list_node_t *head)
         return node;
 }
 
-/* 获取大小 */
+/* Get size */
 static __inline  uint32_t atk_list_len(const atk_list_node_t *head)
 {
     uint32_t len;

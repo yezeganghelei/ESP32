@@ -14,7 +14,7 @@
 
 #include "exfuns.h"
 
-#define FILE_MAX_TYPE_NUM       7       /* mostFILE_MAX_TYPE_NUMA big category */
+#define FILE_MAX_TYPE_NUM       7       /* At most FILE_MAX_TYPE_NUM major categories */
 #define FILE_MAX_SUBT_NUM       7       /* Up to FILE_MAX_SUBT_NUM subcategories */
 
 /* File type definition */
@@ -23,21 +23,21 @@ static const char *FILE_TYPE_TBL[FILE_MAX_TYPE_NUM][FILE_MAX_SUBT_NUM] = {
     {"LRC"," "," "," "," "," "," "},                        /* LRC file */
     {"NES", "SMS"," "," "," "," "," "},                     /* NES/SMS files */
     {"TXT", "C", "H"," "," "," "," "},                      /* Text file */
-    {"WAV", "MP3", "OGG", "FLAC", "AAC", "WMA", "MID"},     /* musicdocument */
-    {"BMP", "JPG", "JPEG", "GIF","PNG"," "," "},            /* picturedocument */
+    {"WAV", "MP3", "OGG", "FLAC", "AAC", "WMA", "MID"},     /* Music files */
+    {"BMP", "JPG", "JPEG", "GIF","PNG"," "," "},            /* Image files */
     {"AVI"," "," "," "," "," "," "},                        /* Video files */
 };
 
 /******************************************************************************************/
-/* Public file area, usemallocWhen */
+/* Public file area, allocated with malloc */
 
-/* Logical disk workspace(Calling anyFATFSBefore the related functions,Must give firstfsApply for memory) */
+/* Logical disk workspace (before calling any FATFS function, memory must first be allocated for fs) */
 FATFS *fs[FF_VOLUMES];  
 
 /******************************************************************************************/
 
 /**
- * @brief       forexfunsApply for memory
+ * @brief       Allocate memory for exfuns
  * @param       none
  * @retval      0, success; 1, fail.
  */
@@ -48,14 +48,14 @@ uint8_t exfuns_init(void)
 
     for (i = 0; i < FF_VOLUMES; i++)
     {
-        fs[i] = (FATFS *)malloc(sizeof(FATFS));   /* fordiskiworkspaceApply for memory */
+        fs[i] = (FATFS *)malloc(sizeof(FATFS));   /* Allocate memory for the disk workspace */
 
         if (!fs[i])break;
     }
     
     if (i == FF_VOLUMES && res == 0)
     {
-        return 0;   /* If there is one failure in the application, that is, failure. */
+        return 0;   /* If any allocation fails, the whole operation fails. */
     }
     else 
     {
@@ -64,36 +64,36 @@ uint8_t exfuns_init(void)
 }
 
 /**
- * @brief       WillLowercase letter conversionforcapitalletter,ifyesnumber,Stay unchanged.
+ * @brief       Convert a lowercase letter to uppercase; numbers are unchanged.
  * @param       c : Letters to convert
- * @retval      Converted letters,capital
+ * @retval      Converted letter (uppercase)
  */
 uint8_t exfuns_char_upper(uint8_t c)
 {
-    if (c < 'A')return c;   /* number,Stay unchanged. */
+    if (c < 'A')return c;   /* Number, unchanged. */
 
     if (c >= 'a')
     {
-        return c - 0x20;    /* Change to capitalization. */
+        return c - 0x20;    /* Convert to uppercase. */
     }
     else
     {
-        return c;           /* Capitalization, stay the same */
+        return c;           /* Already uppercase, unchanged */
     }
 }
 
 /**
  * @brief       Type of report file
- * @param       fname : documentname
+ * @param       fname : file name
  * @retval      File Type
- *   @arg       0XFF , expressnoneMethod identifiedFile Typeserial number.
- *   @arg       other , The four high digits represent the major category, The lower four digits represent the subcategory.
+ *   @arg       0XFF , no matching file type.
+ *   @arg       other , The high nibble is the major category, the low nibble is the subcategory.
  */
 uint8_t exfuns_file_type(char *fname)
 {
     uint8_t tbuf[5];
     char *str_tbuf;
-    char *attr = 0;   /* Suffix name */
+    char *attr = 0;   /* File suffix */
     uint8_t i = 0, j;
 
     str_tbuf = malloc(5);
@@ -102,14 +102,14 @@ uint8_t exfuns_file_type(char *fname)
     {
         i++;
 
-        if (*fname == '\0')break;   /* OffsetarriveIt's the last. */
+        if (*fname == '\0')break;   /* Reached the end. */
 
         fname++;
     }
 
-    if (i == 250)return 0XFF;   /* Wrong string. */
+    if (i == 250)return 0XFF;   /* String too long. */
 
-    for (i = 0; i < 5; i++)     /* have toarriveSuffix name */
+    for (i = 0; i < 5; i++)     /* Find the suffix */
     {
         fname--;
 
@@ -125,7 +125,7 @@ uint8_t exfuns_file_type(char *fname)
 
     strcpy((char *)tbuf, (const char *)attr);       /* copy */
 
-    for (i = 0; i < 4; i++)tbuf[i] = exfuns_char_upper(tbuf[i]);    /* All changeforcapital */
+    for (i = 0; i < 4; i++)tbuf[i] = exfuns_char_upper(tbuf[i]);    /* Convert all to uppercase */
 
     for (i = 0; i < FILE_MAX_TYPE_NUM; i++)         /* Major categories comparison */
     {
@@ -134,23 +134,23 @@ uint8_t exfuns_file_type(char *fname)
             if (*FILE_TYPE_TBL[i][j] == 0)
             {
                 free(str_tbuf);
-                break;    /* This group has no comparable members. */
+                break;    /* No more entries in this group. */
             }
 
             sprintf(str_tbuf,"%s",FILE_TYPE_TBL[i][j]);
 
-            if (strcmp((const char *)str_tbuf, (const char *)tbuf) == 0) /* Found */
+            if (strcmp((const char *)str_tbuf, (const char *)tbuf) == 0) /* Match found */
             {
                 return (i << 4) | j;
             }
         }
     }
 
-    return 0XFF;    /* Didn't look for itarrive */
+    return 0XFF;    /* No match found */
 }
 
 /**
- * @brief       get diskRemaining capacity
+ * @brief       Get the remaining disk capacity
  * @param       pdrv : disk number("0:"~"9:")
  * @param       total: Total capacity (KB)
  * @param       free : Remaining capacity (KB)
@@ -167,14 +167,14 @@ uint8_t exfuns_get_free(uint8_t *pdrv, uint32_t *total, uint32_t *free)
 
     if (res == 0)
     {
-        tot_sect = (fs1->n_fatent - 2) * fs1->csize;    /* have toarriveTotal sectors */
+        tot_sect = (fs1->n_fatent - 2) * fs1->csize;    /* Total number of sectors */
         fre_sect = fre_clust * fs1->csize;              /* Get the number of free sectors */
 #if FF_MAX_SS!=512  /* The sector size is not 512 bytes, then it is converted to 512 bytes. */
         tot_sect *= fs1->ssize / 512;
         fre_sect *= fs1->ssize / 512;
 #endif
-        *total = tot_sect >> 1;     /* unitforKB */
-        *free = fre_sect >> 1;      /* unitforKB */
+        *total = tot_sect >> 1;     /* Unit: KB */
+        *free = fre_sect >> 1;      /* Unit: KB */
     }
 
     return res;
@@ -182,30 +182,30 @@ uint8_t exfuns_get_free(uint8_t *pdrv, uint32_t *total, uint32_t *free)
 
 /**
  * @brief       File Copy
- *   @note      Willpsrcdocument,copyarrivepdst.
- *              Notice: Do not exceed the file size4GB.
+ *   @note      Copy the file psrc to pdst.
+ *              Note: file size must not exceed 4GB.
 
- * @param       fcpymsg : Function pointer, Used to realize the information display during copying
- *                  pname:document/Foldersname
- *                  pct:percentage
+ * @param       fcpymsg : Function pointer, used to display information during copying
+ *                  pname: file/folder name
+ *                  pct: percentage
  *                  mode:
- *                      bit0 : 更newdocumentname
- *                      bit1 : 更newpercentagepct
- *                      bit2 : 更newFolders
- *                      other : reserve
- *                  Return value: 0, normal; 1, Mandatoryquit;
+ *                      bit0 : update file name
+ *                      bit1 : update percentage pct
+ *                      bit2 : update folder
+ *                      other : reserved
+ *                  Return value: 0, normal; 1, force quit;
 
- * @param       psrc    : sourcedocument
+ * @param       psrc    : source file
  * @param       pdst    : Target file
- * @param       totsize : Total size(whentotsizefor0When,Indicates onlyforsingledocumentcopy)
- * @param       cpdsize : Copyed size.
+ * @param       totsize : Total size(0 means single-file copy only)
+ * @param       cpdsize : Copied size.
  * @param       fwmode  : File writing mode
  *   @arg       0: Do not overwrite the original file
  *   @arg       1: Overwrite the original file
 
  * @retval      Execution results
  *   @arg       0   , normal
- *   @arg       0XFF, Mandatoryquit
+ *   @arg       0XFF, force quit
  *   @arg       other, Error code
  */
 uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t mode), uint8_t *psrc, uint8_t *pdst, 
@@ -226,13 +226,13 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
 
     if (fsrc == NULL || fdst == NULL || fbuf == NULL)
     {
-        res = 100;  /* The previous value is left to fatfs */
+        res = 100;  /* Reserve the previous error code for FatFs */
     }
     else
     {
         if (fwmode == 0)
         {
-            fwmode = FA_CREATE_NEW;     /* Not covered */
+            fwmode = FA_CREATE_NEW;     /* Do not overwrite */
         }
         else 
         {
@@ -241,11 +241,11 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
         
         res = f_open(fsrc, (const TCHAR *)psrc, FA_READ | FA_OPEN_EXISTING);        /* Open a read-only file */
 
-        if (res == 0)res = f_open(fdst, (const TCHAR *)pdst, FA_WRITE | fwmode);    /* The first one opens successfully,The second one started to be opened */
+        if (res == 0)res = f_open(fdst, (const TCHAR *)pdst, FA_WRITE | fwmode);    /* Open the destination file after the source opens successfully */
 
-        if (res == 0)           /* Both have been successfully opened */
+        if (res == 0)           /* Both files opened successfully */
         {
-            if (totsize == 0)   /* 仅仅yessingleFile Copy */
+            if (totsize == 0)   /* Single-file copy only */
             {
                 totsize = fsrc->obj.objsize;
                 lcpdsize = 0;
@@ -253,10 +253,10 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
             }
             else
             {
-                curpct = (lcpdsize * 100) / totsize;            /* have toarrivenewpercentage */
+                curpct = (lcpdsize * 100) / totsize;            /* Update the percentage */
             }
             
-            fcpymsg(psrc, curpct, 0X02);                        /* 更newpercentage */
+            fcpymsg(psrc, curpct, 0X02);                        /* Update percentage */
 
             while (res == 0)    /* Start copying */
             {
@@ -267,13 +267,13 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
                 res = f_write(fdst, fbuf, (UINT)br, (UINT *)&bw);/* Write to the destination file */
                 lcpdsize += bw;
 
-                if (curpct != (lcpdsize * 100) / totsize)       /* Does it need to be updated?percentage */
+                if (curpct != (lcpdsize * 100) / totsize)       /* Check whether the percentage needs updating */
                 {
                     curpct = (lcpdsize * 100) / totsize;
 
-                    if (fcpymsg(psrc, curpct, 0X02))            /* 更newpercentage */
+                    if (fcpymsg(psrc, curpct, 0X02))            /* Update percentage */
                     {
-                        res = 0XFF;                             /* Mandatoryquit */
+                        res = 0XFF;                             /* Force quit */
                         break;
                     }
                 }
@@ -293,11 +293,11 @@ uint8_t exfuns_file_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t 
 }
 
 /**
- * @brief       have toarriveunder the pathFolders
- *   @note      Remove all the paths, Leave only the folder name.
+ * @brief       Get the folder name from a path
+ *   @note      Strip the path and keep only the folder name.
  * @param       pname : Detailed path 
  * @retval      0   , The path is a volume number.
- *              other, Foldersname字首地址
+ *              other, Pointer to the folder name
  */
 uint8_t *exfuns_get_src_dname(uint8_t *pname)
 {
@@ -311,25 +311,25 @@ uint8_t *exfuns_get_src_dname(uint8_t *pname)
 
     if (temp < 4)return 0;
 
-    while ((*pname != 0x5c) && (*pname != 0x2f))pname--;    /* recallarriveThe last one"\"or"/"Where */
+    while ((*pname != 0x5c) && (*pname != 0x2f))pname--;    /* Find the last "\" or "/" */
 
     return ++pname;
 }
 
 /**
- * @brief       have toarriveFolderssize
- *   @note      Notice: Folderssize不要超过4GB.
+ * @brief       Get the folder size
+ *   @note      Note: folder size must not exceed 4GB.
  * @param       pname : Detailed path 
- * @retval      0   , Folderssizefor0, orAn error occurred during reading.
- *              other, Folderssize
+ * @retval      0   , Folder size is 0, or a read error occurred.
+ *              other, Folder size
  */
 uint32_t exfuns_get_folder_size(uint8_t *fdname)
 {
-#define MAX_PATHNAME_DEPTH  512 + 1     /* maximumTarget filepath+File name depth */
+#define MAX_PATHNAME_DEPTH  512 + 1     /* Maximum destination path + file name depth */
     uint8_t res = 0;
-    FF_DIR *fddir = 0;         /* Table of contents */
+    FF_DIR *fddir = 0;         /* Directory */
     FILINFO *finfo = 0;     /* File information */
-    uint8_t *pathname = 0;  /* Destination folderpath+documentname */
+    uint8_t *pathname = 0;  /* Destination folder path + file name */
     uint16_t pathlen = 0;   /* target path length */
     uint32_t fdsize = 0;
 
@@ -348,30 +348,30 @@ uint32_t exfuns_get_folder_size(uint8_t *fdname)
         {
             pathname[0] = 0;
             strcat((char *)pathname, (const char *)fdname);     /* Copy path */
-            res = f_opendir(fddir, (const TCHAR *)fdname);      /* OpenSource Directory */
+            res = f_opendir(fddir, (const TCHAR *)fdname);      /* Open the source directory */
 
             if (res == 0)   /* Open directory successfully */
             {
-                while (res == 0)   /* Start copyingFoldersSomething inside */
+                while (res == 0)   /* Copy the folder contents */
                 {
                     res = f_readdir(fddir, finfo);                  /* Read a file in the directory */
 
                     if (res != FR_OK || finfo->fname[0] == 0)break; /* An error/It's the end,quit */
 
-                    if (finfo->fname[0] == '.')continue;            /* Ignore the previous directory */
+                    if (finfo->fname[0] == '.')continue;            /* Ignore the parent directory entry */
 
-                    if (finfo->fattrib & 0X10)                      /* yesSubdirectory(File properties,0X20,Archive files;0X10,Subdirectory;) */
+                    if (finfo->fattrib & 0X10)                      /* Is a subdirectory (file attributes: 0X20 archive, 0X10 subdirectory) */
                     {
                         pathlen = strlen((const char *)pathname);   /* Get the length of the current path */
-                        strcat((char *)pathname, (const char *)"/");/* Add slashes */
+                        strcat((char *)pathname, (const char *)"/");/* Append a slash */
                         strcat((char *)pathname, (const char *)finfo->fname);   /* Source path plus subdirectory name */
                         //printf("\r\nsub folder:%s\r\n",pathname);             /* Print subdirectory name */
-                        fdsize += exfuns_get_folder_size(pathname);             /* have toarriveSubdirectorysize,Recursive call */
-                        pathname[pathlen] = 0;                                  /* Add End symbol */
+                        fdsize += exfuns_get_folder_size(pathname);             /* Get the subdirectory size recursively */
+                        pathname[pathlen] = 0;                                  /* Append the terminator */
                     }
                     else
                     {
-                        fdsize += finfo->fsize;                                 /* Non-directory, directly add the file size */
+                        fdsize += finfo->fsize;                                 /* Not a directory, add the file size directly */
                     }
                 }
             }
@@ -395,46 +395,46 @@ uint32_t exfuns_get_folder_size(uint8_t *fdname)
 
 /**
  * @brief       Folder Copy
- *   @note      WillpsrcFolders, copyarrivepdstFolders.
- *              Notice: Do not exceed the file size4GB.
+ *   @note      Copy the folder psrc to pdst.
+ *              Note: file size must not exceed 4GB.
 
- * @param       fcpymsg : Function pointer, Used to realize the information display during copying
- *                  pname:document/Foldersname
- *                  pct:percentage
+ * @param       fcpymsg : Function pointer, used to display information during copying
+ *                  pname: file/folder name
+ *                  pct: percentage
  *                  mode:
- *                      bit0 : 更newdocumentname
- *                      bit1 : 更newpercentagepct
- *                      bit2 : 更newFolders
- *                      other : reserve
- *                  Return value: 0, normal; 1, Mandatoryquit;
+ *                      bit0 : update file name
+ *                      bit1 : update percentage pct
+ *                      bit2 : update folder
+ *                      other : reserved
+ *                  Return value: 0, normal; 1, force quit;
 
- * @param       psrc    : sourceFolders
+ * @param       psrc    : source folder
  * @param       pdst    : Destination folder
- *   @note      must be in the form of"X:"/"X:XX"/"X:XX/XX"Something like that. And confirm the previous levelFoldersexist
+ *   @note      Must be in the form "X:"/"X:XX"/"X:XX/XX"; the parent folder must exist
 
- * @param       totsize : Total size(whentotsizefor0When,Indicates onlyforsingledocumentcopy)
- * @param       cpdsize : Copyed size.
+ * @param       totsize : Total size(0 means single-file copy only)
+ * @param       cpdsize : Copied size.
  * @param       fwmode  : File writing mode
  *   @arg       0: Do not overwrite the original file
  *   @arg       1: Overwrite the original file
 
  * @retval      Execution results
  *   @arg       0   , normal
- *   @arg       0XFF, Mandatoryquit
+ *   @arg       0XFF, force quit
  *   @arg       other, Error code
  */
 uint8_t exfuns_folder_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_t mode), uint8_t *psrc, uint8_t *pdst, 
                            uint32_t *totsize, uint32_t *cpdsize, uint8_t fwmode)
 {
-#define MAX_PATHNAME_DEPTH 512 + 1  /* maximumTarget filepath+File name depth */
+#define MAX_PATHNAME_DEPTH 512 + 1  /* Maximum destination path + file name depth */
     uint8_t res = 0;
-    FF_DIR *srcdir = 0;     /* Source Directory */
-    FF_DIR *dstdir = 0;     /* Source Directory */
+    FF_DIR *srcdir = 0;     /* Source directory */
+    FF_DIR *dstdir = 0;     /* Destination directory */
     FILINFO *finfo = 0;     /* File information */
-    uint8_t *fn = 0;        /* longdocumentname */
+    uint8_t *fn = 0;        /* Long file name */
 
-    uint8_t *dstpathname = 0;   /* Destination folderpath+documentname */
-    uint8_t *srcpathname = 0;   /* sourceFolderspath+documentname */
+    uint8_t *dstpathname = 0;   /* Destination folder path + file name */
+    uint8_t *srcpathname = 0;   /* Source folder path + file name */
 
     uint16_t dstpathlen = 0;    /* target path length */
     uint16_t srcpathlen = 0;    /* Source path length */
@@ -457,58 +457,58 @@ uint8_t exfuns_folder_copy(uint8_t(*fcpymsg)(uint8_t *pname, uint8_t pct, uint8_
             dstpathname[0] = 0;
             srcpathname[0] = 0;
             strcat((char *)srcpathname, (const char *)psrc);    /* Copy the original source file path */
-            strcat((char *)dstpathname, (const char *)pdst);    /* Copy the originalTarget filepath */
-            res = f_opendir(srcdir, (const TCHAR *)psrc);       /* OpenSource Directory */
+            strcat((char *)dstpathname, (const char *)pdst);    /* Copy the original destination path */
+            res = f_opendir(srcdir, (const TCHAR *)psrc);       /* Open the source directory */
 
             if (res == 0)   /* Open directory successfully */
             {
-                strcat((char *)dstpathname, (const char *)"/"); /* Add slashes */
+                strcat((char *)dstpathname, (const char *)"/"); /* Append a slash */
                 fn = exfuns_get_src_dname(psrc);
 
-                if (fn == 0)   /* Copy of the tag */
+                if (fn == 0)   /* Copying a volume label */
                 {
                     dstpathlen = strlen((const char *)dstpathname);
-                    dstpathname[dstpathlen] = psrc[0];          /* record label */
-                    dstpathname[dstpathlen + 1] = 0;            /* End symbol */
+                    dstpathname[dstpathlen] = psrc[0];          /* Record the label */
+                    dstpathname[dstpathlen + 1] = 0;            /* Terminator */
                 }
-                else strcat((char *)dstpathname, (const char *)fn); /* Add file name */
+                else strcat((char *)dstpathname, (const char *)fn); /* Append the file name */
 
-                fcpymsg(fn, 0, 0X04);   /* 更newFoldersname */
-                res = f_mkdir((const TCHAR *)dstpathname);  /* ifFoldersAlready exists,Do not create.Create a new folder if it does not exist. */
+                fcpymsg(fn, 0, 0X04);   /* Update folder name */
+                res = f_mkdir((const TCHAR *)dstpathname);  /* Do not create if the folder already exists; otherwise create it. */
 
                 if (res == FR_EXIST)res = 0;
 
-                while (res == 0)        /* Start copyingFoldersSomething inside */
+                while (res == 0)        /* Copy the folder contents */
                 {
                     res = f_readdir(srcdir, finfo);         /* Read a file in the directory */
 
                     if (res != FR_OK || finfo->fname[0] == 0)break; /* An error/It's the end,quit */
 
-                    if (finfo->fname[0] == '.')continue;    /* Ignore the previous directory */
+                    if (finfo->fname[0] == '.')continue;    /* Ignore the parent directory entry */
 
-                    fn = (uint8_t *)finfo->fname;           /* get filename */
-                    dstpathlen = strlen((const char *)dstpathname); /* have toarrivewhen前Target path的long度 */
-                    srcpathlen = strlen((const char *)srcpathname); /* have toarriveSource path length */
+                    fn = (uint8_t *)finfo->fname;           /* Get the file name */
+                    dstpathlen = strlen((const char *)dstpathname); /* Get the current destination path length */
+                    srcpathlen = strlen((const char *)srcpathname); /* Get the source path length */
 
-                    strcat((char *)srcpathname, (const char *)"/"); /* source pathAdd slashes */
+                    strcat((char *)srcpathname, (const char *)"/"); /* Append a slash to the source path */
 
-                    if (finfo->fattrib & 0X10)  /* yesSubdirectory(File properties,0X20,Archive files;0X10,Subdirectory;) */
+                    if (finfo->fattrib & 0X10)  /* Is a subdirectory (file attributes: 0X20 archive, 0X10 subdirectory) */
                     {
                         strcat((char *)srcpathname, (const char *)fn);  /* Source path plus subdirectory name */
-                        res = exfuns_folder_copy(fcpymsg, srcpathname, dstpathname, totsize, cpdsize, fwmode);   /* copyFolders */
+                        res = exfuns_folder_copy(fcpymsg, srcpathname, dstpathname, totsize, cpdsize, fwmode);   /* Copy the folder */
                     }
                     else     /* Non-directory */
                     {
-                        strcat((char *)dstpathname, (const char *)"/"); /* Target pathAdd slashes */
-                        strcat((char *)dstpathname, (const char *)fn);  /* Target pathAdd file name */
-                        strcat((char *)srcpathname, (const char *)fn);  /* source pathAdd file name */
-                        fcpymsg(fn, 0, 0X01);       /* 更newdocumentname */
+                        strcat((char *)dstpathname, (const char *)"/"); /* Append a slash to the destination path */
+                        strcat((char *)dstpathname, (const char *)fn);  /* Append the file name to the destination path */
+                        strcat((char *)srcpathname, (const char *)fn);  /* Append the file name to the source path */
+                        fcpymsg(fn, 0, 0X01);       /* Update file name */
                         res = exfuns_file_copy(fcpymsg, srcpathname, dstpathname, *totsize, *cpdsize, fwmode);  /* Copy the file */
-                        *cpdsize += finfo->fsize;   /* Increase a file size */
+                        *cpdsize += finfo->fsize;   /* Add the file size */
                     }
 
-                    srcpathname[srcpathlen] = 0;    /* Add End symbol */
-                    dstpathname[dstpathlen] = 0;    /* Add End symbol */
+                    srcpathname[srcpathlen] = 0;    /* Append the terminator */
+                    dstpathname[dstpathlen] = 0;    /* Append the terminator */
                 }
             }
 

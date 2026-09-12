@@ -21,12 +21,12 @@
 /*FreeRTOSConfiguration*/
 
 /* MUSIC Task Configuration
- * include: Task句柄 Task优先级 Stack size 创建Task
+ * include: task handle, task priority, stack size, create task
  */
-#define MUSIC_PRIO      4                   /* Task优先级 */
-#define MUSIC_STK_SIZE  5*1024              /* TaskStack size */
-TaskHandle_t            MUSICTask_Handler;  /* Task句柄 */
-void music(void *pvParameters);             /* Task函数 */
+#define MUSIC_PRIO      4                   /* Task priority */
+#define MUSIC_STK_SIZE  5*1024              /* Task stack size */
+TaskHandle_t            MUSICTask_Handler;  /* Task handle */
+void music(void *pvParameters);             /* Task function */
 
 static portMUX_TYPE my_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
@@ -39,12 +39,12 @@ esp_err_t i2s_play_next_prev = ESP_FAIL;
 
 /**
  * @brief       WAVAnalytical Initialization
- * @param       fname : document路径+document名
+ * @param       fname : file path + file name
  * @param       wavx  : Information storage structure pointer
- * @retval      0,打开document成功
- *              1,打开document失败
- *              2,NoWAVdocument
- *              3,DATAArea not found
+ * @retval      0, file opened successfully
+ *              1, failed to open file
+ *              2, no WAV file
+ *              3, DATA area not found
  */
 uint8_t wav_decode_init(uint8_t *fname, __wavctrl *wavx)
 {
@@ -63,7 +63,7 @@ uint8_t wav_decode_init(uint8_t *fname, __wavctrl *wavx)
     
     if (ftemp && buf)                                           /* Memory application was successful */
     {
-        res = f_open(ftemp, (TCHAR*)fname, FA_READ);            /* 打开document */
+        res = f_open(ftemp, (TCHAR*)fname, FA_READ);            /* Open file */
         
         if (res == FR_OK)
         {
@@ -77,7 +77,7 @@ uint8_t wav_decode_init(uint8_t *fname, __wavctrl *wavx)
                 
                 if (fact->ChunkID == 0x74636166 || fact->ChunkID == 0x5453494C)
                 {
-                    wavx->datastart = 12 + 8 + fmt->ChunkSize + 8 + fact->ChunkSize;    /* havefact/LISTpiece的时候(Not tested) */
+                    wavx->datastart = 12 + 8 + fmt->ChunkSize + 8 + fact->ChunkSize;    /* when a fact/LIST chunk is present (not tested) */
                 }
                 else
                 {
@@ -91,11 +91,11 @@ uint8_t wav_decode_init(uint8_t *fname, __wavctrl *wavx)
                     wavx->audioformat = fmt->AudioFormat;       /* Audio format */
                     wavx->nchannels = fmt->NumOfChannels;       /* Number of channels */
                     wavx->samplerate = fmt->SampleRate;         /* Sampling rate */
-                    wavx->bitrate = fmt->ByteRate * 8;          /* 得到Bit速 */
-                    wavx->blockalign = fmt->BlockAlign;         /* piece对齐 */
+                    wavx->bitrate = fmt->ByteRate * 8;          /* Get bit rate */
+                    wavx->blockalign = fmt->BlockAlign;         /* chunk alignment */
                     wavx->bps = fmt->BitsPerSample;             /* digit number, 16/24/32 bits */
                     
-                    wavx->datasize = data->ChunkSize;           /* 数据piece大小 */
+                    wavx->datasize = data->ChunkSize;           /* data chunk size */
                     wavx->datastart = wavx->datastart + 8;      /* Where the data flow begins. */
                      
                     printf("wavx->audioformat:%d\r\n", wavx->audioformat);
@@ -119,11 +119,11 @@ uint8_t wav_decode_init(uint8_t *fname, __wavctrl *wavx)
         }
         else
         {
-            res = 1;            /* 打开documentmistake */
+            res = 1;            /* Failed to open file */
         }
     }
     
-    f_close(ftemp);             /* 关闭document */
+    f_close(ftemp);             /* Close file */
     free(ftemp);                /* Free memory */
     free(buf); 
     
@@ -162,18 +162,18 @@ void music(void *pvParameters)
     {
         if ((g_audiodev.status & 0x0F) == 0x03)
         {
-            f_lseek(g_audiodev.file, n ? res : wavctrl.datastart);                          /* 跳过document头 */
+            f_lseek(g_audiodev.file, n ? res : wavctrl.datastart);                          /* Skip the file header */
 
             for (uint16_t readTimes = 0; readTimes < (wavctrl.datasize / WAV_TX_BUFSIZE); readTimes++)
             {
                 if ((g_audiodev.status & 0x0F) == 0x00)                                     /* Pause playback */
                 {
-                    res = f_tell(g_audiodev.file);                                          /* 记录pauseBit置 */
+                    res = f_tell(g_audiodev.file);                                          /* Record the pause position */
                     n = 1;
                     break;
                 }
 
-                if (i2s_table_size >= wavctrl.datasize || i2s_play_next_prev == ESP_OK)   /* yes否播放完成 */
+                if (i2s_table_size >= wavctrl.datasize || i2s_play_next_prev == ESP_OK)   /* Whether playback is complete */
                 {
                     n = 0;
                     i2s_table_size = 0;
@@ -183,7 +183,7 @@ void music(void *pvParameters)
                     break;
                 }
 
-                f_read(g_audiodev.file,g_audiodev.tbuf, WAV_TX_BUFSIZE, (UINT*)&nr);        /* 读document */
+                f_read(g_audiodev.file,g_audiodev.tbuf, WAV_TX_BUFSIZE, (UINT*)&nr);        /* Read file */
                 i2s_table_size = i2s_table_size + i2s_tx_write(g_audiodev.tbuf, WAV_TX_BUFSIZE);
                 vTaskDelay(1);
             }
@@ -198,10 +198,10 @@ void music(void *pvParameters)
 
 /**
  * @brief       Play a certainwavdocument
- * @param       fname : document路径+document名
- * @retval      KEY0_PRES,mistake
- *              KEY1_PRES,打开document失败
- *              other,NoWAVdocument
+ * @param       fname : file path + file name
+ * @retval      KEY0_PRES, mistake
+ *              KEY1_PRES, failed to open file
+ *              other, no WAV file
  */
 uint8_t wav_play_song(uint8_t *fname)
 {
@@ -215,9 +215,9 @@ uint8_t wav_play_song(uint8_t *fname)
     
     if (g_audiodev.file || g_audiodev.tbuf)
     {
-        res = wav_decode_init(fname, &wavctrl);     /* 得到document的信息 */
+        res = wav_decode_init(fname, &wavctrl);     /* Get file information */
 
-        if (res == 0)                               /* 解析document成功 */
+        if (res == 0)                               /* File parsed successfully */
         {
             if (wavctrl.bps == 16)
             {
@@ -235,18 +235,18 @@ uint8_t wav_play_song(uint8_t *fname)
             if (MUSICTask_Handler == NULL)
             {
                 taskENTER_CRITICAL(&my_spinlock);
-                /* 创建Task1 */
-                xTaskCreatePinnedToCore((TaskFunction_t )music,                 /* Task函数 */
-                                        (const char*    )"music",               /* Task名称 */
-                                        (uint16_t       )MUSIC_STK_SIZE,        /* TaskStack size */
-                                        (void*          )NULL,                  /* 传入给Task函数的参数 */
-                                        (UBaseType_t    )MUSIC_PRIO,            /* Task优先级 */
-                                        (TaskHandle_t*  )&MUSICTask_Handler,    /* Task句柄 */
-                                        (BaseType_t     ) 0);                   /* 该Task哪个内核运行 */
+                /* Create task 1 */
+                xTaskCreatePinnedToCore((TaskFunction_t )music,                 /* Task function */
+                                        (const char*    )"music",               /* Task name */
+                                        (uint16_t       )MUSIC_STK_SIZE,        /* Task stack size */
+                                        (void*          )NULL,                  /* Parameter passed to the task function */
+                                        (UBaseType_t    )MUSIC_PRIO,            /* Task priority */
+                                        (TaskHandle_t*  )&MUSICTask_Handler,    /* Task handle */
+                                        (BaseType_t     ) 0);                   /* Which core the task runs on */
                 taskEXIT_CRITICAL(&my_spinlock);
             }
 
-            res = f_open(g_audiodev.file, (TCHAR*)fname, FA_READ);  /* 打开document */
+            res = f_open(g_audiodev.file, (TCHAR*)fname, FA_READ);  /* Open file */
 
             if (res == 0)
             {

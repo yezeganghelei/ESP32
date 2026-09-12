@@ -3,7 +3,7 @@
  * @Date: 2021-11-06 18:32:15
  * @LastEditTime: 2021-11-13 14:45:09
  * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: Open koroFileHeader to view the configuration and settings: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \s3_lvgl_v7\main\page\spage.h
  */
 /*** 
@@ -88,10 +88,10 @@ extern _PageManager page;
 
 struct settingPage
 {
-    void (*onCreat)(void);  // 创建并显示界面
-    void (*onRelece)(void); // 销毁界面，以及释放界面中所有元素所占用的内存
+    void (*onCreat)(void);  // Create and display the screen
+    void (*onRelece)(void); // Destroy the screen and free the memory used by all its elements
     void (*hidePage)(int hide);
-    void (*onKey)(int keyCode, int keyOption); // 第一个参数是 按键类型，说明是按了哪一个按键，第二个是按键动作，按下还是弹起
+    void (*onKey)(int keyCode, int keyOption); // The first parameter is the button type (which button was pressed); the second is the button action (pressed or released)
 };
 void Page_StackInit(void);
 void Page_StackPush(struct settingPage element);

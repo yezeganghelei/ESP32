@@ -29,39 +29,39 @@
 
 static void ICON_Grp_Move(int8_t dir);
 
-/*此页面窗口*/
+/*This page's window*/
 static lv_obj_t *appWindow;
-/*标题栏*/
+/*Title bar*/
 static lv_obj_t *labelTitle;
-/*标题栏分隔线*/
+/*Title bar separator line*/
 static lv_obj_t *lineTitle;
-/*图标显示容器，用于裁剪显示*/
+/*Icon display container, used for clipped display*/
 static lv_obj_t *contDisp;
-/*图标组容器*/
+/*Icon group container*/
 static lv_obj_t *contICON;
 
-/*菜单切换速度*/
+/*Menu switch speed*/
 static uint16_t anim_speed = 200;
-/*选中图标目标放大值*/
+/*Target zoom value for the selected icon*/
 static uint16_t anim_target_zoom = 400;
-/*选中图标目标y轴坐标*/
+/*Target y coordinate for the selected icon*/
 static uint16_t anim_target_y = 60;
-/*选中图标目标y轴坐标*/
+/*Target y coordinate for the selected icon*/
 uint16_t anim_start_y = 130;
 
-/*图标间隔*/
+/*Icon spacing*/
 static uint8_t ICON_IntervalPixel = 30;
 // uint16_t ICON_IntervalPixel = (uint16_t)(DISP_MAX_VER / 6);
-/*图标大小*/
+/*Icon size*/
 static const uint8_t ICON_Size = 20;
-/*当前选中的图标索引*/
+/*Index of the currently selected icon*/
 static int8_t ICON_NowSelIndex = 0;
-/*每个图标的修正值*/
+/*Offset correction for each icon*/
 static int8_t ICON_Offset = 20;
-/*图标索引最大值*/
+/*Maximum icon index*/
 #define ICON_MAX_INDEX (__Sizeof(ICON_Grp) - 1)
 
-//显示图片声明
+//Image declarations
 LV_IMG_DECLARE(imgcam);
 LV_IMG_DECLARE(imgcolor);
 LV_IMG_DECLARE(imgface);
@@ -104,7 +104,7 @@ static void event_handler_page_menu(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -122,21 +122,21 @@ static void event_handler_page_menu(lv_obj_t *obj, lv_event_t event)
 
 	switch (event)
 	{
-	case LV_EVENT_PRESSED: /* 按下 */
+	case LV_EVENT_PRESSED: /* Pressed */
 		printf("Pressed\n");
 		break;
 
-	case LV_EVENT_SHORT_CLICKED: /* 短点击 */
+	case LV_EVENT_SHORT_CLICKED: /* Short click */
 		printf("Short clicked\n");
 		break;
 
-	case LV_EVENT_CLICKED: /* 点击 */
-		/*单击OK，进入对应页面*/
+	case LV_EVENT_CLICKED: /* Click */
+		/*Click OK to enter the corresponding page*/
 
 		printf("Clicked\n");
 		break;
 
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		if (ICON_Grp[ICON_NowSelIndex].pageID != 0)
 		{
 			page.PagePush(ICON_Grp[ICON_NowSelIndex].pageID);
@@ -144,11 +144,11 @@ static void event_handler_page_menu(lv_obj_t *obj, lv_event_t event)
 		printf("Long press\n");
 		break;
 
-	case LV_EVENT_LONG_PRESSED_REPEAT: /* 一直长按 */
+	case LV_EVENT_LONG_PRESSED_REPEAT: /* Long press repeat */
 		printf("Long press repeat\n");
 		break;
 
-	case LV_EVENT_RELEASED: /* 松开 */
+	case LV_EVENT_RELEASED: /* Released */
 
 		printf("Released\n");
 		break;
@@ -157,27 +157,27 @@ static void event_handler_page_menu(lv_obj_t *obj, lv_event_t event)
 	/*Etc.*/
 }
 
-//当前界面是菜单时MOVE任务要做的事情
+//What the MOVE task should do when the current screen is the menu
 void move_task_menu(uint8_t dir)
 {
 
 	switch (dir)
 	{
-	case BT1_DOWN: //往上移动
+	case BT1_DOWN: //Move up
 		ICON_Grp_Move(-1);
 		break;
-	case BT1_LONG: //往上移动
+	case BT1_LONG: //Move up
 		ICON_Grp_Move(-1);
 		break;
-	case BT1_LONGFREE: //往上移动
+	case BT1_LONGFREE: //Move up
 		break;
-	case BT3_DOWN: //往下移动
+	case BT3_DOWN: //Move down
 		ICON_Grp_Move(1);
 		break;
-	case BT3_LONG: //往下移动
+	case BT3_LONG: //Move down
 		ICON_Grp_Move(1);
 		break;
-	case BT3_LONGFREE: //往上移动
+	case BT3_LONGFREE: //Move up
 		break;
 
 	default:
@@ -186,9 +186,9 @@ void move_task_menu(uint8_t dir)
 }
 
 /**
-  * @brief  创建标题栏
-  * @param  无
-  * @retval 无
+  * @brief  Create the title bar
+  * @param  None
+  * @retval None
   */
 static void Title_Create()
 {
@@ -203,7 +203,7 @@ static void Title_Create()
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(appWindow, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_pos(appWindow, 0, APP_WIN_HEIGHT);
 	lv_obj_set_size(appWindow, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -233,7 +233,7 @@ static void Title_Create()
 	lv_obj_set_size(labelTitle, APP_WIN_WIDTH, 60);
 	lv_label_set_recolor(labelTitle, true);
 
-	/*默认选中的是第二个图标*/
+	/*The second icon is selected by default*/
 	lv_label_set_static_text(labelTitle, ICON_Grp[0].text);
 	lv_obj_align(labelTitle, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 	lv_obj_set_auto_realign(labelTitle, true);
@@ -251,7 +251,7 @@ static void Title_Create()
 	lv_line_set_points(lineTitle, screen_line3, 2);
 }
 
-//创建菜单界面
+//Create the menu screen
 static void Cont_create(void)
 {
 	uint8_t i;
@@ -263,7 +263,7 @@ static void Cont_create(void)
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(contDisp, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_size(contDisp, APP_WIN_WIDTH, DISP_MAX_VER - 60);
 	lv_obj_set_pos(contDisp, 0, 60);
@@ -276,7 +276,7 @@ static void Cont_create(void)
 	lv_style_set_border_color(&style_cont1, LV_STATE_DEFAULT, LV_COLOR_RED);
 	lv_style_set_border_width(&style_cont1, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont1, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont1, LV_STATE_DEFAULT, LV_COLOR_RED); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont1, LV_STATE_DEFAULT, LV_COLOR_RED); //Set the screen background
 
 	lv_obj_add_style(contICON, LV_BTN_PART_MAIN, &style_cont);
 	lv_obj_set_size(contICON, (ICON_Size + ICON_IntervalPixel) * __Sizeof(ICON_Grp) + 50, lv_obj_get_height(contDisp));
@@ -284,17 +284,17 @@ static void Cont_create(void)
 
 	for (i = 0; i < __Sizeof(ICON_Grp); i++)
 	{
-		ICON_Grp[i].img = lv_img_create(contICON, NULL);			//创建img显示菜单
-		lv_img_set_src(ICON_Grp[i].img, ICON_Grp[i].img_buffer);	//设置显示图片
-		lv_obj_align(ICON_Grp[i].img, NULL, LV_ALIGN_CENTER, 0, 0); //设置图片显示顶端
-		/*计算偏移量*/
+		ICON_Grp[i].img = lv_img_create(contICON, NULL);			//Create an image to display the menu
+		lv_img_set_src(ICON_Grp[i].img, ICON_Grp[i].img_buffer);	//Set the displayed image
+		lv_obj_align(ICON_Grp[i].img, NULL, LV_ALIGN_CENTER, 0, 0); //Set the image to the top
+		/*Calculate the offset*/
 		lv_obj_set_x(ICON_Grp[i].img, (ICON_Size + ICON_IntervalPixel) * i + ICON_Offset);
 	}
 }
 /**
-  * @brief  创建滚轮阴影
-  * @param  无
-  * @retval 无
+  * @brief  Create the scroll wheel shadow
+  * @param  None
+  * @retval None
   */
 static void ImgShadow_Create()
 {
@@ -311,216 +311,216 @@ static void ImgShadow_Create()
 }
 
 /**
-  * @brief  移动到选中图标
-  * @param  iconIndex:目标图标的索引
-  * @retval 无
+  * @brief  Move to the selected icon
+  * @param  iconIndex:index of the target icon
+  * @retval None
   */
 static void ICON_Grp_MoveFocus(uint8_t iconIndex)
 {
 	if (iconIndex > ICON_MAX_INDEX)
 		return;
 
-	/*改变标题栏的文字说明*/
+	/*Change the title bar text*/
 	lv_label_set_static_text(labelTitle, ICON_Grp[iconIndex].text);
 
-	/*计算目标Y坐标*/
+	/*Calculate the target Y coordinate*/
 	int16_t target_x = -(ICON_Size + ICON_IntervalPixel) * (iconIndex - 1) - ICON_Offset - 10;
-	/*执行滑动动画*/
+	/*Run the slide animation*/
 	obj_add_anim(
-		contICON,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-		lv_obj_get_x(contICON),					  //起始值
-		target_x,								  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		contICON,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+		lv_obj_get_x(contICON),					  //Start value
+		target_x,								  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
 	if (iconIndex == 0)
 	{
 		obj_add_anim(
-			ICON_Grp[iconIndex].img,				  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			LV_IMG_ZOOM_NONE / 1.5,					  //起始值
-			anim_target_zoom,						  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex].img,				  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			LV_IMG_ZOOM_NONE / 1.5,					  //Start value
+			anim_target_zoom,						  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex].img,				  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_start_y,							  //起始值
-			anim_target_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex].img,				  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_start_y,							  //Start value
+			anim_target_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex + 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_zoom,						  //起始值
-			LV_IMG_ZOOM_NONE / 1.5,					  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex + 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_zoom,						  //Start value
+			LV_IMG_ZOOM_NONE / 1.5,					  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex + 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_y,							  //起始值
-			anim_start_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex + 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_y,							  //Start value
+			anim_start_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 	}
 	else if (iconIndex >= 1 && iconIndex < ICON_MAX_INDEX)
 	{
 		obj_add_anim(
-			ICON_Grp[iconIndex].img,				  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			LV_IMG_ZOOM_NONE / 1.5,					  //起始值
-			anim_target_zoom,						  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex].img,				  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			LV_IMG_ZOOM_NONE / 1.5,					  //Start value
+			anim_target_zoom,						  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex].img,				  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_start_y,							  //起始值
-			anim_target_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex].img,				  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_start_y,							  //Start value
+			anim_target_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex - 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_zoom,						  //起始值
-			LV_IMG_ZOOM_NONE / 1.5,					  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex - 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_zoom,						  //Start value
+			LV_IMG_ZOOM_NONE / 1.5,					  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex - 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_y,							  //起始值
-			anim_start_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex - 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_y,							  //Start value
+			anim_start_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 
 		obj_add_anim(
-			ICON_Grp[iconIndex + 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_zoom,						  //起始值
-			LV_IMG_ZOOM_NONE / 1.5,					  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex + 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_zoom,						  //Start value
+			LV_IMG_ZOOM_NONE / 1.5,					  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex + 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_y,							  //起始值
-			anim_start_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex + 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_y,							  //Start value
+			anim_start_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 	}
 	else if (iconIndex == ICON_MAX_INDEX)
 	{
 		obj_add_anim(
-			ICON_Grp[iconIndex - 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_zoom,						  //起始值
-			LV_IMG_ZOOM_NONE / 1.5,					  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex - 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_zoom,						  //Start value
+			LV_IMG_ZOOM_NONE / 1.5,					  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex - 1].img,			  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_target_y,							  //起始值
-			anim_start_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex - 1].img,			  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_target_y,							  //Start value
+			anim_start_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex].img,				  //动画对象
-			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			LV_IMG_ZOOM_NONE / 1.5,					  //起始值
-			anim_target_zoom,						  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex].img,				  //Animation object
+			(lv_anim_exec_xcb_t)lv_img_set_zoom,	  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			LV_IMG_ZOOM_NONE / 1.5,					  //Start value
+			anim_target_zoom,						  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 		obj_add_anim(
-			ICON_Grp[iconIndex].img,				  //动画对象
-			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-			lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-			anim_start_y,							  //起始值
-			anim_target_y,							  //结束值
-			lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+			ICON_Grp[iconIndex].img,				  //Animation object
+			(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+			lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+			anim_start_y,							  //Start value
+			anim_target_y,							  //End value
+			lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 		);
 	}
 }
 
 /**
-  * @brief  上下移动选中的图标
-  * @param  dir:方向
-  * @retval 无
+  * @brief  Move the selected icon up and down
+  * @param  dir:direction
+  * @retval None
   */
 static void ICON_Grp_Move(int8_t dir)
 {
-	/*在限定范围内移动*/
+	/*Move within the allowed range*/
 	__ValuePlus(ICON_NowSelIndex, dir, 0, ICON_MAX_INDEX);
 
-	/*移动到新图标*/
+	/*Move to the new icon*/
 	ICON_Grp_MoveFocus(ICON_NowSelIndex);
 }
 
 static void Exit()
 {
-	/*图标全部滑出*/
+	/*Slide all icons out*/
 	obj_add_anim(
-		contICON,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-		lv_anim_speed_to_time(anim_speed, 0, 50), //动画速度
-		lv_obj_get_y(contICON),					  //起始值
-		lv_obj_get_height(contDisp) + ICON_Size,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		contICON,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+		lv_anim_speed_to_time(anim_speed, 0, 50), //Animation speed
+		lv_obj_get_y(contICON),					  //Start value
+		lv_obj_get_height(contDisp) + ICON_Size,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	obj_add_anim(
-		appWindow,						  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_y, //动画函数
-		300,							  //动画速度
-		0,								  //起始值
-		APP_WIN_HEIGHT,					  //结束值
-		lv_anim_path_linear				  //动画特效:模拟弹性物体下落
+		appWindow,						  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_y, //Animation function
+		300,							  //Animation speed
+		0,								  //Start value
+		APP_WIN_HEIGHT,					  //End value
+		lv_anim_path_linear				  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(appWindow);
 	lv_obj_set_click(lv_layer_top(), false);
 	lv_obj_clean(lv_layer_top());
-	lv_obj_set_event_cb(lv_layer_top(), NULL); /* 分配事件处理 */
+	lv_obj_set_event_cb(lv_layer_top(), NULL); /* Assign the event handler */
 }
 
 static void Setup()
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf("page_menu_start     esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf("page_menu_start     esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	Title_Create();
 	Cont_create();
 	// ImgShadow_Create();
 
 	obj_add_anim(
-		appWindow,						  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_y, //动画函数
-		300,							  //动画速度
-		APP_WIN_HEIGHT,					  //起始值
-		0,								  //结束值
-		lv_anim_path_linear				  //动画特效:模拟弹性物体下落
+		appWindow,						  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_y, //Animation function
+		300,							  //Animation speed
+		APP_WIN_HEIGHT,					  //Start value
+		0,								  //End value
+		lv_anim_path_linear				  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
-	/*图标滑到上一次选中的图标*/
+	/*Slide to the previously selected icon*/
 	ICON_Grp_MoveFocus(ICON_NowSelIndex);
-	/* 分配屏幕触摸事件处理 */
+	/* Assign the screen touch event handler */
 	lv_obj_set_click(lv_layer_top(), true);
 	lv_obj_set_event_cb(lv_layer_top(), event_handler_page_menu);
 }
@@ -530,26 +530,26 @@ uint8_t Menu_Choose(void)
 }
 
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Menu(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Menu至页面调度器*/\r\n");
+	printf("/* Register Menu with the page scheduler */\r\n");
 }

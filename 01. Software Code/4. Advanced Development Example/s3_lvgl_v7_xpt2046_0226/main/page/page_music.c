@@ -24,11 +24,11 @@
 #include "lv_port_indev.h"
 #include "lv_gif.h"
 
-/*此页面窗口*/
+/*This page's window*/
 static lv_obj_t *appWindow;
 
 /**
- * @descripttion: 创建标题栏
+ * @descripttion: Create the title bar
  * @param {*}
  * @return {*}
  */
@@ -43,7 +43,7 @@ static void Title_Create()
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(appWindow, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_pos(appWindow, 0, 0);
 	lv_obj_set_size(appWindow, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -74,7 +74,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -86,12 +86,12 @@ static void Exit(void)
 {
 	my_demo_music_end(appWindow);
 	obj_add_anim(
-		appWindow,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,								   //起始值
-		APP_WIN_WIDTH,					   //结束值
-		lv_anim_path_linear				   //动画特效:模拟弹性物体下落
+		appWindow,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,								   //Start value
+		APP_WIN_WIDTH,					   //End value
+		lv_anim_path_linear				   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(appWindow);
@@ -100,7 +100,7 @@ static void Exit(void)
 
 static void Setup(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
@@ -108,38 +108,38 @@ static void Setup(void)
 	Title_Create();
 
 	obj_add_anim(
-		appWindow,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_WIDTH,					   //起始值
-		0,								   //结束值
-		lv_anim_path_linear				   //动画特效:模拟弹性物体下落
+		appWindow,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_WIDTH,					   //Start value
+		0,								   //End value
+		lv_anim_path_linear				   //Animation effect: simulate a bouncing object falling
 	);
 
 	ANIEND
 	my_demo_music_start(appWindow);
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Music(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Music至页面调度器*/\r\n");
+	printf("/* Register Music with the page scheduler */\r\n");
 }

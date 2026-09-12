@@ -25,7 +25,7 @@ int save_nvs(const char * str,char * data)
         ESP_LOGI(TAG,"save%s:%s",str,data);
     else
     {
-        ESP_LOGI(TAG,"save失败");  
+        ESP_LOGI(TAG,"Save failed");  
         return 0;
     }
     nvs_close(my_handle);

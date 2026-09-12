@@ -15,36 +15,36 @@
 #include "adc1.h"
 
 /**
- * @brief       initializationADC
+ * @brief       Initialize ADC
  * @param       none
  * @retval      none
  */
 void adc_init(void)
 {
-    adc_digi_pattern_config_t adc1_digi_pattern_config;         /* ADC1Configuration句柄 */
+    adc_digi_pattern_config_t adc1_digi_pattern_config;         /* ADC1 configuration handle */
     adc_digi_configuration_t adc1_init_config;                  /* ADC1Initialize handle */
     
     /* ConfigurationADC1 */
-    adc1_digi_pattern_config.atten = ADC_ATTEN_DB_11;           /* ConfigurationADCattenuation degree */
-    adc1_digi_pattern_config.channel = ADC_ADCX_CHY;            /* ConfigurationADCaisle */
-    adc1_digi_pattern_config.unit = ADC_UNIT_1;                 /* ConfigurationADCunit */
+    adc1_digi_pattern_config.atten = ADC_ATTEN_DB_11;           /* Configure ADC attenuation */
+    adc1_digi_pattern_config.channel = ADC_ADCX_CHY;            /* Configure ADC channel */
+    adc1_digi_pattern_config.unit = ADC_UNIT_1;                 /* Configure ADC unit */
     adc1_digi_pattern_config.bit_width = ADC_BITWIDTH_12;       /* Configure ADC bit width */
-    adc1_init_config.adc_pattern = &adc1_digi_pattern_config;   /* Configure each of theADCparameter */
-    adc_digi_controller_configure(&adc1_init_config);           /* ConfigurationADC1 */
+    adc1_init_config.adc_pattern = &adc1_digi_pattern_config;   /* Configure the parameter for each ADC channel */
+    adc_digi_controller_configure(&adc1_init_config);           /* Configure ADC1 */
 }
 
 /**
- * @brief       GetADC转换且进行均值滤波后of结果
- * @param       ch      : aisle号, 0~9
- * @param       times   : Get次数
- * @retval      aislechoftimes次转换结果平均值
+ * @brief       Get the ADC conversion result after average filtering
+ * @param       ch      : channel number, 0~9
+ * @param       times   : number of samples
+ * @retval      Average of times conversion results on the channel
  */
 uint32_t adc_get_result_average(uint32_t ch, uint32_t times)
 {
     uint32_t temp_val = 0;
     uint8_t t;
 
-    for (t = 0; t < times; t++) /* GettimesTime data */
+    for (t = 0; t < times; t++) /* Get times samples */
     {
         temp_val += adc1_get_raw(ch);
         vTaskDelay(5);

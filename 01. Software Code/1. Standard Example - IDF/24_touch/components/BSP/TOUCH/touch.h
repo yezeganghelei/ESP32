@@ -26,7 +26,7 @@
 
 #define TP_PRES_DOWN    0x8000  /* The touch screen is pressed */
 #define TP_CATH_PRES    0x4000  /* There is a button pressed */
-#define CT_MAX_TOUCH    10      /* Capacitor screen支持ofpointnumber,Fixed as5point */
+#define CT_MAX_TOUCH    10      /* Number of touch points supported by the capacitive screen, fixed at 5 */
 
 /* touchscreenController */
 typedef struct
@@ -34,8 +34,8 @@ typedef struct
     uint8_t (*init)(void);      /* Initialize the touch screen controller */
     uint8_t (*scan)(uint8_t);   /* scanningtouchscreen.0,Screen Scan;1,Physical coordinates; */
     uint16_t x[CT_MAX_TOUCH];   /* currentcoordinate */
-    uint16_t y[CT_MAX_TOUCH];   /* Capacitor screenThere are the most10Group coordinates,Resistor screenbutusex[0],y[0]represent:During this scan,触屏ofcoordinate,use
-                                 * x[9],y[9]Storage for the first timePress时ofcoordinate.
+    uint16_t y[CT_MAX_TOUCH];   /* The capacitive screen has at most 10 sets of coordinates; the resistive screen uses only x[0], y[0] to represent the touch coordinates of this scan.
+                                 * x[9], y[9] store the coordinates when first pressed.
                                  */
 
     uint16_t sta;               /* The status of the pen
@@ -45,7 +45,7 @@ typedef struct
                                  * b9~b0: The point number of capacitor touchscreenPress (0, It means that no pressing,1Indicates press)
                                  */
 
-    /* 5pointcalibrationtouchscreencalibration参number(Capacitor screen does not require calibration) */
+    /* 5-point touch screen calibration parameters (the capacitive screen does not require calibration) */
     float xfac;                 /* 5Point calibration methodxDirectional scale factor */
     float yfac;                 /* 5Point calibration methodyDirectional scale factor */
     short xc;                   /* centerXcoordinatephysicsvalue(ADvalue) */

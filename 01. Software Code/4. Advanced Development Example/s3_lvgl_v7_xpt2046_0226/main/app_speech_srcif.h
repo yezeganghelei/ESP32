@@ -72,7 +72,7 @@ extern QueueHandle_t sndQueue;
 
   typedef enum
   {
-    //空调
+    // Air conditioner
     ID0_TIAODAOERSHIDU = 0,
     ID1_TIAODAOERSHIYIDU = 1,
     ID2_TIAODAOERSHIERDU = 2,

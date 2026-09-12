@@ -15,9 +15,9 @@
 #include "tud_flash.h"
 
 static const char *TAG = "usb_msc";
-const char *disk_path = "/disk";                /* 磁plate的路径 */
+const char *disk_path = "/disk";                /* Disk path */
 static uint8_t s_pdrv = 0;                      /* Physical drives used to identify drives */
-static int s_disk_block_size = 0;               /* 磁plate块的大小 */
+static int s_disk_block_size = 0;               /* Disk block size */
 #define LOGICAL_DISK_NUM        1               /* Number of disks */
 static bool ejected[LOGICAL_DISK_NUM] = {true}; /* Pop-up status */
 __usbdev g_usbdev;                              /* USB controller */
@@ -92,7 +92,7 @@ void tud_msc_write10_complete_cb(uint8_t lun)
 }
 
 /**
- * @brief       已弹出磁plate
+ * @brief       Disk has been ejected
  * @param       none
  * @retval      none
  */
@@ -110,7 +110,7 @@ static bool _logical_disk_ejected(void)
 
 /**
  * @brief       receiveSCSI_CMD_INQUIRYThis function is called when，Used to obtain basic information from the target device
- * @param       lun         :磁plate数量
+ * @param       lun         : Number of disks
  * @param       vendor_id   :supplierid
  * @param       product_id  :productid
  * @param       product_rev :Revised version
@@ -136,9 +136,9 @@ void tud_msc_inquiry_cb(uint8_t lun, uint8_t vendor_id[8], uint8_t product_id[16
 }
 
 /**
- * @brief       receive测试单元就绪Called on command
- * @param       lun:磁plate数量
- * @retval      trueAllow host to read/Write thisLUN，For example, insertedSDCard
+ * @brief       Called on receiving the TEST UNIT READY command
+ * @param       lun: Number of disks
+ * @retval      true: allow host to read/write this LUN, for example an inserted SD card
  */
 bool tud_msc_test_unit_ready_cb(uint8_t lun)
 {
@@ -152,7 +152,7 @@ bool tud_msc_test_unit_ready_cb(uint8_t lun)
 
     if (_logical_disk_ejected())
     {
-        /* 为不存在的磁plate设置0x3a */
+        /* Set 0x3a for a non-existent disk */
         tud_msc_set_sense(lun, SCSI_SENSE_NOT_READY, 0x3A, 0x00);
         return false;
     }
@@ -161,8 +161,8 @@ bool tud_msc_test_unit_ready_cb(uint8_t lun)
 }
 
 /**
- * @brief       当receiveSCSI_CMD_READ_CAPACITY_10andSCSI_CMD _READ_FORMAT_CCAPITATIONThis function is called when，以确定磁plate大小
- * @param       lun         :磁plate数量
+ * @brief       Called on receiving SCSI_CMD_READ_CAPACITY_10 and SCSI_CMD_READ_FORMAT_CAPACITIES to determine the disk size
+ * @param       lun         : Number of disks
  * @param       block_count :Number of blocks
  * @param       block_size  :Block size
  * @retval      trueAllow host to read/Write thisLUN，For example, insertedSDCard
@@ -185,8 +185,8 @@ void tud_msc_capacity_cb(uint8_t lun, uint32_t *block_count, uint16_t *block_siz
 
 /**
  * @brief       Call to check if the device is availableSCSI
- * @param       lun         :磁plate数量
- * @retval      true:Can;false:不Can
+ * @param       lun         : Number of disks
+ * @retval      true: yes; false: no
  */
 bool tud_msc_is_writable_cb(uint8_t lun)
 {
@@ -203,11 +203,11 @@ bool tud_msc_is_writable_cb(uint8_t lun)
 
 /**
  * @brief       receive“start up-Stop unit”Called on command
- * @param       lun             :磁plate数量
+ * @param       lun     : Number of disks
  * @param       power_condition :Power conditions
  * @param       start           :Start = 0：Stop power mode;Start = 1：Activity Mode
- * @param       load_eject      :Start = 0,load_eject = 1：卸载磁plate存储;Start = 1,load_eject=1：加载磁plate存储
- * @retval      true:加载磁plate存储成功;false:卸载磁plate存储成功
+ * @param       load_eject      : Start = 0, load_eject = 1: unload disk storage; Start = 1, load_eject = 1: load disk storage
+ * @retval      true: disk storage loaded successfully; false: disk storage unloaded successfully
  */
 bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, bool load_eject)
 {
@@ -224,7 +224,7 @@ bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, boo
     {
         if (!start)
         {
-            /* 弹出磁plate */
+            /* Eject disk */
             if (disk_ioctl(s_pdrv, CTRL_SYNC, NULL) != RES_OK)
             {
                 return false;
@@ -259,7 +259,7 @@ bool tud_msc_start_stop_cb(uint8_t lun, uint8_t power_condition, bool start, boo
 
 /**
  * @brief       receiveREAD10Call this function when command
- * @param       lun     :磁plate数量
+ * @param       lun     : Number of disks
  * @param       lba     :block address
  * @param       offset  :Data offset
  * @param       buffer  :The storage area for reading data
@@ -277,7 +277,7 @@ int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void *buff
     }
 
     const uint32_t block_count = bufsize / s_disk_block_size;
-    /* 磁plate读取 */
+    /* Disk read */
     disk_read(s_pdrv, buffer, lba, block_count);
 
     return block_count * s_disk_block_size;
@@ -285,7 +285,7 @@ int32_t tud_msc_read10_cb(uint8_t lun, uint32_t lba, uint32_t offset, void *buff
 
 /**
  * @brief       receiveWRITE10Call this function when command
- * @param       lun     :磁plate数量
+ * @param       lun     : Number of disks
  * @param       lba     :block address
  * @param       offset  :write offset
  * @param       buffer  :The storage area where data is written
@@ -304,7 +304,7 @@ int32_t tud_msc_write10_cb(uint8_t lun, uint32_t lba, uint32_t offset, uint8_t *
     }
 
     const uint32_t block_count = bufsize / s_disk_block_size;
-    /* 磁plate写入 */
+    /* Disk write */
     disk_write(s_pdrv, buffer, lba, block_count);
 
     return block_count * s_disk_block_size;
@@ -312,8 +312,8 @@ int32_t tud_msc_write10_cb(uint8_t lun, uint32_t lba, uint32_t offset, uint8_t *
 
 /**
  * @brief       When received, it is not in the built-in list belowSCSICall this function when command
- * @param       lun         :磁plate数量
- * @param       scsi_cmd    :scsiCommand content，应用程序必须检查该Command content才能做出相应响应
+ * @param       lun         : Number of disks
+ * @param       scsi_cmd    : SCSI command content; the application must check this command content to respond accordingly
  * @param       buffer      :SCSIBuffer for data stage
  * @param       bufsize     :The length of the buffer
  * @retval      Returns the number of bytes written
@@ -338,7 +338,7 @@ int32_t tud_msc_scsi_cb(uint8_t lun, uint8_t const scsi_cmd[16], void *buffer, u
     switch (scsi_cmd[0])
     {
         case SCSI_CMD_PREVENT_ALLOW_MEDIUM_REMOVAL:
-            /* The host is about to be read/Write, etc.。。。最好不要断开磁plate连接 */
+            /* The host is about to read/write, etc.; it is best not to disconnect the disk */
             resplen = 0;
             break;
 
@@ -386,7 +386,7 @@ static esp_err_t tud_spiffs_partitions_init(const char *base_path)
 {
     ESP_LOGI(TAG, "Mounting FAT filesystem");
     esp_err_t ret = ESP_FAIL;
-    /* If it is a new partition and has not been formatted before，but允许格式化Partition */
+    /* If it is a new partition and has not been formatted before, formatting the partition is allowed */
     wl_handle_t wl_handle_1 = WL_INVALID_HANDLE;
     ESP_LOGI(TAG, "using internal flash");
     
@@ -403,7 +403,7 @@ static esp_err_t tud_spiffs_partitions_init(const char *base_path)
 #else
     ret = esp_vfs_fat_spiflash_mount(base_path, "storage", &mount_config, &wl_handle_1);
 #endif
-    /* hang on partition失败 */
+    /* Failed to mount the partition */
     if (ret != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to mount FATFS (%s)", esp_err_to_name(ret));

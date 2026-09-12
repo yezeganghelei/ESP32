@@ -878,17 +878,17 @@ void stop_cam_web()
         //httpd_unregister_uri_handler();
         httpd_stop(camera_httpd);
         camera_httpd = NULL;
-        ESP_LOGI("WEB", "cam web服务关闭");
+        ESP_LOGI("WEB", "cam web service stopped");
     }
     else if (stream_httpd != NULL)
     {
         //httpd_unregister_uri_handler();
         httpd_stop(stream_httpd);
         stream_httpd = NULL;
-        ESP_LOGI("WEB", "cam stream服务关闭");
+        ESP_LOGI("WEB", "cam stream service stopped");
     }
     else
     {
-        ESP_LOGI("WEB", "cam web服务已关闭");
+        ESP_LOGI("WEB", "cam web service already stopped");
     }
 }

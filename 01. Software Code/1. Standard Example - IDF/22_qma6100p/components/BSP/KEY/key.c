@@ -26,33 +26,33 @@ void key_init(void)
     gpio_init_struct.intr_type = GPIO_INTR_DISABLE;         /* Disable pin interrupt */
     gpio_init_struct.mode = GPIO_MODE_INPUT;                /* Input mode */
     gpio_init_struct.pull_up_en = GPIO_PULLUP_ENABLE;       /* Enable pull-up */
-    gpio_init_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;  /* Disabled pull-down */
+    gpio_init_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;  /* Disable pull-down */
     gpio_init_struct.pin_bit_mask = 1ull << BOOT_GPIO_PIN;  /* BOOT key pin */
-    gpio_config(&gpio_init_struct);                         /* Configuration enabled */
+    gpio_config(&gpio_init_struct);                         /* Apply configuration */
 }
 
 /**
  * @brief       Key scanning function
  * @param       mode:0 / 1, The specific meanings are as follows:
- *              0,  NoSupport continuous press(When pressing the keyPressNo放时, Only the first call willReturn key value,
- *                  Must be released after, Press again to return to other key values)
- *              1,  Support continuous press(When pressing the keyPressNo放时, Each time the function is called, the key value will be returned)
- * @retval      Key value, Definition is as follows:
- *              BOOT_PRES, 1, BOOTPress
+ *              0,  Does not support continuous press (while the key is held down, only the first call returns a key value,
+ *                  and the key must be released and pressed again to return another key value)
+ *              1,  Supports continuous press (while the key is held down, each call returns the key value)
+ * @retval      Key value, defined as follows:
+ *              BOOT_PRES, 1, BOOT press
  */
 uint8_t key_scan(uint8_t mode)
 {
     uint8_t keyval = 0;
-    static uint8_t key_boot = 1;    /* Release the key */
+    static uint8_t key_boot = 1;    /* Key released */
 
     if(mode)
     {
         key_boot = 1;
     }
 
-    if (key_boot && (BOOT == 0))    /* Release the keyfor1，And any button has been pressed */
+    if (key_boot && (BOOT == 0))    /* Key release flag is 1, and any button is pressed */
     {
-        vTaskDelay(10);             /* De-shake */
+        vTaskDelay(10);             /* Debounce */
         key_boot = 0;
 
         if (BOOT == 0)

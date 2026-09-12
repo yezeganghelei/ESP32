@@ -28,39 +28,39 @@ extern "C" {
 #define KSDIY_GAME_SNAKE_SPEED         (10)
 #define KSDIY_GAME_SNAKE_SPACE         (KSDIY_GAME_SNAKE_SIZE - KSDIY_GAME_SNAKE_SPEED)
 
-#define KSDIY_GAME_SNAKE_HEAD_COLOR    (LV_COLOR_YELLOW)  		// 蛇头颜色
-#define KSDIY_GAME_SNAKE_BODY_COLOR    (LV_COLOR_BLACK)  		// 蛇身颜色
-#define KSDIY_GAME_SNAKE_RADIUS        (15)   					// 蛇身体圆角设置radius
-#define KSDIY_GAME_FOOD_RADIUS         (50)   					// 食物圆角设置
-#define KSDIY_GAME_FOOD_COLOR          (LV_COLOR_PURPLE) 	    // 食物颜色
+#define KSDIY_GAME_SNAKE_HEAD_COLOR    (LV_COLOR_YELLOW)  		// Snake head color
+#define KSDIY_GAME_SNAKE_BODY_COLOR    (LV_COLOR_BLACK)  		// Snake body color
+#define KSDIY_GAME_SNAKE_RADIUS        (15)   					// Snake body corner radius setting
+#define KSDIY_GAME_FOOD_RADIUS         (50)   					// Food corner radius setting
+#define KSDIY_GAME_FOOD_COLOR          (LV_COLOR_PURPLE) 	    // Food color
 #define KSDIY_GAME_FOOD_SIZE           (KSDIY_GAME_SNAKE_SIZE)
 #define KSDIY_GAME_FOOD_CHECK_SPACE    (10)
 #define KSDIY_GAME_FOOD_MAX_HOR        (LV_HOR_RES - KSDIY_GAME_SNAKE_SIZE)
 #define KSDIY_GAME_FOOD_MAX_VER        (LV_VER_RES - KSDIY_GAME_SNAKE_TITLE_SPACE)
-#define KSDIY_GAME_SNAKE_USE_KEY       (1)  					// 使用按键控制
+#define KSDIY_GAME_SNAKE_USE_KEY       (1)  					// Use button control
 
 
 /**********************
  *      TYPEDEFS
  **********************/
-// 游戏数据
+// Game data
 typedef struct _KSDIY_snake {
-	lv_obj_t  * bg;				// 背景
-	lv_obj_t  * obj_food;		// 食物句柄
-	lv_obj_t  * label_info;		// 游戏信息
-	lv_task_t * task_handle; 	// 任务句柄
-	uint8_t	sroce;				// 得分
-	uint8_t len;				// 长度
-	uint8_t gesture;			// 蛇头方向标志
+	lv_obj_t  * bg;				// Background
+	lv_obj_t  * obj_food;		// Food handle
+	lv_obj_t  * label_info;		// Game info
+	lv_task_t * task_handle; 	// Task handle
+	uint8_t	sroce;				// Score
+	uint8_t len;				// Length
+	uint8_t gesture;			// Snake head direction flag
 } T_KSDIY_snake, *PT_KSDIY_snake;
 
-// 蛇身数据
+// Snake body data
 typedef struct Link{
-	lv_obj_t *obj;            	// 蛇身
-	lv_coord_t x;             	// x坐标
-	lv_coord_t y;             	// y坐标
-	struct Link *prior;       	// 指向直接前趋
-	struct Link *next;        	// 指向直接后继针
+	lv_obj_t *obj;            	// Snake body
+	lv_coord_t x;             	// x coordinate
+	lv_coord_t y;             	// y coordinate
+	struct Link *prior;       	// Points to the direct predecessor
+	struct Link *next;        	// Points to the direct successor
 }link_snake, p_link_snake;
 
 /**********************

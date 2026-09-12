@@ -18,10 +18,10 @@ i2c_obj_t xl9555_i2c_master;
 static uint16_t xl9555_failed = 0;
 
 /**
- * @brief       ReadXL9555of16BitIOvalue
- * @param       data：ReaddataofStorage area
- * @param       len：Readdataofsize
- * @retval      ESP_OK：Readsuccess；other：Read failed
+ * @brief       Read the 16-bit IO value of XL9555
+ * @param       data: Buffer for the read data
+ * @param       len: Size of the data to read
+ * @retval      ESP_OK: Read succeeded; other: Read failed
  */
 esp_err_t xl9555_read_byte(uint8_t *data, size_t len)
 {
@@ -37,11 +37,11 @@ esp_err_t xl9555_read_byte(uint8_t *data, size_t len)
 }
 
 /**
- * @brief       TowardsXL9555Write16BitIOvalue
- * @param       reg：Register address
- * @param       data：wantWriteofdata
- * @param       len：The size of the data to be written
- * @retval      ESP_OK：Readsuccess；other：Read failed
+ * @brief       Write a 16-bit IO value to XL9555
+ * @param       reg: Register address
+ * @param       data: Data to write
+ * @param       len: The size of the data to be written
+ * @retval      ESP_OK: Read succeeded; other: Read failed
  */
 esp_err_t xl9555_write_byte(uint8_t reg, uint8_t *data, size_t len)
 {
@@ -54,10 +54,10 @@ esp_err_t xl9555_write_byte(uint8_t reg, uint8_t *data, size_t len)
 }
 
 /**
- * @brief       Control a certainIOofLevel
- * @param       pin     : ControlledIO
+ * @brief       Control the level of a specific IO
+ * @param       pin     : Controlled IO
  * @param       val     : Level
- * @retval      Return to allIOstate
+ * @retval      Return the state of all IOs
  */
 uint16_t xl9555_pin_write(uint16_t pin, int val)
 {
@@ -97,9 +97,9 @@ uint16_t xl9555_pin_write(uint16_t pin, int val)
 }
 
 /**
- * @brief       Get a certainIOstate
- * @param       pin     : want获取stateofIO
- * @retval      thisIOmouthofvalue(state, 0/1)
+ * @brief       Get the state of a specific IO
+ * @param       pin     : IO whose state to get
+ * @retval      Value of this IO (state, 0/1)
  */
 int xl9555_pin_read(uint16_t pin)
 {
@@ -114,14 +114,14 @@ int xl9555_pin_read(uint16_t pin)
 }
 
 /**
- * @brief       XL9555ofIOConfiguration
- * @param       config_value：IOConfigurationInput or output
+ * @brief       XL9555 IO configuration
+ * @param       config_value: IO configuration (input or output)
  * @retval      Returns the set value
  */
 uint16_t xl9555_ioconfig(uint16_t config_value)
 {
     /* Slave address + CMD + data1(P0) + data2(P1) */
-    /* P00、P01、P14、P15、P16、P17For input，The other pins are outputs -->1111 0000 0000 0011 Notice：0For output，1For input*/
+    /* P00, P01, P14, P15, P16, P17 are inputs, the other pins are outputs --> 1111 0000 0000 0011. Note: 0 = output, 1 = input*/
     uint8_t data[2];
     esp_err_t err;
     int retry = 3;
@@ -158,7 +158,7 @@ uint16_t xl9555_ioconfig(uint16_t config_value)
 }
 
 /**
- * @brief       initializationXL9555
+ * @brief       Initialize XL9555
  * @param       none
  * @retval      none
  */
@@ -168,7 +168,7 @@ void xl9555_init(i2c_obj_t self)
 
     if (self.init_flag == ESP_FAIL)
     {
-        iic_init(I2C_NUM_0);        /* initializationIIC */
+        iic_init(I2C_NUM_0);        /* Initialize IIC */
     }
 
     xl9555_i2c_master = self;
@@ -191,26 +191,26 @@ void xl9555_init(i2c_obj_t self)
 
 /**
  * @brief       Key scan function
- * @param       mode:0->Discontinuous;1->continuous
- * @retval      keyvalue, Definition is as follows:
- *              KEY0_PRES, 1, KEY0press
- *              KEY1_PRES, 2, KEY1press
- *              KEY2_PRES, 3, KEY2press
- *              KEY3_PRES, 4, KEY3press
+ * @param       mode: 0 -> discontinuous; 1 -> continuous
+ * @retval      key value, defined as follows:
+ *              KEY0_PRES, 1, KEY0 press
+ *              KEY1_PRES, 2, KEY1 press
+ *              KEY2_PRES, 3, KEY2 press
+ *              KEY3_PRES, 4, KEY3 press
  */
 uint8_t xl9555_key_scan(uint8_t mode)
 {
     uint8_t keyval = 0;
-    static uint8_t key_up = 1;                                          /* Press the button to release the sign */
+    static uint8_t key_up = 1;                                          /* Button release flag */
 
     if (mode)
     {
         key_up = 1;                                                     /* Supports continuous press */
     }
     
-    if (key_up && (KEY0 == 0 || KEY1 == 0 || KEY2 == 0  || KEY3 == 0 )) /* The key release sign is1, And there is any buttonpressIt's */
+    if (key_up && (KEY0 == 0 || KEY1 == 0 || KEY2 == 0  || KEY3 == 0 )) /* Key release flag is 1, and any button is pressed */
     {
-        vTaskDelay(10);                                                 /* De-shake */
+        vTaskDelay(10);                                                 /* Debounce */
         key_up = 0;
 
         if (KEY0 == 0)
@@ -233,7 +233,7 @@ uint8_t xl9555_key_scan(uint8_t mode)
             keyval = KEY3_PRES;
         }
     }
-    else if (KEY0 == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1)          /* 没有任何按keypress, Mark button released */
+    else if (KEY0 == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1)          /* No key is pressed; mark the button as released */
     {
         key_up = 1;
     }

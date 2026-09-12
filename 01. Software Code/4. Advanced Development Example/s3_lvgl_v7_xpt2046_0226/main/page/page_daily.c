@@ -34,21 +34,21 @@
 
 #define DAILY_URL "https://api.xygeng.cn/one"
 #define HEART_URL "http://www.dutangapp.cn/u/toxic?date=2021-7-13"
-/*此页面窗口*/
+/*This page's window*/
 static lv_obj_t *appWindow;
-/*标题栏*/
+/*Title bar*/
 static lv_obj_t *labelTitle;
 
-/*标题栏分隔线*/
+/*Title bar separator line*/
 static lv_obj_t *lineTitle;
-/*图标显示容器，用于裁剪显示*/
+/*Icon display container, used for clipped display*/
 static lv_obj_t *contDisp;
 
 static lv_obj_t *label_sentence;
 /**
-  * @brief  创建标题栏
-  * @param  无
-  * @retval 无
+  * @brief  Create the title bar
+  * @param  None
+  * @retval None
   */
  extern lv_obj_t *label_speech;
 extern const uint8_t example_gif_map[]; /*Use the example gif*/
@@ -63,7 +63,7 @@ static void Title_Create()
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(appWindow, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_pos(appWindow, 0, 0);
 	lv_obj_set_size(appWindow, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -94,7 +94,7 @@ static void Title_Create()
 	lv_obj_set_size(labelTitle, APP_WIN_WIDTH, 55);
 	lv_label_set_recolor(labelTitle, true);
 
-	/*默认选中的是第二个图标*/
+	/*The second icon is selected by default*/
 	lv_label_set_static_text(labelTitle, "Daily");
 	lv_obj_align(labelTitle, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 	lv_obj_set_auto_realign(labelTitle, true);
@@ -111,7 +111,7 @@ static void Title_Create()
 	lv_line_set_points(lineTitle, screen_line3, 2);
 }
 
-//创建菜单界面
+//Create the menu screen
 static void Cont_create(void)
 {
 	LV_FONT_DECLARE(myFont);
@@ -124,7 +124,7 @@ static void Cont_create(void)
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(contDisp, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_size(contDisp, LV_HOR_RES, 190);
 	lv_obj_set_pos(contDisp, 0, 60);
@@ -218,7 +218,7 @@ static esp_err_t daily_http_event_handler(esp_http_client_event_t *evt)
 void get_daily(void)
 {
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
-	lv_label_set_text(label_speech, "获取每日一句...");
+	lv_label_set_text(label_speech, "Getting daily quote...");
 	static esp_http_client_config_t config = {
 		.url = DAILY_URL,
 		.event_handler = daily_http_event_handler,
@@ -300,7 +300,7 @@ static esp_err_t heart_http_event_handler(esp_http_client_event_t *evt)
 void get_heart(void)
 {
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
-	lv_label_set_text(label_speech, "获取心灵鸡汤...");
+	lv_label_set_text(label_speech, "Getting daily inspiration...");
 	static esp_http_client_config_t config = {
 		.url = HEART_URL,
 		.event_handler = heart_http_event_handler,
@@ -332,31 +332,31 @@ void get_heart(void)
 
 	esp_http_client_cleanup(client);
 }
-//当前界面是菜单时MOVE任务要做的事情
+//What the MOVE task should do when the current screen is the menu
 void move_task_daily(uint8_t move)
 {
 
 	switch (move)
 	{
-	case BT1_DOWN: //往上移动
+	case BT1_DOWN: //Move up
 		page_wakeup_start();
 
 		get_heart();
 		break;
-	case BT1_LONG: //往上移动
+	case BT1_LONG: //Move up
 
 		break;
-	case BT1_LONGFREE: //往上移动
+	case BT1_LONGFREE: //Move up
 		break;
-	case BT2_DOWN: //往下移动
+	case BT2_DOWN: //Move down
 		page_wakeup_start();
 
 		get_daily();
 		break;
-	case BT3_LONG: //往下移动
+	case BT3_LONG: //Move down
 
 		break;
-	case BT3_LONGFREE: //往上移动
+	case BT3_LONGFREE: //Move up
 		break;
 
 	default:
@@ -370,12 +370,12 @@ void page_daily_load()
 	Title_Create();
 	Cont_create();
 	obj_add_anim(
-		appWindow,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_WIDTH,					  //起始值
-		0,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		appWindow,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_WIDTH,					  //Start value
+		0,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	page_wakeup_start();
@@ -394,7 +394,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -411,7 +411,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -423,12 +423,12 @@ static void Exit(void)
 {
 
 	obj_add_anim(
-		appWindow,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,					  //起始值
-		APP_WIN_WIDTH,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		appWindow,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,					  //Start value
+		APP_WIN_WIDTH,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(appWindow);
@@ -436,9 +436,9 @@ static void Exit(void)
 
 static void Setup(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" page_daily_start    esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" page_daily_start    esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
 	page_daily_load();
@@ -446,10 +446,10 @@ static void Setup(void)
 	lv_obj_set_event_cb(lv_layer_top(), event_handler_touch);
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
@@ -457,16 +457,16 @@ static void Event(void *btn, int event)
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Daily(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Daily至页面调度器*/\r\n");
+	printf("/* Register Daily with the page scheduler */\r\n");
 }

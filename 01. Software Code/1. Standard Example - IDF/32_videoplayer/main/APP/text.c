@@ -18,7 +18,7 @@
 /**
  * @brief       Obtain Chinese character dot matrix data
  * @param       code  : Current Chinese character encoding(GBKcode)
- * @param       mat   : 当前Chinese character点阵数据存放地址
+ * @param       mat   : Storage address of the current Chinese character dot matrix data
  * @param       size  : Font size
  *   @note      sizeSize fonts,The size of the dot matrix is: (size / 8 + ((size % 8) ? 1 : 0)) * (size)  byte
  * @retval      none
@@ -30,7 +30,7 @@ static void text_get_hz_mat(unsigned char *code, unsigned char *mat, uint8_t siz
     unsigned long foffset;
     uint8_t csize;
     
-    csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size);             /* 计算字体一个character对应点阵集所占的byte数 */
+    csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size);             /* Calculate the number of bytes occupied by the dot matrix set of one font character */
     qh = *code;
     ql = *(++code);
     if ((qh < 0x81) || (ql < 0x40) || (ql == 0xFF) || (qh == 0xFF)) /* Very use of Chinese characters */
@@ -75,13 +75,13 @@ static void text_get_hz_mat(unsigned char *code, unsigned char *mat, uint8_t siz
 }
 
 /**
- * @brief       show一个指定大小的Chinese character
+ * @brief       Display a Chinese character of the specified size
  * @param       x,y   : Coordinates of Chinese characters
- * @param       font  : Chinese characterGBKcode
+ * @param       font  : Chinese character GBK code
  * @param       size  : Font size
- * @param       mode  : show模式
- *   @note              0, 正常show(不需要show的点,useLCDBackground color fill,Right nowg_back_color)
- *   @note              1, 叠加show(仅show需要show的点, 不需要show的点, No processing)
+ * @param       mode  : Display mode
+ *   @note              0, normal display (points not needing display use the LCD background color fill, i.e. g_back_color)
+ *   @note              1, overlay display (only display points that need display; points that don't are left unprocessed)
  * @param       color : Font color
  * @retval      none
  */
@@ -93,7 +93,7 @@ void text_show_font(uint16_t x, uint16_t y, uint8_t *font, uint8_t size, uint8_t
     uint8_t csize;
     uint8_t font_size = size;
     
-    csize = (font_size / 8 + ((font_size % 8) ? 1 : 0)) * (font_size);         /* 计算字体一个character对应点阵集所占的byte数 */
+    csize = (font_size / 8 + ((font_size % 8) ? 1 : 0)) * (font_size);         /* Calculate the number of bytes occupied by the dot matrix set of one font character */
     
     if ((font_size != 12) && (font_size != 16) && (font_size != 24))
     {
@@ -117,9 +117,9 @@ void text_show_font(uint16_t x, uint16_t y, uint8_t *font, uint8_t size, uint8_t
         {
             if (temp & 0x80)
             {
-                lcd_draw_pixel(x, y, color);                    /* 画需要show的点 */
+                lcd_draw_pixel(x, y, color);                    /* Draw the points to display */
             }
-            else if (mode == 0)                                 /* If non-overlapping mode，不需要show的点useBackground color fill */
+            else if (mode == 0)                                 /* If non-overlapping mode, points not needing display use background color fill */
             {
                 lcd_draw_pixel(x, y, 0xffff);             /* Fill background color */
             }
@@ -139,16 +139,16 @@ void text_show_font(uint16_t x, uint16_t y, uint8_t *font, uint8_t size, uint8_t
 }
 
 /**
- * @brief       在指定位置开始show一个character串
- *   @note      该函数支持自动newline
+ * @brief       Display a character string starting at the specified position
+ *   @note      This function supports automatic line break
  * @param       x,y   : starting coordinates
- * @param       width : show区域宽度
- * @param       height: show区域高度
- * @param       str   : character串
+ * @param       width : Display area width
+ * @param       height: Display area height
+ * @param       str   : Character string
  * @param       size  : Font size
- * @param       mode  : show模式
- *   @note              0, 正常show(不需要show的点,useLCDBackground color fill,Right nowg_back_color)
- *   @note              1, 叠加show(仅show需要show的点, 不需要show的点, No processing)
+ * @param       mode  : Display mode
+ *   @note              0, normal display (points not needing display use the LCD background color fill, i.e. g_back_color)
+ *   @note              1, overlay display (only display points that need display; points that don't are left unprocessed)
  * @param       color : Font color
  * @retval      none
  */
@@ -184,7 +184,7 @@ void text_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, c
                     break;
                 }
                 
-                if (*pstr == 13)                                    /* newline符号 */
+                if (*pstr == 13)                                    /* Line break symbol */
                 {
                     y += size;
                     x = x0;
@@ -201,7 +201,7 @@ void text_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, c
         }
         else                                                        /* Chinese */
         {
-            bHz = 0;                                                /* 有Chinese character库 */
+            bHz = 0;                                                /* Chinese character library present */
             
             if (x > (x0 + width - size))                            /* newline */
             {
@@ -216,7 +216,7 @@ void text_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, c
             
             text_show_font(x, y, pstr, size, mode, color);          /* Show this Chinese character, hollow */
             pstr += 2;
-            x += size;                                              /* 下一个Chinese character偏移 */
+            x += size;                                              /* Offset to the next Chinese character */
         }
     }
 
@@ -224,12 +224,12 @@ void text_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, c
 }
 
 /**
- * @brief       在指定宽度的中间showcharacter串
- *   @note      If the character length exceedslen,Usetext_show_string_middleshow
+ * @brief       Display a character string centered within the specified width
+ *   @note      If the character length exceeds len, use text_show_string_middle to display
  * @param       x,y   : starting coordinates
- * @param       str   : character串
+ * @param       str   : Character string
  * @param       size  : Font size
- * @param       width : show区域宽度
+ * @param       width : Display area width
  * @param       color : Font color
  * @retval      none
  */
@@ -239,7 +239,7 @@ void text_show_string_middle(uint16_t x, uint16_t y, char *str, uint8_t size, ui
     strlenth = strlen((const char *)str);
     strlenth *= size / 2;
 
-    if (strlenth > width) /* More than, 不能居中show */
+    if (strlenth > width) /* Too long, cannot center */
     {
         text_show_string(x, y, lcd_self.width, lcd_self.height, str, size, 1, color);
     }

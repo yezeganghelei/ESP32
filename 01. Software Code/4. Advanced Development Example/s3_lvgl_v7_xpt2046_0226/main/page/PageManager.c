@@ -46,20 +46,20 @@ void save_clock(uint8_t clock_index, uint8_t s, uint8_t h, uint8_t m)
 	char info[30];
 	if (h > 23 || m > 60 || s > 2)
 	{
-		ESP_LOGI("CLOCK", "保存时间格式错误1 s:%d,h:%d,m:%d", s, h, m);
+		ESP_LOGI("CLOCK", "Saved time format error 1 s:%d,h:%d,m:%d", s, h, m);
 		return;
 	}
 	sprintf(info, "{\"s\":%d,\"h\":%d,\"m\":%d}", s, h, m);
 	sprintf(index, "ck%d", clock_index);
 	save_nvs((const char *)index, info);
 }
-void lv_page_clock_init() //闹钟信息获取
+void lv_page_clock_init() //Get alarm information
 {
 	//char info[15];
-	// if(read_nvs("t_all",info))//获取哔哩哔哩uid
+	// if(read_nvs("t_all",info))// get bilibili uid
 	// {
 	//     sprintf(str,"%s%s%s",BILIBILI_REQUEST1,uid,BILIBILI_REQUEST2);
-	//     ESP_LOGI(TAG_HTTP,"获取到uid");
+	//     ESP_LOGI(TAG_HTTP,"Got uid");
 	// }
 }
 void lv_ico_web_show(uint8_t state)
@@ -112,12 +112,12 @@ void web_temp_save(uint8_t i)
 	if (i)
 	{
 		save_nvs("temp", "y");
-		lv_message("温湿度上传开启", 1000);
+		lv_message("Temp/Humidity upload on", 1000);
 	}
 	else
 	{
 		save_nvs("temp", "n");
-		lv_message("温湿度上传关闭", 1000);
+		lv_message("Temp/Humidity upload off", 1000);
 	}
 }
 void web_switch_save(uint8_t i)
@@ -125,12 +125,12 @@ void web_switch_save(uint8_t i)
 	if (i)
 	{
 		save_nvs("web_set", "y");
-		lv_message("WEB开启", 1000);
+		lv_message("WEB on", 1000);
 	}
 	else
 	{
 		save_nvs("web_set", "n");
-		lv_message("WEB关闭", 1000);
+		lv_message("WEB off", 1000);
 	}
 }
 void cam_switch_save(uint8_t i)
@@ -138,12 +138,12 @@ void cam_switch_save(uint8_t i)
 	if (i)
 	{
 		save_nvs("cam_set", "y");
-		lv_message("CAM WEB开启", 1000);
+		lv_message("CAM WEB on", 1000);
 	}
 	else
 	{
 		save_nvs("cam_set", "n");
-		lv_message("CAM WEB关闭", 1000);
+		lv_message("CAM WEB off", 1000);
 	}
 }
 void cam_vflip_switch_save(uint8_t i)
@@ -151,12 +151,12 @@ void cam_vflip_switch_save(uint8_t i)
 	if (i)
 	{
 		save_nvs("cam_vflip", "y");
-		lv_message("vflip开启", 1000);
+		lv_message("vflip on", 1000);
 	}
 	else
 	{
 		save_nvs("cam_vflip", "n");
-		lv_message("vflip关闭", 1000);
+		lv_message("vflip off", 1000);
 	}
 }
 void cam_hmirror_switch_save(uint8_t i)
@@ -164,12 +164,12 @@ void cam_hmirror_switch_save(uint8_t i)
 	if (i)
 	{
 		save_nvs("cam_hmirror", "y");
-		lv_message("hmirror开启", 1000);
+		lv_message("hmirror on", 1000);
 	}
 	else
 	{
 		save_nvs("cam_hmirror", "n");
-		lv_message("hmirror关闭", 1000);
+		lv_message("hmirror off", 1000);
 	}
 }
 void clock_switch_save(uint8_t i)
@@ -177,41 +177,41 @@ void clock_switch_save(uint8_t i)
 	if (i)
 	{
 		save_nvs("clock", "y");
-		lv_message("闹钟开启", 1000);
+		lv_message("Alarm on", 1000);
 	}
 	else
 	{
 		save_nvs("clock", "n");
-		lv_message("闹钟关闭", 1000);
+		lv_message("Alarm off", 1000);
 	}
 }
 void lv_ksdiy_web_init()
 {
 	char info[5];
-	if (read_nvs("web_set", info)) //读取web状态
+	if (read_nvs("web_set", info)) //Read the web state
 	{
-		if (!strcmp("y", info)) //开启web
+		if (!strcmp("y", info)) //Enable web
 		{
-			if (start_file_server("/spiffs") != ESP_OK) //启动文件系统
+			if (start_file_server("/spiffs") != ESP_OK) //Start the file system
 			{
 				ksdiy_sys_t.state.web_set = 0;
-				ESP_LOGI("web_set", "web_set启动失败");
+				ESP_LOGI("web_set", "web_set start failed");
 			}
-			ESP_LOGI("web_set", "打开web_set服务");
+			ESP_LOGI("web_set", "Starting web_set service");
 			ksdiy_sys_t.state.web_set = 1;
 		}
-		else //关闭
+		else //Disable
 		{
 			save_nvs("web_set", "n");
 			ksdiy_sys_t.state.web_set = 0;
 		}
 	}
-	else //第一次使用未选择
+	else //Not selected on first use
 	{
-		ESP_LOGI("web_set", "web_set没启动");
+		ESP_LOGI("web_set", "web_set not started");
 		ksdiy_sys_t.state.web_set = 0;
 	}
-	if (ksdiy_sys_t.state.web_set) //显示图标
+	if (ksdiy_sys_t.state.web_set) //Show the icon
 	{
 		lv_ico_web_show(1);
 	}
@@ -220,54 +220,54 @@ void lv_ksdiy_cam_init()
 {
 	// app_camera_init();
 	char info[5];
-	if (read_nvs("cam_vflip", info)) //读取web状态
+	if (read_nvs("cam_vflip", info)) //Read the web state
 	{
-		if (!strcmp("y", info)) //开启web
+		if (!strcmp("y", info)) //Enable web
 		{
 
 			ksdiy_sys_t.state.cam_vflip = 1;
 			sensor_t *s = esp_camera_sensor_get();
 			s->set_vflip(s, ksdiy_sys_t.state.cam_vflip);
-			ESP_LOGI("web_set", "cam_vflip打开");
+			ESP_LOGI("web_set", "cam_vflip on");
 		}
 
-		else //关闭
+		else //Disable
 		{
 			ksdiy_sys_t.state.cam_vflip = 0;
 			sensor_t *s = esp_camera_sensor_get();
 			s->set_vflip(s, ksdiy_sys_t.state.cam_vflip);
-			ESP_LOGI("web_set", "cam_vflip关闭");
+			ESP_LOGI("web_set", "cam_vflip off");
 		}
 	}
-	else //第一次使用未选择
+	else //Not selected on first use
 	{
-		ESP_LOGI("web_set", "cam_vflip没设置过");
+		ESP_LOGI("web_set", "cam_vflip not set");
 		ksdiy_sys_t.state.cam_vflip = 0;
 		ksdiy_sys_t.state.cam_hmirror = 0;
 	}
-	if (read_nvs("cam_hmirror", info)) //读取web状态
+	if (read_nvs("cam_hmirror", info)) //Read the web state
 	{
-		if (!strcmp("y", info)) //开启web
+		if (!strcmp("y", info)) //Enable web
 		{
 
 			ksdiy_sys_t.state.cam_hmirror = 1;
 			sensor_t *s = esp_camera_sensor_get();
 			s->set_hmirror(s, ksdiy_sys_t.state.cam_hmirror);
-			ESP_LOGI("web_set", "cam_hmirror打开");
+			ESP_LOGI("web_set", "cam_hmirror on");
 		}
 
-		else //关闭
+		else //Disable
 		{
 			ksdiy_sys_t.state.cam_hmirror = 0;
 			sensor_t *s = esp_camera_sensor_get();
 			s->set_hmirror(s, ksdiy_sys_t.state.cam_hmirror);
-			ESP_LOGI("web_set", "cam_hmirror关闭");
+			ESP_LOGI("web_set", "cam_hmirror off");
 		}
 	}
 
-	else //第一次使用未选择
+	else //Not selected on first use
 	{
-		ESP_LOGI("web_set", "cam_hmirror没设置过");
+		ESP_LOGI("web_set", "cam_hmirror not set");
 		ksdiy_sys_t.state.cam_vflip = 0;
 		ksdiy_sys_t.state.cam_hmirror = 0;
 	}
@@ -328,10 +328,10 @@ _PageManager page = {
 };
 
 /**
-  * @brief  初始化页面调度器
-  * @param  pageMax: 页面最大数量
-  * @param  eventMax: 事件最大数量
-  * @retval 无
+  * @brief  Initialize the page scheduler
+  * @param  pageMax: maximum number of pages
+  * @param  eventMax: maximum number of events
+  * @retval None
   */
 void PageManager(uint8_t pageMax, uint8_t pageStackSize)
 {
@@ -340,13 +340,13 @@ void PageManager(uint8_t pageMax, uint8_t pageStackSize)
 	page.OldPage = 0;
 	IsPageBusy = false;
 
-	/* 申请内存，清空列表 */
+	/* Allocate memory and clear the list */
 	// PageList = (PageList_TypeDef *)malloc(sizeof(PageList_TypeDef));
 	for (uint8_t page = 0; page < MaxPage; page++)
 	{
 		PageClear(page);
 	}
-	/*页面栈配置*/
+	/*Page stack configuration*/
 	PageStackSize = pageStackSize;
 	// PageStack = (uint8_t *)heap_caps_malloc(pageStackSize * sizeof(uint8_t), MALLOC_CAP_SPIRAM);
 	// PageStack = (uint8_t *)malloc(pageStackSize);
@@ -354,9 +354,9 @@ void PageManager(uint8_t pageMax, uint8_t pageStackSize)
 }
 
 /**
-  * @brief  页面调度器析构
-  * @param  无
-  * @retval 无
+  * @brief  Page scheduler destructor
+  * @param  None
+  * @retval None
   */
 // ~PageManager()
 // {
@@ -365,9 +365,9 @@ void PageManager(uint8_t pageMax, uint8_t pageStackSize)
 // }
 
 /**
-  * @brief  清除一个页面
-  * @param  pageID: 页面编号
-  * @retval true:成功 false:失败
+  * @brief  Clear one page
+  * @param  pageID: page number
+  * @retval true:success false:failure
   */
 bool PageClear(uint8_t pageID)
 {
@@ -383,13 +383,13 @@ bool PageClear(uint8_t pageID)
 }
 
 /**
-  * @brief  注册一个基本页面，包含一个初始化函数，循环函数，退出函数，事件函数
-  * @param  pageID: 页面编号
-  * @param  setupCallback: 初始化函数回调
-  * @param  loopCallback: 循环函数回调
-  * @param  exitCallback: 退出函数回调
-  * @param  eventCallback: 事件函数回调
-  * @retval true:成功 false:失败
+  * @brief  Register a basic page, including an initialization function, loop function, exit function, and event function
+  * @param  pageID: page number
+  * @param  setupCallback: initialization function callback
+  * @param  loopCallback: loop function callback
+  * @param  exitCallback: exit function callback
+  * @param  eventCallback: event function callback
+  * @retval true:success false:failure
   */
 bool PageRegister(
 	uint8_t pageID,
@@ -409,152 +409,152 @@ bool PageRegister(
 }
 
 /**
-  * @brief  页面事件传递
-  * @param  obj: 发生事件的对象
-  * @param  event: 事件编号
-  * @retval 无
+  * @brief  Page event transmission
+  * @param  obj: object that raised the event
+  * @param  event: event ID
+  * @retval None
   */
 void PageEventTransmit(void *obj, int event)
 {
-	/*将事件传递到当前页面*/
+	/*Pass the event to the current page*/
 	if (PageList[page.NowPage].EventCallback != NULL)
 		PageList[page.NowPage].EventCallback(obj, event);
 }
 
 /**
-  * @brief  切换到指定页面
-  * @param  pageID: 页面编号
-  * @retval 无
+  * @brief  Switch to the specified page
+  * @param  pageID: page number
+  * @retval None
   */
 void PageChangeTo(uint8_t pageID)
 {
 	if (!IS_PAGE(pageID))
 		return;
-	/*检查页面是否忙碌*/
+	/*Check whether the page is busy*/
 	if (!IsPageBusy)
 	{
 
-		/*新页面ID*/
+		/*New page ID*/
 		page.NextPage = page.NewPage = pageID;
 
-		/*标记为忙碌状态*/
+		/*Mark as busy*/
 		IsPageBusy = true;
 	}
 }
 
 /**
-  * @brief  页面压栈，跳转至该页面
-  * @param  pageID: 页面编号
-  * @retval true:成功 false:失败
+  * @brief  Push a page onto the stack and jump to it
+  * @param  pageID: page number
+  * @retval true:success false:failure
   */
 bool PagePush(uint8_t pageID)
 {
 	if (!IS_PAGE(pageID))
 		return false;
 
-	/*检查页面是否忙碌*/
+	/*Check whether the page is busy*/
 	if (IsPageBusy)
 		return false;
-	/*防止栈溢出*/
+	/*Prevent stack overflow*/
 	if (PageStackTop >= PageStackSize - 1)
 		return false;
-	/*防止重复页面压栈*/
+	/*Prevent pushing a duplicate page*/
 	if (pageID == PageStack[PageStackTop])
 		return false;
-	/*栈顶指针上移*/
+	/*Move the stack top pointer up*/
 	PageStackTop++;
 
-	/*页面压栈*/
+	/*Push the page onto the stack*/
 	PageStack[PageStackTop] = pageID;
 
-	/*页面跳转*/
+	/*Switch page*/
 	PageChangeTo(PageStack[PageStackTop]);
 
 	return true;
 }
 
 /**
-  * @brief  页面弹栈，跳转至上一个页面
-  * @param  无
-  * @retval true:成功 false:失败
+  * @brief  Pop a page from the stack and jump to the previous page
+  * @param  None
+  * @retval true:success false:failure
   */
 bool PagePop()
 {
-	/*检查页面是否忙碌*/
+	/*Check whether the page is busy*/
 	if (IsPageBusy)
 		return false;
 
-	/*防止栈溢出*/
+	/*Prevent stack overflow*/
 	if (PageStackTop == 0)
 		return false;
 
-	/*清空当前页面*/
+	/*Clear the current page*/
 	PageStack[PageStackTop] = 0;
 
-	/*弹栈，栈顶指针下移*/
+	/*Pop the stack; move the stack top pointer down*/
 	PageStackTop--;
 
-	/*页面跳转*/
+	/*Switch page*/
 	PageChangeTo(PageStack[PageStackTop]);
 
 	return true;
 }
 
 /**
-  * @brief  清空页面栈
-  * @param  无
-  * @retval 无
+  * @brief  Clear the page stack
+  * @param  None
+  * @retval None
   */
 void PageStackClear()
 {
-	/*检查页面是否忙碌*/
+	/*Check whether the page is busy*/
 	if (IsPageBusy)
 		return;
 
-	/*清除栈中左右数据*/
+	/*Clear all data in the stack*/
 	for (uint8_t i = 0; i < PageStackSize; i++)
 	{
 		PageStack[i] = 0;
 	}
-	/*栈顶指针复位*/
+	/*Reset the stack top pointer*/
 	PageStackTop = 0;
 }
 
 /**
-  * @brief  页面调度器状态机
-  * @param  无
-  * @retval 无
+  * @brief  Page scheduler state machine
+  * @param  None
+  * @retval None
   */
 void Running()
 {
-	/*页面切换事件*/
+	/*Page switch event*/
 	if (page.NewPage != page.OldPage)
 	{
-		/*标记为忙碌状态*/
+		/*Mark as busy*/
 		IsPageBusy = true;
 
-		/*触发旧页面退出事件*/
+		/*Trigger the old page's exit event*/
 		if (PageList[page.OldPage].ExitCallback != NULL && IS_PAGE(page.OldPage))
 			PageList[page.OldPage].ExitCallback();
 
-		/*标记旧页面*/
+		/*Mark the old page*/
 		page.LastPage = page.OldPage;
 
-		/*标记新页面为当前页面*/
+		/*Mark the new page as the current page*/
 		page.NowPage = page.NewPage;
 
-		/*触发新页面初始化事件*/
+		/*Trigger the new page's initialization event*/
 		if (PageList[page.NewPage].SetupCallback != NULL && IS_PAGE(page.NewPage))
 			PageList[page.NewPage].SetupCallback();
-		/*新页面初始化完成，标记为旧页面*/
+		/*New page initialization complete; mark it as the old page*/
 		page.OldPage = page.NewPage;
 	}
 	else
 	{
-		/*标记页面不忙碌，处于循环状态*/
+		/*Mark the page as not busy; it is in the loop state*/
 		IsPageBusy = false;
 
-		/*页面循环事件*/
+		/*Page loop event*/
 		if (PageList[page.NowPage].LoopCallback != NULL && IS_PAGE(page.NowPage))
 			PageList[page.NowPage].LoopCallback();
 	}

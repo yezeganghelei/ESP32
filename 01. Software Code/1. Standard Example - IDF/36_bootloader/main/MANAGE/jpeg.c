@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
 * @file        jpeg.c
-* @author      正点原子团队(ALIENTEK)
+* @author      ALIENTEK Team (ALIENTEK)
 * @version     V1.0
 * @date        2023-12-01
-* @brief       图片解码-jpeg/jpg解码 代码
-* @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+* @brief       Image decoding - JPEG/JPG decoder
+* @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
 ****************************************************************************************************
 * @attention
 *
-* 实验平台:正点原子 ESP32-S3 开发板
-* 在线视频:www.yuanzige.com
-* 技术论坛:www.openedv.com
-* 公司网址:www.alientek.com
-* 购买地址:openedv.taobao.com
+* Platform: ALIENTEK ESP32-S3 development board
+* Online video: www.yuanzige.com
+* Technical forum: www.openedv.com
+* Company website: www.alientek.com
+* Purchase: openedv.taobao.com
 *
 ****************************************************************************************************
 */
@@ -21,39 +21,39 @@
 #include "jpeg.h"
 
 
-/* ROM代码外的TJPGD较新，在解码回调中具有不同的返回类型 */
+/* The TJPGD outside the ROM code is newer and has a different return type in the decode callback */
 typedef int jpeg_decode_out_t;
-JDEC jpeg_dev;                  /* 待解码对象结构体指针 */
+JDEC jpeg_dev;                  /* Decoder object structure pointer */
 
 /**
- * @brief       jpeg数据输入回调函数
- * @param       jd       : 储存待解码的对象信息的结构体
- * @param       buf      : 输入数据缓冲区 (NULL:执行地址偏移)
- * @param       num      : 需要从输入数据流读出的数据量/地址偏移量
- * @retval      读取到的字节数/地址偏移量
+ * @brief       JPEG data input callback function
+ * @param       jd       : Structure holding the object information to be decoded
+ * @param       buf      : Input data buffer (NULL: perform address offset)
+ * @param       num      : Number of bytes to read from the input stream / address offset
+ * @retval      Number of bytes read / address offset
  */
 static unsigned int infunc(JDEC *decoder, uint8_t *buf, unsigned int len)
 {
-    uint16_t  rb;                           /* 读取到的字节数 */
-    FIL *dev = (FIL *)decoder->device;      /* 待解码的文件的信息，使用FATFS中的FIL结构类型进行定义 */
+    uint16_t  rb;                           /* Number of bytes read */
+    FIL *dev = (FIL *)decoder->device;      /* Information of the file to be decoded, defined using the FATFS FIL structure type */
 
-    if (buf)                                /* 读取数据有效，开始读取数据 */
+    if (buf)                                /* Read data is valid, start reading data */
     {
-        f_read(dev, buf, len, (UINT *)&rb); /* 调用FATFS的f_read函数，用于把jpeg文件的数据读取出来 */
-        return rb;                          /* 返回读取到的字节数目 */
+        f_read(dev, buf, len, (UINT *)&rb); /* Call the FATFS f_read function to read data from the JPEG file */
+        return rb;                          /* Return the number of bytes read */
     }
     else
     {
-        return (f_lseek(dev, f_tell(dev) + len) == FR_OK) ? len : 0;    /* 重新定位数据点，相当于删除之前的n字节数据 */
+        return (f_lseek(dev, f_tell(dev) + len) == FR_OK) ? len : 0;    /* Reposition the data pointer, equivalent to discarding the previous n bytes */
     }
 }
 
 /**
- * @brief       输出功能。将来自解码器的RGB888数据重新编码为big-endian RGB565
- * @param       decoder : JPEG解码结构体
- * @param       bitmap  : 位图数据
- * @param       rect    : 图像坐标信息
- * @retval      返回1输出成功
+ * @brief       Output function. Re-encode RGB888 data from the decoder into big-endian RGB565
+ * @param       decoder : JPEG decode structure
+ * @param       bitmap  : Bitmap data
+ * @param       rect    : Image coordinate information
+ * @retval      Returns 1 on successful output
  */
 static jpeg_decode_out_t outfunc(JDEC *decoder, void *bitmap, JRECT *rect)
 {
@@ -77,12 +77,12 @@ static jpeg_decode_out_t outfunc(JDEC *decoder, void *bitmap, JRECT *rect)
 }
 
 /**
- * @brief       指定输出的比例因子N。输出图像被缩放为1/2^N（N=0到3）
- * @param       screenWidth     : 屏幕宽度
- * @param       screenHeight    : 屏幕高度
- * @param       decodeWidth     : 解码宽度
- * @param       decodeHeight    : 解码高度
- * @retval      0:失败;1;2倍比例;2:4倍比例;3:原本大小
+ * @brief       Specify the output scale factor N. The output image is scaled by 1/2^N (N=0 to 3)
+ * @param       screenWidth     : Screen width
+ * @param       screenHeight    : Screen height
+ * @param       decodeWidth     : Decode width
+ * @param       decodeHeight    : Decode height
+ * @retval      0: failure; 1: 1/2 scale; 2: 1/4 scale; 3: original size
  */
 uint8_t getScale(int screenWidth, int screenHeight, uint16_t decodeWidth, uint16_t decodeHeight)
 {
@@ -114,27 +114,27 @@ uint8_t getScale(int screenWidth, int screenHeight, uint16_t decodeWidth, uint16
 }
 
 /**
- * @brief       JPEG/JPG解码函数
- * @param       pixels          : 像素点
- * @param       file            : 读取文件名称
- * @param       screenWidth     : 屏幕宽度
- * @param       screenHeight    : 屏幕高度
- * @param       imageWidth      : 解码宽度
- * @param       imageHeight     : 解码高度
- * @retval      0:失败;1;2倍比例;2:4倍比例;3:原本大小
+ * @brief       JPEG/JPG decoding function
+ * @param       pixels          : Pixels
+ * @param       file            : File name to read
+ * @param       screenWidth     : Screen width
+ * @param       screenHeight    : Screen height
+ * @param       imageWidth      : Decode width
+ * @param       imageHeight     : Decode height
+ * @retval      0: failure; 1: 1/2 scale; 2: 1/4 scale; 3: original size
  */
 esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int screenHeight, int * imageWidth, int * imageHeight)
 {
     char *work = NULL;
-    FIL *f_jpeg = NULL;     /* JPEG文件指针 */
+    FIL *f_jpeg = NULL;     /* JPEG file pointer */
     *pixels = NULL;
     JRESULT res = JDR_OK;
     esp_err_t ret = ESP_OK;
     uint32_t jd_work_size = 6144 + 4096;
 
-    /* Alocate像素内存。每一行是IMAGE_W 16位像素的阵列；“*像素”数组本身包含指向这些行的指针 */
+    /* Allocate pixel memory. Each row is an array of IMAGE_W 16-bit pixels; the "*pixels" array itself contains pointers to these rows */
     *pixels = malloc( sizeof(pixel_jpeg *) * screenHeight);
-    /* 申请失败 */
+    /* Allocation failed */
     if (*pixels == NULL)
     {
         ESP_LOGE(__FUNCTION__, "Error allocating memory for lines");
@@ -154,7 +154,7 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
         }
     }
 
-    /* 为jpeg解码器分配工作空间 */
+    /* Allocate workspace for the JPEG decoder */
     work = malloc(jd_work_size);
 
     if (work == NULL)
@@ -164,14 +164,14 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
         goto err;
     }
     
-    /* 填充JpegDev结构的字段 */
+    /* Fill in the fields of the JpegDev structure */
     jpeg_dev.outData = *pixels;
     jpeg_dev.screenWidth = screenWidth;
     jpeg_dev.screenHeight = screenHeight;
 
-    f_jpeg = (FIL *)malloc(sizeof(FIL));    /* 申请内存 */
+    f_jpeg = (FIL *)malloc(sizeof(FIL));    /* Allocate memory */
 
-    f_open(f_jpeg, (const TCHAR *)file, FA_READ); /* 打开文件 */
+    f_open(f_jpeg, (const TCHAR *)file, FA_READ); /* Open file */
 
     if (f_jpeg == NULL)
     {
@@ -180,7 +180,7 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
         goto err;
     }
 
-    /* 准备并解码jpeg */
+    /* Prepare and decode the JPEG */
     res = jd_prepare(&jpeg_dev, infunc, work, jd_work_size, f_jpeg);
 
     if (res != JDR_OK)
@@ -190,17 +190,17 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
         goto err;
     }
 
-    /* 计算比例因子 */
+    /* Calculate the scale factor */
     uint8_t scale = getScale(screenWidth, screenHeight, jpeg_dev.width, jpeg_dev.height);
 
-    /* 计算图像大小 */
+    /* Calculate the image size */
     double factor = 1.0;
     if (scale == 1) factor = 0.5;
     if (scale == 2) factor = 0.25;
     if (scale == 3) factor = 0.125;
     *imageWidth = (double)jpeg_dev.width * factor;
     *imageHeight = (double)jpeg_dev.height * factor;
-    /* 反编译 */
+    /* Decompress */
     res = jd_decomp(&jpeg_dev, outfunc, scale);
 
     if (res != JDR_OK)
@@ -210,12 +210,12 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
         goto err;
     }
 
-    /* 全部完成！释放内存 */
+    /* All done! Free memory */
     free(work);
     f_close(f_jpeg);
     return ret;
 
-    /* 出现解码错误的话，执行以下代码 */
+    /* If a decoding error occurs, execute the following code */
     err:
     f_close(f_jpeg);
 
@@ -234,11 +234,11 @@ esp_err_t decode_jpeg(pixel_jpeg ***pixels, char * file, int screenWidth, int sc
 }
 
 /**
- * @brief       显示完成后释放内存
- * @param       pixels          : 像素点地址
- * @param       screenWidth     : 屏幕宽度
- * @param       screenHeight    : 屏幕高度
- * @retval      ESP_OK:成功;其他:失败
+ * @brief       Free memory after display is complete
+ * @param       pixels          : Pixel address
+ * @param       screenWidth     : Screen width
+ * @param       screenHeight    : Screen height
+ * @retval      ESP_OK: success; others: failure
  */
 esp_err_t release_image(pixel_jpeg ***pixels, int screenWidth, int screenHeight)
 {
@@ -255,11 +255,11 @@ esp_err_t release_image(pixel_jpeg ***pixels, int screenWidth, int screenHeight)
 }
 
 /**
- * @brief       JPEG图片解码
- * @param       filename        : 包含路径的文件名(.bmp/.jpg/.jpeg/.gif/.png等)
- * @param       width, height   : 显示区域
- * @param       lcd_cb          : 绘画回调函数
- * @retval      返回BMP解码速度
+ * @brief       Decode a JPEG image
+ * @param       filename        : File name with path (.bmp/.jpg/.jpeg/.gif/.png, etc.)
+ * @param       width, height   : Display area
+ * @param       lcd_cb          : Drawing callback function
+ * @retval      Decoding speed
  */
 TickType_t jpeg_decode(const char *filename, int width, int height,lcd_write_cb lcd_cb)
 {

@@ -202,7 +202,7 @@ static esp_err_t img_http_event_handler(esp_http_client_event_t *evt)
 		strcpy((char *)detect_things, keyword->valuestring);
 
 		char now_time[256];
-		sprintf((char *)now_time, "识别到:%s", keyword->valuestring);
+		sprintf((char *)now_time, "Recognized: %s", keyword->valuestring);
 		lv_label_set_text(label_speech, now_time);
 		vTaskDelay(2000);
 
@@ -266,7 +266,7 @@ static esp_err_t ocr_http_event_handler(esp_http_client_event_t *evt)
 
 		// strcpy((char *)detect_things, keyword->valuestring);
 
-		// sprintf((char *)now_result1, "识别到:%s", keyword->valuestring);
+		// sprintf((char *)now_result1, "Recognized: %s", keyword->valuestring);
 		lv_label_set_text(label_speech, now_result1);
 		vTaskDelay(2000);
 
@@ -288,13 +288,13 @@ static esp_err_t ocr_http_event_handler(esp_http_client_event_t *evt)
 void get_img_token(void)
 {
 
-	ESP_LOGI(TAG, "获取百度识图token");
+	ESP_LOGI(TAG, "Getting Baidu image token");
 	char *url_buf = NULL;
 	// while (1)
 	// {
 
 	url_buf = malloc(sizeof(char) * 255);
-	/*                       开始上传百度AI               */
+	/*                       Start uploading to Baidu AI               */
 	esp_http_client_config_t config = {
 		//.url = TOKEN_URL,
 		.event_handler = img_access_token_http_event_handler,
@@ -342,7 +342,7 @@ void get_ocr_token(void)
 	// {
 
 	url_buf = malloc(sizeof(char) * 255);
-	/*                       开始上传百度AI               */
+	/*                       Start uploading to Baidu AI               */
 	esp_http_client_config_t config = {
 		//.url = TOKEN_URL,
 		.event_handler = ocr_access_token_http_event_handler,
@@ -415,13 +415,13 @@ int baidu_img_ai(void)
 		return ESP_FAIL;
 	}
 	ESP_LOGE(TAG, "Picture taken! Its size was: %zu bytes", _jpg_buf_len);
-	/*                       base64编码                                   */
+	/*                       base64 encoding                                   */
 	base64_buf = base64_encode(_jpg_buf, _jpg_buf_len);
 	ESP_LOGE(TAG, "base64_encode OK,size: %d", strlen(base64_buf));
 	urlcode_buf = malloc(sizeof(char) * strlen(base64_buf) * 2);
 	URLEncode(base64_buf, strlen(base64_buf), urlcode_buf, strlen(base64_buf) * 2);
 	ESP_LOGE(TAG, "urlencode OK,size: %d", strlen(urlcode_buf));
-	/*                       开始上传百度AI                         */
+	/*                       Start uploading to Baidu AI                         */
 	esp_http_client_config_t config = {
 		//.url = BAIDU_WEB_URL,
 		.event_handler = img_http_event_handler,
@@ -458,7 +458,7 @@ int baidu_img_ai(void)
 	}
 	else
 	{
-		lv_label_set_text(label_speech, "识别出错！");
+		lv_label_set_text(label_speech, "Recognition error!");
 		ESP_LOGE(TAG, "HTTP POST request failed: %d", err);
 		esp_http_client_cleanup(client);
 		free(base64_buf);
@@ -501,7 +501,7 @@ int baidu_ocr_ai(void)
 		return ESP_FAIL;
 	}
 	ESP_LOGE(TAG, "Picture taken! Its size was: %zu bytes", _jpg_buf_len);
-	/*                       base64编码                                   */
+	/*                       base64 encoding                                   */
 	base64_buf = base64_encode(_jpg_buf, _jpg_buf_len);
 	ESP_LOGE(TAG, "base64_encode OK,size: %d", strlen(base64_buf));
 
@@ -512,7 +512,7 @@ int baidu_ocr_ai(void)
 
 	ESP_LOGE(TAG, "urlencode OK,size: %d", strlen(urlcode_buf));
 
-	/*                       开始上传百度AI                         */
+	/*                       Start uploading to Baidu AI                         */
 	esp_http_client_config_t config = {
 		//.url = BAIDU_WEB_URL,
 		.event_handler = ocr_http_event_handler,
@@ -549,7 +549,7 @@ int baidu_ocr_ai(void)
 	}
 	else
 	{
-		lv_label_set_text(label_speech, "识别出错！");
+		lv_label_set_text(label_speech, "Recognition error!");
 		ESP_LOGE(TAG, "HTTP POST request failed: %d", err);
 		esp_http_client_cleanup(client);
 		free(base64_buf);
@@ -579,7 +579,7 @@ void baiduai_test_task(void *pvParameters)
 		camera_fb_t *pic = esp_camera_fb_get();
 
 		ESP_LOGI(TAG, "Picture taken! Its size was: %zu bytes", pic->len);
-		/*                       base64编码                                   */
+		/*                       base64 encoding                                   */
 		base64_buf = base64_encode(pic->buf, pic->len);
 		ESP_LOGI(TAG, "base64_encode OK,size: %d", strlen(base64_buf));
 
@@ -593,7 +593,7 @@ void baiduai_test_task(void *pvParameters)
 
 		ESP_LOGI(TAG, "urlencode OK,size: %d", strlen(urlcode_buf));
 
-		/*                       开始上传百度AI                         */
+		/*                       Start uploading to Baidu AI                         */
 		esp_http_client_config_t config = {
 			//.url = BAIDU_WEB_URL,
 			.event_handler = img_http_event_handler,
@@ -637,7 +637,7 @@ void baiduai_test_task(void *pvParameters)
 	ESP_LOGI(TAG, "baidu End");
 }
 
-lv_obj_t *img_baiduai, *img_fft; //要显示图像
+lv_obj_t *img_baiduai, *img_fft; //Image to display
 extern lv_group_t *group_button;
 extern lv_img_dsc_t imgfft;
 extern lv_img_dsc_t img_dsc;
@@ -646,7 +646,7 @@ uint8_t start_reg = 0;
 void BaiduAI_Task(void *pvParameters)
 {
 
-	// /* 入口处检测一次 */
+	// /* Detect once at entry */
 	ESP_LOGE(TAG, "BaiduAI_Task Run Run uxHighWaterMark = %d", uxTaskGetStackHighWaterMark(NULL));
 
 	portTickType xLastWakeTime;
@@ -699,14 +699,14 @@ void BaiduAI_Task(void *pvParameters)
 			{
 				if (start_reg == 1)
 				{
-					lv_label_set_text(label_speech, "开始识别通用物体...");
+					lv_label_set_text(label_speech, "Recognizing general object...");
 					start_reg = 0;
 					baidu_img_ai();
 					page_wakeup_end();
 				}
 				if (start_reg == 2)
 				{
-					lv_label_set_text(label_speech, "开始识别文字...");
+					lv_label_set_text(label_speech, "Recognizing text...");
 					start_reg = 0;
 					baidu_ocr_ai();
 					page_wakeup_end();
@@ -741,31 +741,31 @@ void BaiduAI_Task(void *pvParameters)
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
 	}
 }
-//当前界面是菜单时MOVE任务要做的事情
+//What the MOVE task should do when the current screen is the menu
 void move_task_baiduai(uint8_t move)
 {
 
 	switch (move)
 	{
-	case BT1_DOWN: //往上移动
+	case BT1_DOWN: //Move up
 		page_wakeup_start();
 		start_reg = 2;
 
 		break;
-	case BT1_LONG: //往上移动
+	case BT1_LONG: //Move up
 
 		break;
-	case BT1_LONGFREE: //往上移动
+	case BT1_LONGFREE: //Move up
 		break;
-	case BT2_DOWN: //往下移动
+	case BT2_DOWN: //Move down
 		page_wakeup_start();
 		start_reg = 1;
 
 		break;
-	case BT3_LONG: //往下移动
+	case BT3_LONG: //Move down
 
 		break;
-	case BT3_LONGFREE: //往上移动
+	case BT3_LONGFREE: //Move up
 		break;
 
 	default:
@@ -800,7 +800,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -817,7 +817,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -830,12 +830,12 @@ static void Exit(void)
 	baiduai_en = 0, color_en = 0, face_en = 0;
 	vTaskDelay(500);
 	obj_add_anim(
-		img_baiduai,					   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,								   //起始值
-		APP_WIN_WIDTH,					   //结束值
-		lv_anim_path_ease_out			   //动画特效:模拟弹性物体下落
+		img_baiduai,					   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,								   //Start value
+		APP_WIN_WIDTH,					   //End value
+		lv_anim_path_ease_out			   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(img_baiduai);
@@ -850,21 +850,21 @@ static void Exit(void)
 
 static void Setup(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" %s    esp_get_free_heap_size : %d  \n", __func__, esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" %s    esp_get_minaboutm_free_heap_size : %d  \n", __func__, esp_get_minimum_free_heap_size());
 	baiduai_en = 1;
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
 	app_camera_init();
 	baiduai_init();
 	obj_add_anim(
-		img_baiduai,					   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_WIDTH,					   //起始值
-		0,								   //结束值
-		lv_anim_path_ease_out			   //动画特效:模拟弹性物体下落
+		img_baiduai,					   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_WIDTH,					   //Start value
+		0,								   //End value
+		lv_anim_path_ease_out			   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	xTaskCreatePinnedToCore(&BaiduAI_Task, "BaiduAI_Task", 1024 * 3, NULL, 5, NULL, 0);
@@ -872,26 +872,26 @@ static void Setup(void)
 	lv_obj_set_event_cb(lv_layer_top(), event_handler_touch);
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Baidu(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Baidu至页面调度器*/\r\n");
+	printf("/* Register Baidu with the page scheduler */\r\n");
 }

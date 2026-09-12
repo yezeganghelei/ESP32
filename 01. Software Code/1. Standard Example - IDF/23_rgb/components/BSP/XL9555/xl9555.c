@@ -98,7 +98,7 @@ uint16_t xl9555_pin_write(uint16_t pin, int val)
 
 /**
  * @brief       Get a certainIOstate
- * @param       pin     : want获取stateofIO
+ * @param       pin     : IO pin whose state is requested
  * @retval      thisIOmouthofvalue(state, 0/1)
  */
 int xl9555_pin_read(uint16_t pin)
@@ -233,7 +233,7 @@ uint8_t xl9555_key_scan(uint8_t mode)
             keyval = KEY3_PRES;
         }
     }
-    else if (KEY0 == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1)          /* 没有任何按keypress, Mark button released */
+    else if (KEY0 == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1)          /* No button is pressed, mark the button as released */
     {
         key_up = 1;
     }

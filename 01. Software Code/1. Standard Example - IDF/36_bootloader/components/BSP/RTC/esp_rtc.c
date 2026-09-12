@@ -14,16 +14,16 @@
 
 #include "esp_rtc.h"
 
-_calendar_obj calendar;         /* hour间结构体 */
+_calendar_obj calendar;         /* Time structure */
 
 /**
- * @brief       RTCSet time
+ * @brief       Set RTC time
  * @param       year    :Year
- * @param       mon     :moon
+ * @param       mon     :month
  * @param       mday    :day
  * @param       hour    :hour
- * @param       min     :point
- * @param       sec     :Second
+ * @param       min     :minute
+ * @param       sec     :second
  * @retval      none
  */
 void rtc_set_time(int year,int mon,int mday,int hour,int min,int sec)
@@ -37,10 +37,10 @@ void rtc_set_time(int year,int mon,int mday,int hour,int min,int sec)
     datetime.tm_min = min;
     datetime.tm_sec = sec;
     datetime.tm_isdst = -1;
-    /* Get1970.1.1以来的总Second数 */
+    /* Get the total number of seconds since 1970.1.1 */
     time_t second = mktime(&datetime);
     struct timeval val = { .tv_sec = second, .tv_usec = 0 };
-    /* 设置当前hour间 */
+    /* Set the current time */
     settimeofday(&val, NULL);
 }
 
@@ -58,23 +58,23 @@ void rtc_get_time(void)
     datetime = localtime(&second);
 
     calendar.hour = datetime->tm_hour;          /* hour */
-    calendar.min = datetime->tm_min;            /* point */
-    calendar.sec = datetime->tm_sec;            /* Second */
-    /* 公历Yearmoondayweek */
+    calendar.min = datetime->tm_min;            /* minute */
+    calendar.sec = datetime->tm_sec;            /* second */
+    /* Gregorian year, month, day, and week */
     calendar.year = datetime->tm_year + 1900;   /* Year */
-    calendar.month = datetime->tm_mon + 1;      /* moon */
+    calendar.month = datetime->tm_mon + 1;      /* month */
     calendar.date = datetime->tm_mday;          /* day */
     /* week */
     calendar.week = rtc_get_week(calendar.year, calendar.month, calendar.date);
 }
 
 /**
- * @brief       将YearmoondayhourpointSecond转换成Second钟数
- *   @note      输入公历date得到星期(起始hour间为: A.D.0Year3moon1Day begins, 输入往后的任何date, You can get the correct day of the week)
- *              use 基姆拉尔森calculate公式 calculate, See this post for principle explanation:
+ * @brief       Convert year, month, day, hour, minute, and second to a second count
+ *   @note      Pass a Gregorian date to get the day of the week (starting from March 1, A.D. 0; any later date returns the correct day of the week)
+ *              Uses the Kim Larsen calculation formula; see this post for an explanation:
  *              https://www.cnblogs.com/fengbohello/p/3264300.html
- * @param       syear : Year份
- * @param       smon  : moon份
+ * @param       syear : year
+ * @param       smon  : month
  * @param       sday  : date
  * @retval      0, Sunday; 1 ~ 6: Monday ~ Saturday
  */

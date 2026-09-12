@@ -167,7 +167,7 @@ char data_read_buf[1024] = {0};
 bool is_recv_complete = 0;
 /*
 
-	GetBWebsite avatarJPGdocumentbuffer
+	Get the Bilibili avatar JPG file buffer
 */
 static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 {
@@ -204,13 +204,13 @@ static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 		{
 			//ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA  !esp_http_client_is_chunked_response");
 			// If user_data buffer is configured, copy the response into the buffer
-			if (face_buffer) /*if已经申请了内存 Just copy the received data directly*/
+			if (face_buffer) /*If memory has already been allocated, just copy the received data directly*/
 			{
 				memcpy(face_buffer + output_len, evt->data, evt->data_len);
 			}
-			else /*ifNo申请*/
+			else /*if not allocated*/
 			{
-				if (face_buffer == NULL) /*apply for onehttplength of memory to hold data*/
+				if (face_buffer == NULL) /*Allocate memory of the HTTP content length to hold the data*/
 				{
 					face_buffer = (char *)malloc(esp_http_client_get_content_length(evt->client));
 					output_len = 0;
@@ -220,7 +220,7 @@ static esp_err_t face_http_event_handler(esp_http_client_event_t *evt)
 						return ESP_FAIL;
 					}
 				}
-				memcpy(face_buffer + output_len, evt->data, evt->data_len); //copy data
+				memcpy(face_buffer + output_len, evt->data, evt->data_len); //Copy data
 			}
 
 			output_len += evt->data_len; //Record download progress
@@ -275,7 +275,7 @@ void get_face_jpg(char *url_jpg)
 	// {
 	// 	printf("esp_http_client_open  DOWN\n\n\n");
 
-	// 	http_stream_len = esp_http_client_fetch_headers(client); //Get the size of the file to be downloaded，Here isbindocument的大小
+	// 	http_stream_len = esp_http_client_fetch_headers(client); //Get the size of the file to be downloaded, Here isbindocument size
 	// 	// face_buffer = heap_caps_malloc((sizeof(uint8_t *))*http_stream_len, MALLOC_CAP_SPIRAM);
 	// 	face_buffer = (char *)malloc(sizeof(char) * http_stream_len);
 	// 	memset(face_buffer, 0, http_stream_len);
@@ -285,7 +285,7 @@ void get_face_jpg(char *url_jpg)
 	// 	{
 	// 		while (data_read_num > 0) //Loop to read data
 	// 		{
-	// 			data_read_num = esp_http_client_read(client, data_read_buf, 1024); //read every time1Kdata，The larger the cache here, the fewer the number of communications will be.
+	// 			data_read_num = esp_http_client_read(client, data_read_buf, 1024); //read every time1Kdata, The larger the cache here, the fewer the number of communications will be.
 
 	// 			if (errno == ENOTCONN || errno == ECONNRESET || errno == ECONNABORTED || data_read_num < 0)
 	// 			{
@@ -296,7 +296,7 @@ void get_face_jpg(char *url_jpg)
 	// 			{
 
 	// 				// memcpy(face_buffer + total_data_read_nums, data_read_buf, data_read_num);
-	// 				//Store data here toflash,Call hereESP_LOGIFunctions can cause reentrancy elsewhere，Causes printing to fail
+	// 				//Store data here toflash,Call hereESP_LOGIFunctions can cause reentrancy elsewhere, Causes printing to fail
 	// 				printf("data_read_num= %d\r\n", data_read_num);
 	// 				// for (size_t i = total_data_read_nums; i < data_read_num+total_data_read_nums; i++)
 	// 				// {
@@ -310,15 +310,15 @@ void get_face_jpg(char *url_jpg)
 	// 			{
 	// 				is_recv_complete = esp_http_client_is_complete_data_received(client);
 
-	// 				if (!is_recv_complete) //Not finished receiving，continue to receive
+	// 				if (!is_recv_complete) //Not finished receiving, continue to receive
 	// 				{
 	// 					data_read_num = 1;
-	// 					ESP_LOGI(TAG, "Not finished receiving，continue to receive");
+	// 					ESP_LOGI(TAG, "Not finished receiving, continue to receive");
 	// 				}
 	// 				else
 	// 				{
-	// 					//A global variable that is saved when power is off should be added here.，Download stored with tagbindocument是完整的
-	// 					ESP_LOGI(TAG, "Completed receiving avatar！");
+	// 					//A global variable that is saved when power is off should be added here. Download stored with tagbindocument is complete
+	// 					ESP_LOGI(TAG, "Completed receiving avatar!");
 	// 					esp_http_client_close(client);
 	// 					printf("esp_http_client_close DOWN \n\n\n");
 
@@ -358,11 +358,11 @@ esp_err_t cjson_bilibili(char *text)
 				wp_fans.follower = follower->valueint;
 				cJSON *following = cJSON_GetObjectItem(psub_ksdiy, "following");
 				wp_fans.following = following->valueint;
-				ESP_LOGI(TAG, "Get粉丝success follower:%d  following:%d\n", wp_fans.follower, wp_fans.following);
+				ESP_LOGI(TAG, "Got fans successfully follower:%d  following:%d\n", wp_fans.follower, wp_fans.following);
 			}
 			else
 			{
-				ESP_LOGI(TAG, "Failed to get fans，Check, pleaseuid");
+				ESP_LOGI(TAG, "Failed to get fans, check uid");
 			}
 		}
 		else
@@ -406,7 +406,7 @@ esp_err_t cjson_face(char *text)
 				memset((char *)url_buff, 0, 256);
 				// _get_face_url = false;
 				sprintf(url_buff, "%s","http://i2.hdslb.com/bfs/face/bce14f5e3af4bca480fc7de227986ba304507078.jpg");
-				ESP_LOGI(TAG, "Failed to get fans，Use default头像");
+				ESP_LOGI(TAG, "Failed to get fans, use default avatar");
 
 			}
 		}
@@ -466,7 +466,7 @@ esp_err_t cjson_weather(char *text)
 			}
 			else
 			{
-				ESP_LOGI("HTTP", "Failed to get weather，Please check whether you have the authority to change the interface");
+				ESP_LOGI("HTTP", "Failed to get weather, Please check whether you have the authority to change the interface");
 			}
 		}
 		else
@@ -557,20 +557,20 @@ esp_err_t read_weather()
 {
 	static char city[30] = {0};
 	static char key[30] = {0};
-	if (read_nvs("city", city)) //Get Bilibiliuid
+	if (read_nvs("city", city)) //Get Bilibili uid
 		ESP_LOGI(TAG, "Get the city");
 	else
 	{
 		sprintf(city, "chengdu");
-		ESP_LOGI(TAG, "NoGet the city，Used by default Chengdu");
+		ESP_LOGI(TAG, "No city obtained, defaulting to Chengdu");
 	}
-	if (read_nvs("pass", key)) //Get Bilibiliuid
+	if (read_nvs("pass", key)) //Get the weather key
 		ESP_LOGI(TAG, "Get the key to knowing");
 	else
 	{
 		save_nvs("pass", "SybN2IXZM2B_vayTP");
 		sprintf(key, "SybN2IXZM2B_vayTP");
-		ESP_LOGI(TAG, "Didn't get the mind key，Use default:SybN2IXZM2B_vayTP");
+		ESP_LOGI(TAG, "Didn't get the mind key, use default:SybN2IXZM2B_vayTP");
 	}
 	get_weather(city, key);
 	return ESP_OK;
@@ -579,16 +579,16 @@ esp_err_t read_fans()
 {
 	static char str[20] = {0};
 	static char uid[15] = {0};
-	if (read_nvs("uid", uid)) //Get Bilibiliuid
+	if (read_nvs("uid", uid)) //Get Bilibili uid
 	{
 		sprintf(str, "%s", uid);
-		ESP_LOGI(TAG, "Get到uid");
+		ESP_LOGI(TAG, "Got uid");
 	}
 	else
 	{
 		sprintf(str, "%s", uid);
 		save_nvs("uid", "59041601");
-		ESP_LOGI(TAG, "Nouid，Use defaultuid:59041601");
+		ESP_LOGI(TAG, "No uid, use default uid:59041601");
 	}
 	ESP_LOGI(TAG, "%s", str);
 	get_bilibili(str);

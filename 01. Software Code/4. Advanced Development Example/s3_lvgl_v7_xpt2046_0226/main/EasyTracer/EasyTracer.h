@@ -10,41 +10,41 @@
 #ifndef EASY_TRACER_H
 #define EASY_TRACER_H
 
-#define IMG_X 0	  //图片x坐标
-#define IMG_Y 0	  //图片y坐标
-#define IMG_W 240 //图片宽度
-#define IMG_H 240 //图片高度
+#define IMG_X 0	  // Image x coordinate
+#define IMG_Y 0	  // Image y coordinate
+#define IMG_W 240 // Image width
+#define IMG_H 240 // Image height
 
-#define ALLOW_FAIL_PER 3 //容错率，没1<<ALLOW_FAIL_PER个点允许出现一个错误点，容错率越大越容易识别，但错误率越大
-#define ITERATE_NUM    8 //迭代次数，迭代次数越多识别越精确，但计算量越大
+#define ALLOW_FAIL_PER 3 // Fault tolerance: one bad point is allowed every 1<<ALLOW_FAIL_PER points; a larger tolerance makes recognition easier but increases the error rate
+#define ITERATE_NUM    8 // Iteration count; more iterations make recognition more accurate but increase computation
 
 typedef struct{
-    unsigned char  H_MIN;//目标最小色调
-    unsigned char  H_MAX;//目标最大色调	
+    unsigned char  H_MIN;// Target minimum hue
+    unsigned char  H_MAX;// Target maximum hue	
     
-	unsigned char  S_MIN;//目标最小饱和度  
-    unsigned char  S_MAX;//目标最大饱和度
+	unsigned char  S_MIN;// Target minimum saturation  
+    unsigned char  S_MAX;// Target maximum saturation
 	
-	unsigned char  L_MIN;//目标最小亮度  
-    unsigned char  L_MAX;//目标最大亮度
+	unsigned char  L_MIN;// Target minimum luminance  
+    unsigned char  L_MAX;// Target maximum luminance
 	
-	unsigned int  WIDTH_MIN;//目标最小宽度
-	unsigned int  HIGHT_MIN;//目标最小高度
+	unsigned int  WIDTH_MIN;// Target minimum width
+	unsigned int  HIGHT_MIN;// Target minimum height
 
-	unsigned int  WIDTH_MAX;//目标最大宽度
-	unsigned int  HIGHT_MAX;//目标最大高度
+	unsigned int  WIDTH_MAX;// Target maximum width
+	unsigned int  HIGHT_MAX;// Target maximum height
 
-}TARGET_CONDI;//判定为的目标条件
+}TARGET_CONDI;// Target condition for judgment
 
 typedef struct{
-	unsigned int x;//目标的x坐标
-	unsigned int y;//目标的y坐标
-	unsigned int w;//目标的宽度
-	unsigned int h;//目标的高度
-}RESULT;//识别结果
+	unsigned int x;// Target x coordinate
+	unsigned int y;// Target y coordinate
+	unsigned int w;// Target width
+	unsigned int h;// Target height
+}RESULT;// Recognition result
 
-//唯一的API，用户将识别条件写入Condition指向的结构体中，该函数将返回目标的x，y坐标和长宽
-//返回1识别成功，返回1识别失败
+// The only API; the user writes the recognition condition into the struct pointed to by Condition, and the function returns the target x/y coordinates, width and height
+// Returns 1 on successful recognition, 1 on failure
 int Trace(const TARGET_CONDI *Condition,RESULT *Resu);
 
 #endif

@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        lv_measure_demo.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-11-04
- * @brief       测量系统
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Measurement system
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台: 正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -30,9 +30,9 @@ extern void temperature_sensor_init(void);
 extern float sensor_get_temperature(void);
 extern temperature_sensor_handle_t temp_handle;
 /**
-  * @brief  删除测量demo
-  * @param  无
-  * @retval 无
+  * @brief  Delete the measurement demo
+  * @param  none
+  * @retval none
   */
 void lv_measure_del(void)
 {
@@ -54,25 +54,25 @@ void lv_measure_del(void)
 }
 
 /**
-  * @brief  获取温度信息
-  * @param  无
-  * @retval 无
+  * @brief  Get temperature information
+  * @param  none
+  * @retval none
   */
 static void lv_temp_timer(lv_timer_t* timer)
 {
-    temp = sensor_get_temperature();                                        /* 得到温度值 */
+    temp = sensor_get_temperature();                                        /* Get the temperature value */
     lv_label_set_text_fmt(measure_obj.small_cont.temp.temp_obj,"%d.%d",(int)temp,(int)((int)(temp * 100) % 100));
     lv_slider_set_value(measure_obj.small_cont.temp.temp_slider, temp, LV_ANIM_ON);
 }
 
 /**
-  * @brief  获取AP3216C信息
-  * @param  无
-  * @retval 无
+  * @brief  Get AP3216C information
+  * @param  none
+  * @retval none
   */
 static void lv_ap3216c_timer(lv_timer_t* timer)
 {
-    ap3216c_read_data(&ir, &ps, &als);              /* 读取数据  */
+    ap3216c_read_data(&ir, &ps, &als);              /* Read data */
     
     lv_label_set_text_fmt(measure_obj.small_cont.ap3216c.ap_ir,"%d",ir);
     lv_label_set_text_fmt(measure_obj.small_cont.ap3216c.ap_ps,"%d",ps);
@@ -80,20 +80,20 @@ static void lv_ap3216c_timer(lv_timer_t* timer)
 }
 
 /**
- * @brief       测量demo
- * @param       无
- * @retval      无
+ * @brief       Measurement demo
+ * @param       none
+ * @retval      none
  */
 void lv_measure_demo(void)
 {
-    /* 解决重复按下 */
+    /* Handle repeated presses */
     if (app_obj_general.current_parent != NULL)
     {
         lv_obj_del(app_obj_general.current_parent);
         app_obj_general.current_parent = NULL;
     }
     
-    temperature_sensor_init();                                  /* 初始化内部温度传感器 */
+    temperature_sensor_init();                                  /* Initialize the internal temperature sensor */
 
     lv_app_del();
 
@@ -104,8 +104,8 @@ void lv_measure_demo(void)
     lv_obj_set_style_border_opa(measure_obj.lv_main_cont,LV_OPA_0,LV_STATE_DEFAULT);
     lv_obj_set_pos(measure_obj.lv_main_cont,0,20);
 
-    app_obj_general.del_parent = measure_obj.lv_main_cont;              /* 指向当前界面容器 */
-    app_obj_general.Function = lv_measure_del;                              /* 删除此界面 */
+    app_obj_general.del_parent = measure_obj.lv_main_cont;              /* Point to the current screen container */
+    app_obj_general.Function = lv_measure_del;                              /* Delete this screen */
 
     measure_obj.small_cont.temp.temp_slider = lv_slider_create(measure_obj.lv_main_cont);
     lv_slider_set_value(measure_obj.small_cont.temp.temp_slider, 0, LV_ANIM_OFF);
@@ -315,11 +315,11 @@ void lv_measure_demo(void)
     lv_obj_set_style_text_opa(measure_obj.small_cont.temp.temp_unit, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(measure_obj.small_cont.temp.temp_unit, &lv_font_montserrat_14, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    /* ESP32内部温度 */
+    /* ESP32 internal temperature */
     measure_obj.small_cont.temp.lv_temp_timer =  lv_timer_create(lv_temp_timer, 100, NULL);
     /* AP3216C */
     measure_obj.small_cont.ap3216c.lv_ap3216c_timer =  lv_timer_create(lv_ap3216c_timer, 100, NULL);
 
     lv_group_add_obj(ctrl_g, measure_obj.small_cont.temp.temp_unit);
-    lv_group_focus_obj(measure_obj.small_cont.temp.temp_unit);                /* 聚焦当前APP */
+    lv_group_focus_obj(measure_obj.small_cont.temp.temp_unit);                /* Focus the current app */
 }

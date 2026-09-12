@@ -24,7 +24,7 @@ static const char *TAG = "FACE";
 #define ENROLL_CONFIRM_TIMES 5
 #define FACE_ID_SAVE_NUMBER 7
 
-extern lv_obj_t *img_cam; //要显示图像
+extern lv_obj_t *img_cam; // Image to display
 extern lv_group_t *group_button;
 extern lv_img_dsc_t img_dsc;
 extern uint8_t cam_en, face_en;

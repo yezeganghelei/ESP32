@@ -38,7 +38,7 @@ extern esp_afe_sr_iface_t *afe_handle;
 
 #define I2S_NUM 1
 /*
-    recordingI2Sinitialization
+    Recording I2S initialization
 */
 void record_i2s_init(void)
 {
@@ -65,7 +65,7 @@ void record_i2s_init(void)
     printf("record_i2s_init init success...\r\n");
 }
 /*
-    playI2Sinitialization
+    Playback I2S initialization
 */
 void play_i2s_init(void)
 {
@@ -92,7 +92,7 @@ void play_i2s_init(void)
     printf("play_i2s_init init success...\r\n");
 }
 /*
-    uninstallI2Sdrive
+    Uninstall the I2S driver
 */
 void all_i2s_deinit(void)
 {
@@ -129,7 +129,7 @@ static void tips_sleep(void)
 */
 void recsrcTask(void *arg)
 {
-    record_i2s_init(); // initializationI2S用于recording
+    record_i2s_init(); // Initialize I2S for recording
     esp_afe_sr_data_t *afe_data = arg;
     int audio_chunksize = afe_handle->get_feed_chunksize(afe_data);
     int nch = afe_handle->get_channel_num(afe_data);
@@ -146,7 +146,7 @@ void recsrcTask(void *arg)
             tips_i2s_read();
             if (playing != true)
             i2s_read(I2S_NUM, i2s_buff, samp_len_bytes, &bytes_read, 100);
-            /*MICIs the left channel to extract data in the following way Use new versionesp sr*/
+            /*MIC is the left channel; extract data as follows (use the new version of esp-sr)*/
         //     for (size_t j = 0; j < 100; j++)
         // {
         //     /* code */
@@ -168,7 +168,7 @@ void recsrcTask(void *arg)
             vTaskDelay(10);
         }
 
-        /*MICIt is the right channel to extract data in the following way Can’t use new versionesp sr*/
+        /*MIC is the right channel; extract data as follows (cannot use the new version of esp-sr)*/
         // i2s_read(I2S_NUM, samp, samp_len, &read_len, portMAX_DELAY); //fromI2SRead raw data
         // for (int x = 0; x < cfg->item_size / 4; x++)                 //Process the original data and only take part of it
         // {

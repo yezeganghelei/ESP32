@@ -44,7 +44,7 @@ typedef struct
 esp_err_t play_wav(const char *filepath)
 {
 
-	all_i2s_deinit();//First uninstall the i2s driver because i2s was initialized for recording before. Now that you want to play, the public pins cannot be played. You need to uninstall it and re-initialize it to play mode.
+	all_i2s_deinit();//Uninstall the i2s driver first, because i2s was initialized for recording earlier. The shared pins cannot play in that mode, so it must be uninstalled and re-initialized in playback mode.
 	play_i2s_init();//Initialize i2s in playback mode
 	FILE *fd = NULL;
 	struct stat file_stat;
@@ -83,7 +83,7 @@ esp_err_t play_wav(const char *filepath)
 	 * read head of WAV file
 	 */
 	wav_header_t wav_head;
-	int len = fread(&wav_head, 1, sizeof(wav_header_t), fd);//readwav文件of文件头
+	int len = fread(&wav_head, 1, sizeof(wav_header_t), fd);//Read the WAV file header
 	if (len <= 0)
 	{
 		ESP_LOGE(TAG, "Read wav header failed");
@@ -109,7 +109,7 @@ esp_err_t play_wav(const char *filepath)
 	size_t write_num = 0;
 	size_t cnt;
 	ESP_LOGI(TAG, "set clock");
-	i2s_set_clk(1, wav_head.SampleRate, wav_head.BitsPerSample, 1);//According to thewav文件of各种参数来配置一下i2Sofclk 采样率等等
+	i2s_set_clk(1, wav_head.SampleRate, wav_head.BitsPerSample, 1);//Configure the I2S clock (sample rate, etc.) according to the WAV file parameters
 	ESP_LOGI(TAG, "write data");
 	do
 	{
@@ -119,7 +119,7 @@ esp_err_t play_wav(const char *filepath)
 		{
 			break;
 		}
-		i2s_write(1, buffer, len, &cnt, 1000 / portTICK_PERIOD_MS);//Output data toI2S  Playback is achieved
+		i2s_write(1, buffer, len, &cnt, 1000 / portTICK_PERIOD_MS);//Output data to I2S to play it back
 		write_num += len;
 	} while (1);
 	fclose(fd);

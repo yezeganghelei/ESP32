@@ -47,18 +47,18 @@ uint16_t audio_get_tnum(uint8_t *path)
 {
     uint8_t res;
     uint16_t rval = 0;
-    FF_DIR tdir;                                                /* 临时Table of contents */
-    FILINFO *tfileinfo;                                         /* 临时文件information */
+    FF_DIR tdir;                                                /* Temporary directory */
+    FILINFO *tfileinfo;                                         /* Temporary file information */
     
     tfileinfo = (FILINFO*)malloc(sizeof(FILINFO));              /* Apply for memory */
     
-    res = f_opendir(&tdir, (const TCHAR*)path);                 /* 打开Table of contents */
+    res = f_opendir(&tdir, (const TCHAR*)path);                 /* Open the directory */
     
     if ((res == FR_OK) && tfileinfo)
     {
         while (1)                                               /* Query the total number of valid files */
         {
-            res = f_readdir(&tdir, tfileinfo);                  /* 读取Table of contents下的一个文件 */
+            res = f_readdir(&tdir, tfileinfo);                  /* Read one file from the directory */
             
             if ((res != FR_OK) || (tfileinfo->fname[0] == 0))
             {
@@ -67,7 +67,7 @@ uint16_t audio_get_tnum(uint8_t *path)
 
             res = exfuns_file_type(tfileinfo->fname);
             
-            if ((res & 0xF0) == 0x40)                           /* Take the top four,看看是不是music文件 */
+            if ((res & 0xF0) == 0x40)                           /* Check the high nibble to see whether it is a music file */
             {
                 rval++;                                         /* Increase the number of valid files1 */
             }
@@ -87,7 +87,7 @@ uint16_t audio_get_tnum(uint8_t *path)
  */
 void audio_index_show(uint16_t index, uint16_t total)
 {
-    /* 显示当前曲目的index,and total number of tracks */
+    /* Display the current track index and total number of tracks */
     lcd_show_num(30 + 0, 230, index, 3, 16, RED);   /* index */
     lcd_show_char(30 + 24, 230, '/', 16, 0, RED);
     lcd_show_num(30 + 32, 230, total, 3, 16, RED);  /* Total tracks */
@@ -134,7 +134,7 @@ void audio_play(void)
 {
     uint8_t res;
     FF_DIR wavdir;                                              /* Table of contents */
-    FILINFO *wavfileinfo;                                       /* 文件information */
+    FILINFO *wavfileinfo;                                       /* File information */
     uint8_t *pname;                                             /* File name with path */
     uint16_t totwavnum;                                         /* Total number of music files */
     uint16_t curindex;                                          /* Current index */
@@ -153,7 +153,7 @@ void audio_play(void)
         vTaskDelay(200);
     }
 
-    totwavnum = audio_get_tnum((uint8_t *)"0:/MUSIC");          /* get总有效文件数 */
+    totwavnum = audio_get_tnum((uint8_t *)"0:/MUSIC");          /* Get the total number of valid files */
     
     while (totwavnum == 0)                                   /* The total number of music files is0 */
     {
@@ -165,7 +165,7 @@ void audio_play(void)
     
     wavfileinfo = (FILINFO*)malloc(sizeof(FILINFO));            /* Apply for memory */
     pname = malloc(255 * 2 + 1);                                /* Allocate memory for file names with paths */
-    wavoffsettbl = malloc(4 * totwavnum);                       /* Apply4*totwavnumBytes of memory,用于存放music文件off blockindex */
+    wavoffsettbl = malloc(4 * totwavnum);                       /* Allocate 4*totwavnum bytes to store the music file offset table */
     
     while (!wavfileinfo || !pname || !wavoffsettbl)             /* Memory allocation error */
     {
@@ -176,7 +176,7 @@ void audio_play(void)
     }
     
     /* Record index */
-    res = f_opendir(&wavdir, "0:/MUSIC");                       /* 打开Table of contents */
+    res = f_opendir(&wavdir, "0:/MUSIC");                       /* Open the directory */
     
     if (res == FR_OK)
     {
@@ -186,7 +186,7 @@ void audio_play(void)
         {
             temp = wavdir.dptr;                                 /* Record the currentindex */
 
-            res = f_readdir(&wavdir, wavfileinfo);              /* 读取Table of contents下的一个文件 */
+            res = f_readdir(&wavdir, wavfileinfo);              /* Read one file from the directory */
             
             if ((res != FR_OK) || (wavfileinfo->fname[0] == 0))
             {
@@ -195,7 +195,7 @@ void audio_play(void)
 
             res = exfuns_file_type(wavfileinfo->fname);
             
-            if ((res & 0xF0) == 0x40)                           /* Take the top four,看看是不是music文件 */
+            if ((res & 0xF0) == 0x40)                           /* Check the high nibble to see whether it is a music file */
             {
                 wavoffsettbl[curindex] = temp;                   /* Record index */
                 curindex++;
@@ -204,12 +204,12 @@ void audio_play(void)
     }
     
     curindex = 0;                                               /* Display from 0 */
-    res = f_opendir(&wavdir, (const TCHAR*)"0:/MUSIC");         /* 打开Table of contents */
+    res = f_opendir(&wavdir, (const TCHAR*)"0:/MUSIC");         /* Open the directory */
     
     while (res == FR_OK)                                        /* Open successfully */
     {
-        dir_sdi(&wavdir, wavoffsettbl[curindex]);               /* 改变当前Table of contentsindex */
-        res = f_readdir(&wavdir, wavfileinfo);                  /* 读取Table of contents下的一个文件 */
+        dir_sdi(&wavdir, wavoffsettbl[curindex]);               /* Change the current directory index */
+        res = f_readdir(&wavdir, wavfileinfo);                  /* Read one file from the directory */
         
         if ((res != FR_OK) || (wavfileinfo->fname[0] == 0))
         {
@@ -217,7 +217,7 @@ void audio_play(void)
         }
         
         strcpy((char *)pname, "0:/MUSIC/");                     /* Copy path(Table of contents) */
-        strcat((char *)pname, (const char *)wavfileinfo->fname);/* 将file name接在后面 */
+        strcat((char *)pname, (const char *)wavfileinfo->fname);/* Append the file name */
         lcd_fill(30, 190, lcd_self.width - 1, 190 + 16, WHITE); /* Clear previous display */
         audio_index_show(curindex + 1, totwavnum);
         text_show_string(30, 190, lcd_self.width - 60, 16, (char *)wavfileinfo->fname, 16, 0, BLUE);   /* Show song name */
@@ -257,7 +257,7 @@ void audio_play(void)
 /**
  * @brief       Play an audio file
  * @param       fname : file name
- * @retval      按Key value
+ * @retval      Button value
  *   @arg       KEY0_PRES , Next song.
  *   @arg       KEY2_PRES , Previous song.
  *   @arg       other , mistake
@@ -277,7 +277,7 @@ uint8_t audio_play_song(uint8_t *fname)
             /* Implement it by yourself */
             break;
 
-        default:            /* Other documents,自动跳转到Next song */
+        default:            /* Other files, automatically skip to the next track */
             printf("can't play:%s\r\n", fname);
             res = KEY0_PRES;
             break;

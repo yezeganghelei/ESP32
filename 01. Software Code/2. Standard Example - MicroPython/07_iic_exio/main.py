@@ -4,13 +4,13 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    IOExtended experiments
+ * @brief    IO expansion experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * Experiment purpose：How to useIICdriveXL9555(16BitIOexpansion chip)
+ * Experiment purpose: How to use IIC to drive the XL9555 (16-bit IO expansion chip)
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,    LED --> ESP32S3 IO
  *       LED --> IO1
  * 2, XL9555 --> ESP32S3 IO
@@ -18,8 +18,9 @@
  *       SDA --> IO41
  *       INT --> IO0(Jumper cap connection)
 
- * experimental phenomenon
- * 1, User can pressKEY0~KEY3按键来controlLEDand buzzer，KEY0andKEY1来control蜂鸣器开与关；KEY2andKEY3controlLEDLight and extinguish。
+ * Experimental phenomenon
+ * 1, The user can press KEY0~KEY3 to control the LED and buzzer. KEY0 and KEY1 turn the buzzer on
+ *    and off; KEY2 and KEY3 turn the LED on and off.
 
  * Things to note
  * none
@@ -53,7 +54,7 @@ if __name__ == '__main__':
         key = int(xl9555.key_scan())
         
         if key == io_ex.KEY0:
-            xl9555.write_bit(io_ex.BEEP,0)      # Open蜂鸣器
+            xl9555.write_bit(io_ex.BEEP,0)      # Turn on the buzzer
         elif key == io_ex.KEY1:
             xl9555.write_bit(io_ex.BEEP,1)      # Turn off the buzzer
         elif key == io_ex.KEY2:
@@ -61,4 +62,4 @@ if __name__ == '__main__':
         elif key == io_ex.KEY3:
             led.value(1) 
 
-        time.sleep_ms(10)                       # Delay 10ms
+        time.sleep_ms(10)                       # Delay 10 ms

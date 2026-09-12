@@ -3,7 +3,7 @@
  * @Date: 2021-11-13 14:29:15
  * @LastEditTime: 2021-11-15 15:24:56
  * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: Open koroFileHeader to view the configuration and settings: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \s3_lvgl_v7\main\page\DisplayPrivate.h
  */
 
@@ -32,12 +32,12 @@ while(!(condition)){\
 #define LV_SYMBOL_DEGREE_SIGN   "\xC2\xB0"
 
 /**
-  * @brief  让一个变量增加或者减去一个值，在大于最大值后从最小值开始，小于最小值后从最大值开始
-  * @param  src:被控变量
-  * @param  plus:增加的值
-  * @param  min:最小值
-  * @param  max:最大值
-  * @retval 无
+  * @brief  Increment or decrement a variable; wrap to the minimum after exceeding the maximum, and to the maximum after dropping below the minimum
+  * @param  src:controlled variable
+  * @param  plus:value to add
+  * @param  min:minimum value
+  * @param  max:maximum value
+  * @retval None
   */
 #define __ValuePlus(src, plus, min, max) \
 	do                                   \
@@ -56,23 +56,23 @@ while(!(condition)){\
 
 typedef enum
 {
-	Disp_Home = 1,	 //主页
-	Disp_Menu,		 //菜单选择界面
-	Disp_Cam,		 //摄像头显示
-	Disp_Color,		 //颜色识别
-	Disp_Face,		 //人脸识别
-	Disp_Baidu,		 //百度AI 物体和文字识别
-	Disp_IMU,		 //陀螺仪
-	Disp_FFT,		 //音乐频谱
-	Disp_Daily,		 //每日一句
-	Disp_Game_2048,	 //2048游戏
-	Disp_Game_Snake, //贪吃蛇游戏
-	Disp_Music,		 //音乐播放界面 采用lvgl的music demo
-	Disp_Calendar,	 //日历
-	Disp_Setting,	 //设置界面 可设置摄像头翻转   空调类型选择
-	Disp_About,		 //关于介绍
+	Disp_Home = 1,	 //Home page
+	Disp_Menu,		 //Menu selection screen
+	Disp_Cam,		 //Camera display
+	Disp_Color,		 //Color recognition
+	Disp_Face,		 //Face recognition
+	Disp_Baidu,		 //Baidu AI object and text recognition
+	Disp_IMU,		 //Gyroscope
+	Disp_FFT,		 //Music spectrum
+	Disp_Daily,		 //Daily quote
+	Disp_Game_2048,	 //2048 game
+	Disp_Game_Snake, //Snake game
+	Disp_Music,		 //Music player screen, based on the LVGL music demo
+	Disp_Calendar,	 //Calendar
+	Disp_Setting,	 //Settings screen; configure camera flip and air-conditioner type
+	Disp_About,		 //About
 	Disp_Max_Page,
-} Display_Page; //当前界面枚举
+} Display_Page; //Current screen enum
 
 
 /*AppWindow*/

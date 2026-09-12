@@ -44,7 +44,7 @@ static const char *TAG = "app_wifi";
 const int CONNECTED_BIT = BIT0;
 const int ESPTOUCH_DONE_BIT = BIT1;
 const int WIFI_SMART = BIT2;
-const int WIFI_CONNET_BIT = BIT3; // Distribution network连接
+const int WIFI_CONNET_BIT = BIT3; // Provisioning connection
 const int MQTT_CONNET_BIT = BIT4;
 
 char ip_adder[20];
@@ -237,7 +237,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         ESP_LOGI(TAG, "SSID:%s", ssid);
         ESP_LOGI(TAG, "PASSWORD:%s", password);
 
-        /*Openwifipassworkspace and save password*/
+        /*Open the WiFi password space and save the password*/
         // if (save_nvs("wifi_ssid", ssid) && save_nvs("wifi_pass", password))
         //     ESP_LOGI(TAG, "Password saved successfully");
 
@@ -267,19 +267,19 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         wifi_connect_status = false;
     }
 }
-// Distribution network任务
+// Provisioning task
 void smartconfig_example_task(void *parm)
 {
     ESP_LOGI(TAG, "start smartconfig。。。。。。。1");
     EventBits_t uxBits;
 
-    ESP_ERROR_CHECK(esp_smartconfig_set_type(SC_TYPE_ESPTOUCH_AIRKISS)); // chooseesptouchandairkissDistribution network
+    ESP_ERROR_CHECK(esp_smartconfig_set_type(SC_TYPE_ESPTOUCH_AIRKISS)); // choose esptouch and airkiss provisioning
     smartconfig_start_config_t cfg = SMARTCONFIG_START_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_smartconfig_start(&cfg));
 
     while (1)
     {
-        uxBits = xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT | ESPTOUCH_DONE_BIT, false, false, portMAX_DELAY); // Waiting for distribution network event group
+        uxBits = xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT | ESPTOUCH_DONE_BIT, false, false, portMAX_DELAY); // Wait for the provisioning event group
         // if(uxBits & CONNECTED_BIT)
         //     ESP_LOGI(TAG, "WiFi Connected to ap");
         if (uxBits & ESPTOUCH_DONE_BIT)
@@ -478,7 +478,7 @@ esp_err_t wifi_init_sta()
     // return ESP_FAIL;
     // }
 
-    /*Enter blocking state waiting for connection*/
+    /*Block while waiting for a connection*/
     EventBits_t uxBits = xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT, false, false, 100000 / portTICK_PERIOD_MS);
     if (uxBits & CONNECTED_BIT)
     {

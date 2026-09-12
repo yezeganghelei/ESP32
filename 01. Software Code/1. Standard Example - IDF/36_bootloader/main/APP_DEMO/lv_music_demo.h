@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        lv_music.h
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-11-04
- * @brief       音乐播放器
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Music player
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台: 正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -37,83 +37,83 @@
 #include "sdmmc_cmd.h"
 
 
-#define WAV_TX_BUFSIZE    8192  /* 定义WAV TX DMA 数组大小(播放192Kbps@24bit的时候,需要设置8192大才不会卡) */
+#define WAV_TX_BUFSIZE    8192  /* Define the WAV TX DMA array size (set it to 8192 to avoid stuttering when playing 192Kbps@24bit) */
 
 typedef struct
 {
-    uint32_t ChunkID;           /* chunk id;这里固定为"RIFF",即0X46464952 */
-    uint32_t ChunkSize ;        /* 集合大小;文件总大小-8 */
-    uint32_t Format;            /* 格式;WAVE,即0X45564157 */
-}ChunkRIFF;     /* RIFF块 */
+    uint32_t ChunkID;           /* chunk id; fixed to "RIFF" here, i.e. 0X46464952 */
+    uint32_t ChunkSize ;        /* Collection size; total file size - 8 */
+    uint32_t Format;            /* Format; WAVE, i.e. 0X45564157 */
+}ChunkRIFF;     /* RIFF chunk */
 
 typedef struct
 {
-    uint32_t ChunkID;           /* chunk id;这里固定为"fmt ",即0X20746D66 */
-    uint32_t ChunkSize ;        /* 子集合大小(不包括ID和Size);这里为:20. */
-    uint16_t AudioFormat;       /* 音频格式;0X01,表示线性PCM;0X11表示IMA ADPCM */
-    uint16_t NumOfChannels;     /* 通道数量;1,表示单声道;2,表示双声道; */
-    uint32_t SampleRate;        /* 采样率;0X1F40,表示8Khz */
-    uint32_t ByteRate;          /* /字节速率; */
-    uint16_t BlockAlign;        /* 块对齐(字节); */
-    uint16_t BitsPerSample;     /* 单个采样数据大小;4位ADPCM,设置为4 */
-//    uint16_t ByteExtraData;   /* 附加的数据字节;2个; 线性PCM,没有这个参数 */
-}ChunkFMT;      /* fmt块 */
+    uint32_t ChunkID;           /* chunk id; fixed to "fmt " here, i.e. 0X20746D66 */
+    uint32_t ChunkSize ;        /* Sub-collection size (excluding ID and Size); here it is 20. */
+    uint16_t AudioFormat;       /* Audio format; 0X01 = linear PCM, 0X11 = IMA ADPCM */
+    uint16_t NumOfChannels;     /* Number of channels; 1 = mono, 2 = stereo */
+    uint32_t SampleRate;        /* Sample rate; 0X1F40 = 8 kHz */
+    uint32_t ByteRate;          /* Byte rate */
+    uint16_t BlockAlign;        /* Block alignment (bytes) */
+    uint16_t BitsPerSample;     /* Size of one sample; for 4-bit ADPCM, set to 4 */
+//    uint16_t ByteExtraData;   /* Additional data bytes;2; linear PCM,no such parameter */
+}ChunkFMT;      /* fmt chunk */
 
 typedef struct 
 {
-    uint32_t ChunkID;           /* chunk id;这里固定为"fact",即0X74636166; */
-    uint32_t ChunkSize ;        /* 子集合大小(不包括ID和Size);这里为:4. */
-    uint32_t NumOfSamples;      /* 采样的数量; */
-}ChunkFACT;     /* fact块 */
+    uint32_t ChunkID;           /* chunk id; fixed to "fact" here, i.e. 0X74636166; */
+    uint32_t ChunkSize ;        /* Sub-collection size (excluding ID and Size); here it is 4. */
+    uint32_t NumOfSamples;      /* Number of samples */
+}ChunkFACT;     /* fact chunk */
 
 typedef struct 
 {
-    uint32_t ChunkID;           /* chunk id;这里固定为"LIST",即0X74636166; */
-    uint32_t ChunkSize ;        /* 子集合大小(不包括ID和Size);这里为:4. */
-}ChunkLIST;     /* LIST块 */
+    uint32_t ChunkID;           /* chunk id; fixed to "LIST" here, i.e. 0X74636166; */
+    uint32_t ChunkSize ;        /* Sub-collection size (excluding ID and Size); here it is 4. */
+}ChunkLIST;     /* LIST chunk */
 
 typedef struct
 {
-    uint32_t ChunkID;           /* chunk id;这里固定为"data",即0X5453494C */
-    uint32_t ChunkSize ;        /* 子集合大小(不包括ID和Size) */
-}ChunkDATA;     /* data块 */
+    uint32_t ChunkID;           /* chunk id; fixed to "data" here, i.e. 0X5453494C */
+    uint32_t ChunkSize ;        /* Sub-collection size (excluding ID and Size) */
+}ChunkDATA;     /* data chunk */
 
 typedef struct
 { 
-    ChunkRIFF riff;             /* riff块 */
-    ChunkFMT fmt;               /* fmt块 */
-//    ChunkFACT fact;           /* fact块 线性PCM,没有这个结构体 */
-    ChunkDATA data;             /* data块 */
-}__WaveHeader;  /* wav头 */
+    ChunkRIFF riff;             /* RIFF chunk */
+    ChunkFMT fmt;               /* fmt chunk */
+//    ChunkFACT fact;           /* fact chunk linear PCM,no such structure */
+    ChunkDATA data;             /* data chunk */
+}__WaveHeader;  /* WAV header */
 
 typedef struct
 { 
-    uint16_t audioformat;       /* 音频格式;0X01,表示线性PCM;0X11表示IMA ADPCM */
-    uint16_t nchannels;         /* 通道数量;1,表示单声道;2,表示双声道; */
-    uint16_t blockalign;        /* 块对齐(字节); */
-    uint32_t datasize;          /* WAV数据大小 */
+    uint16_t audioformat;       /* Audio format; 0X01 = linear PCM, 0X11 = IMA ADPCM */
+    uint16_t nchannels;         /* Number of channels; 1 = mono, 2 = stereo */
+    uint16_t blockalign;        /* Block alignment (bytes) */
+    uint32_t datasize;          /* WAV data size */
 
-    uint32_t totsec ;           /* 整首歌时长,单位:秒 */
-    uint32_t cursec ;           /* 当前播放时长 */
+    uint32_t totsec ;           /* Total song duration, in seconds */
+    uint32_t cursec ;           /* Current playback duration */
 
-    uint32_t bitrate;           /* 比特率(位速) */
-    uint32_t samplerate;        /* 采样率 */
-    uint16_t bps;               /* 位数,比如16bit,24bit,32bit */
+    uint32_t bitrate;           /* Bitrate */
+    uint32_t samplerate;        /* Sample rate */
+    uint16_t bps;               /* Bit depth, e.g. 16-bit, 24-bit, 32-bit */
 
-    uint32_t datastart;         /* 数据帧开始的位置(在文件里面的偏移) */
-}__wavctrl;                     /* wav 播放控制结构体 */ 
+    uint32_t datastart;         /* Start position of the data frame (offset within the file) */
+}__wavctrl;                     /* WAV playback control structure */ 
 
-/* 音乐播放控制器 */
+/* Music playback controller */
 typedef struct
 {
-    uint8_t *tbuf;                          /* 临时数组,仅在24bit解码的时候需要用到 */
-    FIL *file;                              /* 音频文件指针 */
+    uint8_t *tbuf;                          /* Temporary array, only needed for 24-bit decoding */
+    FIL *file;                              /* Audio file pointer */
 
-    uint8_t status;                         /* bit0:0,暂停播放;1,继续播放 */
-                                            /* bit1:0,结束播放;1,开启播放 */
+    uint8_t status;                         /* bit0: 0, pause playback; 1, resume playback */
+                                            /* bit1: 0, stop playback; 1, start playback */
 }__audiodev;
 
-/* 音乐播放状态 */
+/* Music playback state */
 enum MUSIC_STATE
 {
     MUSIC_NULL,
@@ -123,7 +123,7 @@ enum MUSIC_STATE
     MUSIC_PREV
 };
 
-/* 函数声明 */
+/* Function declarations */
 void lv_music_demo(void);
 
 #endif

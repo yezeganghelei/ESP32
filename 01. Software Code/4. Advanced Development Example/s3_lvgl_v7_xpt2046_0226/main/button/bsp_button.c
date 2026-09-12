@@ -1,5 +1,5 @@
 /************************************************************
-  * @brief   按键驱动
+  * @brief   Button driver
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -11,24 +11,24 @@
 #include "bsp_button.h"
 
 /*******************************************************************
- *                          变量声明                               
+ *                          Variable declarations                               
  *******************************************************************/
 
 static struct button *Head_Button = NULL;
 bool long_press = false;
 /*******************************************************************
- *                         函数声明     
+ *                         Function declarations     
  *******************************************************************/
 static char *StrnCopy(char *dst, const char *src, uint32_t n);
 static void Print_Btn_Info(Button_t *btn);
 static void Add_Button(Button_t *btn);
 
 /************************************************************
-  * @brief   按键创建
-	* @param   name : 按键名称
-	* @param   btn : 按键结构体
-  * @param   read_btn_level : 按键电平读取函数，需要用户自己实现返回uint8_t类型的电平
-  * @param   btn_trigger_level : 按键触发电平
+  * @brief   Button creation
+	* @param   name : button name
+	* @param   btn : button structure
+  * @param   read_btn_level : button level read function; the user must implement it to return a uint8_t level
+  * @param   btn_trigger_level : button trigger level
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
@@ -45,30 +45,30 @@ void Button_Create(const char *name,
   {
   }
 
-  // memset(btn, 0, sizeof(struct button)); //清除结构体信息，建议用户在之前清除
+  // memset(btn, 0, sizeof(struct button)); // clear the struct information; it is recommended to clear it beforehand
 
-  StrnCopy(btn->Name, name, BTN_NAME_MAX); /* 创建按键名称 */
+  StrnCopy(btn->Name, name, BTN_NAME_MAX); /* Create the button name */
 
-  btn->Button_State = NONE_TRIGGER;                  //按键状态
-  btn->Button_Last_State = NONE_TRIGGER;             //按键上一次状态
-  btn->Button_Trigger_Event = NONE_TRIGGER;          //按键触发事件
-  btn->Read_Button_Level = read_btn_level;           //按键读电平函数
-  btn->Button_Trigger_Level = btn_trigger_level;     //按键触发电平
-  btn->Button_Last_Level = btn->Read_Button_Level(); //按键当前电平
+  btn->Button_State = NONE_TRIGGER;                  // Button state
+  btn->Button_Last_State = NONE_TRIGGER;             // Previous button state
+  btn->Button_Trigger_Event = NONE_TRIGGER;          // Button trigger event
+  btn->Read_Button_Level = read_btn_level;           // Button level read function
+  btn->Button_Trigger_Level = btn_trigger_level;     // Button trigger level
+  btn->Button_Last_Level = btn->Read_Button_Level(); // Current button level
   btn->Debounce_Time = 0;
 
   //USART3_Put_String("Button create success!\r\n");
 
-  Add_Button(btn); //创建的时候添加到单链表中
+  Add_Button(btn); // Add to the linked list on creation
 
-  Print_Btn_Info(btn); //打印信息
+  Print_Btn_Info(btn); // Print information
 }
 
 /************************************************************
-  * @brief   按键触发事件与回调函数映射链接起来
-	* @param   btn : 按键结构体
-	* @param   btn_event : 按键触发事件
-  * @param   btn_callback : 按键触发之后的回调处理函数。需要用户实现
+  * @brief   Map button trigger events to callback functions
+	* @param   btn : button structure
+	* @param   btn_event : button trigger event
+  * @param   btn_callback : callback handler invoked after the button is triggered; the user must implement it
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
@@ -84,16 +84,16 @@ void Button_Attach(Button_t *btn, Button_Event btn_event, Button_CallBack btn_ca
   if (BUTTON_ALL_RIGGER == btn_event)
   {
     for (uint8_t i = 0; i < number_of_event - 1; i++)
-      btn->CallBack_Function[i] = btn_callback; //按键事件触发的回调函数，用于处理按键事件
+      btn->CallBack_Function[i] = btn_callback; // Callback invoked by the button event, used to handle button events
   }
   else
   {
-    btn->CallBack_Function[btn_event] = btn_callback; //按键事件触发的回调函数，用于处理按键事件
+    btn->CallBack_Function[btn_event] = btn_callback; // Callback invoked by the button event, used to handle button events
   }
 }
 
 /************************************************************
-  * @brief   删除一个已经创建的按键
+  * @brief   Delete an already created button
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -120,7 +120,7 @@ void Button_Delete(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   获取按键触发的事件
+  * @brief   Get the button trigger event
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -130,7 +130,7 @@ void Button_Delete(Button_t *btn)
   ***********************************************************/
 void Get_Button_EventInfo(Button_t *btn)
 {
-  //按键事件触发的回调函数，用于处理按键事件
+  // Callback invoked by the button event, used to handle button events
   for (uint8_t i = 0; i < number_of_event - 1; i++)
   {
     if (btn->CallBack_Function[i] != 0)
@@ -147,7 +147,7 @@ uint8_t Get_Button_Event(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   获取按键触发的事件
+  * @brief   Get the button trigger event
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -161,37 +161,37 @@ uint8_t Get_Button_State(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   按键周期处理函数
-  * @param   btn:处理的按键
+  * @brief   Button periodic processing function
+  * @param   btn: the button to process
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
   * @date    2018-xx-xx
   * @version v1.0
-  * @note    必须以一定周期调用此函数，建议周期为20~50ms
+  * @note    This function must be called periodically; a period of 20~50 ms is recommended
   ***********************************************************/
 void Button_Cycle_Process(Button_t *btn)
 {
-  uint8_t current_level = (uint8_t)btn->Read_Button_Level(); //获取当前按键电平
-  //按键电平发生变化
+  uint8_t current_level = (uint8_t)btn->Read_Button_Level(); // Get the current button level
+  // Button level changed
   if ((current_level != btn->Button_Last_Level) && (++(btn->Debounce_Time) >= BUTTON_DEBOUNCE_TIME))
   {
-    btn->Button_Last_Level = current_level; //更新当前按键电平
-    btn->Debounce_Time = 0;                 //确定了是按下
+    btn->Button_Last_Level = current_level; // Update the current button level
+    btn->Debounce_Time = 0;                 // Confirmed as pressed
 
-    //如果上一次的状态按键是没被按下的，改变按键状态为按下(首次按下/双击按下)
+    // If the previous state was not pressed, change the button state to pressed (first press/double-click press)
     if (((btn->Button_State == NONE_TRIGGER) || (btn->Button_State == BUTTON_DOUBLE)))
     {
       btn->Button_State = BUTTON_DOWN;
     }
-    //释放按键
+    // Release the button
     else if (btn->Button_State == BUTTON_DOWN)
     {
       if (!long_press)
       {
 
         btn->Button_State = BUTTON_UP;
-        TRIGGER_CB(BUTTON_UP); // 触发释放
+        TRIGGER_CB(BUTTON_UP); // Trigger release
       }
       else
       {
@@ -206,17 +206,17 @@ void Button_Cycle_Process(Button_t *btn)
 
   switch (btn->Button_State)
   {
-  case BUTTON_DOWN: // 按下状态
+  case BUTTON_DOWN: // Pressed state
   {
-    if (btn->Button_Last_Level == btn->Button_Trigger_Level) //按键按下
+    if (btn->Button_Last_Level == btn->Button_Trigger_Level) // Button pressed
     {
-#if CONTINUOS_TRIGGER //支持连续触发
+#if CONTINUOS_TRIGGER // Support continuous triggering
 
       if (++(btn->Button_Cycle) >= BUTTON_CONTINUOS_CYCLE)
       {
         btn->Button_Cycle = 0;
         btn->Button_Trigger_Event = BUTTON_CONTINUOS;
-        TRIGGER_CB(BUTTON_CONTINUOS); //连按
+        TRIGGER_CB(BUTTON_CONTINUOS); // Continuous press
         //USART3_Put_String("lianxu button !\r\n");
       }
 
@@ -224,7 +224,7 @@ void Button_Cycle_Process(Button_t *btn)
 
       btn->Button_Trigger_Event = BUTTON_DOWN;
 
-      if (++(btn->Long_Time) >= BUTTON_LONG_TIME) //释放按键前更新触发事件为长按
+      if (++(btn->Long_Time) >= BUTTON_LONG_TIME) // Before releasing, update the trigger event to long press
       {
 #if LONG_FREE_TRIGGER
 
@@ -234,22 +234,22 @@ void Button_Cycle_Process(Button_t *btn)
         if (long_press == false)
         {
 
-          TRIGGER_CB(BUTTON_LONG); //长按
+          TRIGGER_CB(BUTTON_LONG); // Long press
           long_press = true;
           btn->Button_Trigger_Event = BUTTON_LONG_FREE;
         }
 
 #else
 
-        if (++(btn->Button_Cycle) >= BUTTON_LONG_CYCLE) //连续触发长按的周期
+        if (++(btn->Button_Cycle) >= BUTTON_LONG_CYCLE) // Period for continuously triggering long press
         {
           btn->Button_Cycle = 0;
           btn->Button_Trigger_Event = BUTTON_LONG;
-          TRIGGER_CB(BUTTON_LONG); //长按
+          TRIGGER_CB(BUTTON_LONG); // Long press
         }
 #endif
 
-        if (btn->Long_Time == 0xFF) //更新时间溢出
+        if (btn->Long_Time == 0xFF) // Update time overflow
         {
           btn->Long_Time = BUTTON_LONG_TIME;
         }
@@ -262,11 +262,11 @@ void Button_Cycle_Process(Button_t *btn)
     break;
   }
 
-  case BUTTON_UP: // 弹起状态
+  case BUTTON_UP: // Released state
   {
-    if (btn->Button_Trigger_Event == BUTTON_DOWN) //触发单击
+    if (btn->Button_Trigger_Event == BUTTON_DOWN) // Trigger single click
     {
-      if ((btn->Timer_Count <= BUTTON_DOUBLE_TIME) && (btn->Button_Last_State == BUTTON_DOUBLE)) // 双击
+      if ((btn->Timer_Count <= BUTTON_DOUBLE_TIME) && (btn->Button_Last_State == BUTTON_DOUBLE)) // Double click
       {
         btn->Button_Trigger_Event = BUTTON_DOUBLE;
         TRIGGER_CB(BUTTON_DOUBLE);
@@ -277,10 +277,10 @@ void Button_Cycle_Process(Button_t *btn)
       else
       {
         btn->Timer_Count = 0;
-        btn->Long_Time = 0; //检测长按失败，清0
+        btn->Long_Time = 0; // Long press detection failed; reset to 0
 
 #if (SINGLE_AND_DOUBLE_TRIGGER == 0)
-        TRIGGER_CB(BUTTON_DOWN); //单击
+        TRIGGER_CB(BUTTON_DOWN); // Single click
 #endif
         btn->Button_State = BUTTON_DOUBLE;
         btn->Button_Last_State = BUTTON_DOUBLE;
@@ -290,7 +290,7 @@ void Button_Cycle_Process(Button_t *btn)
     else if (btn->Button_Trigger_Event == BUTTON_LONG)
     {
 #if LONG_FREE_TRIGGER
-      TRIGGER_CB(BUTTON_LONG); //长按
+      TRIGGER_CB(BUTTON_LONG); // Long press
 
 #endif
       btn->Long_Time = 0;
@@ -304,7 +304,7 @@ void Button_Cycle_Process(Button_t *btn)
     {
 #if LONG_FREE_ENABLE
 
-      TRIGGER_CB(BUTTON_LONG_FREE); //长按释放
+      TRIGGER_CB(BUTTON_LONG_FREE); // Long-press release
 
 #endif
       btn->Long_Time = 0;
@@ -314,10 +314,10 @@ void Button_Cycle_Process(Button_t *btn)
       //USART3_Put_String("long_free click button !\r\n");
     }
 #if CONTINUOS_TRIGGER
-    else if (btn->Button_Trigger_Event == BUTTON_CONTINUOS) //连按
+    else if (btn->Button_Trigger_Event == BUTTON_CONTINUOS) // Continuous press
     {
       btn->Long_Time = 0;
-      TRIGGER_CB(BUTTON_CONTINUOS_FREE); //连发释放
+      TRIGGER_CB(BUTTON_CONTINUOS_FREE); // Continuous-release
       btn->Button_State = NONE_TRIGGER;
       btn->Button_Last_State = BUTTON_CONTINUOS;
     }
@@ -328,7 +328,7 @@ void Button_Cycle_Process(Button_t *btn)
 
   case BUTTON_DOUBLE:
   {
-    btn->Timer_Count++; //时间记录
+    btn->Timer_Count++; // Time tracking
     if (btn->Timer_Count >= BUTTON_DOUBLE_TIME)
     {
       btn->Button_State = NONE_TRIGGER;
@@ -339,7 +339,7 @@ void Button_Cycle_Process(Button_t *btn)
     if ((btn->Timer_Count >= BUTTON_DOUBLE_TIME) && (btn->Button_Last_State != BUTTON_DOWN))
     {
       btn->Timer_Count = 0;
-      TRIGGER_CB(BUTTON_DOWN); //单击
+      TRIGGER_CB(BUTTON_DOWN); // Single click
       btn->Button_State = NONE_TRIGGER;
       btn->Button_Last_State = BUTTON_DOWN;
     }
@@ -355,14 +355,14 @@ void Button_Cycle_Process(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   遍历的方式扫描按键，不会丢失每个按键
+  * @brief   Scan buttons by traversal without missing any button
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
   * @date    2018-xx-xx
   * @version v1.0
-  * @note    此函数要周期调用，建议20-50ms调用一次
+  * @note    This function must be called periodically; once every 20-50 ms is recommended
   ***********************************************************/
 void Button_Process(void)
 {
@@ -374,7 +374,7 @@ void Button_Process(void)
 }
 
 /************************************************************
-  * @brief   遍历按键
+  * @brief   Traverse buttons
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -392,10 +392,10 @@ void Search_Button(void)
   }
 }
 
-/**************************** 以下是内部调用函数 ********************/
+/**************************** Internal functions below ********************/
 
 /************************************************************
-  * @brief   拷贝指定长度字符串
+  * @brief   Copy a string of the specified length
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -424,7 +424,7 @@ static char *StrnCopy(char *dst, const char *src, uint32_t n)
 }
 
 /************************************************************
-  * @brief   打印按键相关信息
+  * @brief   Print button-related information
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -450,7 +450,7 @@ static void Print_Btn_Info(Button_t *btn)
   Search_Button();
 }
 /************************************************************
-  * @brief   使用单链表将按键连接起来
+  * @brief   Link buttons together using a singly linked list
 	* @param   NULL
   * @return  NULL
   * @author  jiejie

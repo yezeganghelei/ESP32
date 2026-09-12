@@ -47,7 +47,7 @@ if __name__ == '__main__':
             
             time.sleep_ms(10)               # This delay is for button debounce
             
-            if key.value() == 0:            # 再一次judgeWhether to press
+            if key.value() == 0:            # Check again whether the button is pressed
                 led_state = led.value()
                 led.value(not led_state)
                 

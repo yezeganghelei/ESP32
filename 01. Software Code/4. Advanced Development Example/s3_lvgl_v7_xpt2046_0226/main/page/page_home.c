@@ -50,7 +50,7 @@ LV_FONT_DECLARE(myFont);
 LV_FONT_DECLARE(number);
 LV_FONT_DECLARE(number_temp);
 
-/*此页面窗口*/
+/*This page's window*/
 static lv_obj_t *appWindow;
 
 extern lv_obj_t *scr;
@@ -60,16 +60,16 @@ extern lv_obj_t *cont_head;
 static lv_obj_t *img_weather;
 
 lv_style_t style1;
-/*****主体****/
+/*****Main body****/
 lv_obj_t *cont_time, *cont_temp, *cont_fensi, *img_anim;
-/*****时间****/
+/*****Time****/
 lv_obj_t *label_time1, *label_time1_shi, *label_time1_fen;
 lv_obj_t *label_time2;
 lv_task_t *task_time, *task_anim;
-/*****粉丝****/
+/*****Followers****/
 lv_obj_t *label_fensi;
 lv_obj_t *label_guanzhu;
-/*****温湿度****/
+/*****Temperature and humidity****/
 lv_obj_t *cont_temp_number;
 lv_obj_t *label_temp_number;
 
@@ -84,24 +84,24 @@ void page_task_time(lv_task_t *task)
 
     if (i % 20 == 0) //10s
     {
-        update_temp(); //更新温湿度
-        update_time(); //更新时间
+        update_temp(); //Update temperature and humidity
+        update_time(); //Update time
     }
-    // if (i % 500 == 0) //十分钟
+    // if (i % 500 == 0) // ten minutes
     //     read_fans();
-    // if (i % (1000) == 0) //12小时
+    // if (i % (1000) == 0) // 12 hours
     // {
     //     read_weather();
     // }
-    if (i % 120 == 0) //一分钟
+    if (i % 120 == 0) //One minute
     {
         i = 0;
         h++;
-        if (h % 3 == 0) //3分钟，更新粉丝数
+        if (h % 3 == 0) //3 minutes, update the follower count
             update_fensi();
-        if (h == h * 60 * 8) //8小时
+        if (h == h * 60 * 8) //8 hours
         {
-            update_weather(); //更新天气
+            update_weather(); //Update weather
             h = 0;
         }
     }
@@ -114,33 +114,33 @@ void update_time()
     lv_label_set_text(label_time1_shi, (const char *)now_time);
     sprintf((char *)now_time, "#FFFFFF %02d#", ksdiy_sys_t.timeinfo.tm_min);
     lv_label_set_text(label_time1_fen, (const char *)now_time);
-    //星期与日历
+    //Weekday and date
     switch (ksdiy_sys_t.timeinfo.tm_wday)
     {
     case 0:
-        sprintf((char *)now_time, "星期日\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Sunday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
     case 1:
-        sprintf((char *)now_time, "星期一\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Monday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
     case 2:
-        sprintf((char *)now_time, "星期二\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Tuesday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
     case 3:
-        sprintf((char *)now_time, "星期三\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Wednesday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
     case 4:
-        sprintf((char *)now_time, "星期四\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Thursday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
     case 5:
-        sprintf((char *)now_time, "星期五\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Friday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
     case 6:
-        sprintf((char *)now_time, "星期六\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Saturday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
 
     default:
-        sprintf((char *)now_time, "星期日\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
+        sprintf((char *)now_time, "Sunday\n %02d/%02d", ksdiy_sys_t.timeinfo.tm_mon + 1, ksdiy_sys_t.timeinfo.tm_mday);
         break;
         break;
     }
@@ -154,45 +154,45 @@ void page_home_time(void)
     lv_obj_set_pos(cont_time, 0, 10);
     lv_obj_add_style(cont_time, LV_BTN_PART_MAIN, &style1); /*Default button style*/
     //lv_cont_set_layout(cont_time, LV_LAYOUT_CENTER);
-    //小时
+    //Hour
     label_time1_shi = lv_label_create(cont_time, NULL);
     lv_label_set_recolor(label_time1_shi, true);
     lv_obj_set_pos(label_time1_shi, 2, 0);
     lv_label_set_align(label_time1_shi, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
     lv_obj_set_style_local_text_font(label_time1_shi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &number);
 
-    //点
+    //Colon
     label_time1 = lv_label_create(cont_time, NULL);
     lv_label_set_recolor(label_time1, true);
     lv_obj_set_pos(label_time1, 58, -5);
     lv_label_set_align(label_time1, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
     lv_obj_set_style_local_text_font(label_time1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &number);
     lv_label_set_text(label_time1, "#FFA500 :#");
-    //分钟
+    //Minute
     label_time1_fen = lv_label_create(cont_time, NULL);
     lv_label_set_recolor(label_time1_fen, true);
     lv_obj_set_pos(label_time1_fen, 68, 0);
     lv_label_set_align(label_time1_fen, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
     lv_obj_set_style_local_text_font(label_time1_fen, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &number);
 
-    //星期及日期
+    //Weekday and date
     label_time2 = lv_label_create(cont_time, NULL);
     lv_label_set_recolor(label_time2, true);
     lv_obj_set_pos(label_time2, 0, 70);
     lv_label_set_align(label_time2, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
     lv_obj_set_style_local_text_font(label_time2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
     lv_obj_set_style_local_text_color(label_time2, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    update_time(); //更新数据
+    update_time(); //Update data
 
-    //动画
+    //Animation
 
     obj_add_anim(
-        cont_time,                        //动画对象
-        (lv_anim_exec_xcb_t)lv_obj_set_x, //动画函数
-        300,                              //动画速度
-        -(APP_WIN_WIDTH / 2),              //起始值
-        10,                               //结束值
-        lv_anim_path_ease_out             //动画特效:模拟弹性物体下落
+        cont_time,                        //Animation object
+        (lv_anim_exec_xcb_t)lv_obj_set_x, //Animation function
+        300,                              //Animation speed
+        -(APP_WIN_WIDTH / 2),              //Start value
+        10,                               //End value
+        lv_anim_path_ease_out             //Animation effect: simulate a bouncing object falling
     );
 }
 lv_img_dsc_t bili_face = {
@@ -227,25 +227,25 @@ void page_home_anim(void)
     lv_obj_set_pos(img_face, APP_WIN_WIDTH / 2 - 40, 70);
 
 
-    bili_face.data = (uint8_t *)face_buffer;//把在线获取的buffer给img
+    bili_face.data = (uint8_t *)face_buffer;//Assign the buffer fetched online to the image
 
     lv_img_set_src(img_face, &bili_face);    // lv_obj_set_size(img_anim, 100, 100);
     // lv_obj_set_pos(img_anim, 70, 50);
-    //动画
+    //Animation
 
     obj_add_anim(
-        img_anim,                         //动画对象
-        (lv_anim_exec_xcb_t)lv_obj_set_y, //动画函数
-        300,                              //动画速度
-        APP_WIN_HEIGHT,                     //起始值
-        APP_WIN_HEIGHT - 170,               //结束值
-        lv_anim_path_ease_out             //动画特效:模拟弹性物体下落
+        img_anim,                         //Animation object
+        (lv_anim_exec_xcb_t)lv_obj_set_y, //Animation function
+        300,                              //Animation speed
+        APP_WIN_HEIGHT,                     //Start value
+        APP_WIN_HEIGHT - 170,               //End value
+        lv_anim_path_ease_out             //Animation effect: simulate a bouncing object falling
     );
 }
 void update_fensi()
 {
     char now_time[40];
-    sprintf((char *)now_time, "粉丝:%d\n关注:%d", ksdiy_sys_t.wp.follow, ksdiy_sys_t.wp.following);
+    sprintf((char *)now_time, "Fans:%d\nFollowing:%d", ksdiy_sys_t.wp.follow, ksdiy_sys_t.wp.following);
     lv_label_set_text(label_fensi, (const char *)now_time);
 }
 void page_home_fensi(void)
@@ -257,13 +257,13 @@ void page_home_fensi(void)
     lv_obj_set_pos(cont_fensi, APP_WIN_WIDTH / 2 - 50, APP_WIN_HEIGHT - 80);
     lv_obj_add_style(cont_fensi, LV_BTN_PART_MAIN, &style1); /*Default button style*/
     lv_cont_set_layout(cont_fensi, LV_LAYOUT_CENTER);
-    //主题
+    //Theme
     static lv_style_t label_fensi_style;
     lv_style_init(&label_fensi_style);
     lv_style_set_bg_opa(&label_fensi_style, LV_STATE_DEFAULT, 0);
     lv_style_set_text_opa(&label_fensi_style, LV_STATE_DEFAULT, LV_OPA_COVER);
     lv_style_set_text_color(&label_fensi_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    //粉丝
+    //Followers
     label_fensi = lv_label_create(cont_fensi, NULL);
     lv_label_set_recolor(label_fensi, true);
     lv_label_set_align(label_fensi, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
@@ -271,19 +271,19 @@ void page_home_fensi(void)
     lv_obj_add_style(label_fensi, LV_LABEL_PART_MAIN, &label_fensi_style);
     update_fensi();
 
-    //动画
+    //Animation
     obj_add_anim(
-        cont_fensi,                       //动画对象
-        (lv_anim_exec_xcb_t)lv_obj_set_y, //动画函数
-        300,                              //动画速度
-        APP_WIN_HEIGHT,                     //起始值
-        APP_WIN_HEIGHT - 80,                //结束值
-        lv_anim_path_ease_out             //动画特效:模拟弹性物体下落
+        cont_fensi,                       //Animation object
+        (lv_anim_exec_xcb_t)lv_obj_set_y, //Animation function
+        300,                              //Animation speed
+        APP_WIN_HEIGHT,                     //Start value
+        APP_WIN_HEIGHT - 80,                //End value
+        lv_anim_path_ease_out             //Animation effect: simulate a bouncing object falling
     );
 }
 void update_temp()
 {
-    //更新温湿度
+    //Update temperature and humidity
     char now_time[40];
     sprintf(now_time, "△%d℃\n▽%d℃", weather_data[0].high, weather_data[0].low);
     // printf("now temp:\n%s\n", now_time);
@@ -291,17 +291,17 @@ void update_temp()
 }
 static void update_weather()
 {
-    //天气图片
+    //Weather image
 
-    ESP_LOGI("WEATHER", "更新天气");
+    ESP_LOGI("WEATHER", "Updating weather");
 
     lv_img_set_src(img_weather, lv_weather[weather_data[0].code_day].img_dsc);
 }
-/*温度*/
+/*Temperature*/
 void page_home_temp(void)
 {
 
-    //主cont体
+    //Main container
     cont_temp = lv_cont_create(scr_body, NULL);
     lv_cont_set_fit2(cont_temp, LV_FIT_NONE, LV_FIT_NONE);
     lv_obj_set_size(cont_temp, 110, 50);
@@ -314,12 +314,12 @@ void page_home_temp(void)
     lv_img_dsc_t *p = (lv_img_dsc_t *)lv_weather[i].img_dsc;
     lv_img_set_src(img_weather, p);
     lv_obj_set_pos(img_weather, 60, 0);
-    //风格
+    //Style
     static lv_style_t label_temp_style;
     lv_style_init(&label_temp_style);
     lv_style_set_text_opa(&label_temp_style, LV_STATE_DEFAULT, 255);
     lv_style_set_text_color(&label_temp_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    //百分比
+    //Percentage
     label_temp_number = lv_label_create(cont_temp, NULL);
     // lv_obj_set_size(label_temp_number, 70, 50);
     // lv_obj_set_pos(label_temp_number, 130, 15);
@@ -331,14 +331,14 @@ void page_home_temp(void)
 
     update_temp();
     update_weather();
-    //加载动画
+    //Load animation
     obj_add_anim(
-        cont_temp,                        //动画对象
-        (lv_anim_exec_xcb_t)lv_obj_set_x, //动画函数
-        500,                              //动画速度
-        APP_WIN_WIDTH,                     //起始值
-        APP_WIN_WIDTH - 110,               //结束值
-        lv_anim_path_ease_out             //动画特效:模拟弹性物体下落
+        cont_temp,                        //Animation object
+        (lv_anim_exec_xcb_t)lv_obj_set_x, //Animation function
+        500,                              //Animation speed
+        APP_WIN_WIDTH,                     //Start value
+        APP_WIN_WIDTH - 110,               //End value
+        lv_anim_path_ease_out             //Animation effect: simulate a bouncing object falling
     );
 }
 
@@ -356,20 +356,20 @@ void page_home_ksdiy()
     lv_obj_set_pos(img33, APP_WIN_WIDTH, APP_WIN_HEIGHT - 80);
 
     obj_add_anim(
-        img22,                            //动画对象
-        (lv_anim_exec_xcb_t)lv_obj_set_x, //动画函数
-        500,                              //动画速度
-        -(APP_WIN_WIDTH / 2),              //起始值
-        10,                               //结束值
-        lv_anim_path_ease_out             //动画特效:模拟弹性物体下落
+        img22,                            //Animation object
+        (lv_anim_exec_xcb_t)lv_obj_set_x, //Animation function
+        500,                              //Animation speed
+        -(APP_WIN_WIDTH / 2),              //Start value
+        10,                               //End value
+        lv_anim_path_ease_out             //Animation effect: simulate a bouncing object falling
     );
     obj_add_anim(
-        img33,                            //动画对象
-        (lv_anim_exec_xcb_t)lv_obj_set_x, //动画函数
-        500,                              //动画速度
-        APP_WIN_WIDTH,                     //起始值
-        APP_WIN_WIDTH - 60,                //结束值
-        lv_anim_path_ease_out             //动画特效:模拟弹性物体下落
+        img33,                            //Animation object
+        (lv_anim_exec_xcb_t)lv_obj_set_x, //Animation function
+        500,                              //Animation speed
+        APP_WIN_WIDTH,                     //Start value
+        APP_WIN_WIDTH - 60,                //End value
+        lv_anim_path_ease_out             //Animation effect: simulate a bouncing object falling
     );
 }
 
@@ -403,29 +403,29 @@ static void event_handler_page_home(lv_obj_t *obj, lv_event_t event)
     }
     switch (event)
     {
-    case LV_EVENT_PRESSED: /* 按下 */
+    case LV_EVENT_PRESSED: /* Pressed */
         printf("Pressed\n");
         break;
 
-    case LV_EVENT_SHORT_CLICKED: /* 短点击 */
+    case LV_EVENT_SHORT_CLICKED: /* Short click */
         printf("Short clicked\n");
         break;
 
-    case LV_EVENT_CLICKED: /* 点击 */
+    case LV_EVENT_CLICKED: /* Click */
 
         printf("Clicked\n");
         break;
 
-    case LV_EVENT_LONG_PRESSED: /* 长按 */
+    case LV_EVENT_LONG_PRESSED: /* Long press */
     
         printf("Long press\n");
         break;
 
-    case LV_EVENT_LONG_PRESSED_REPEAT: /* 一直长按 */
+    case LV_EVENT_LONG_PRESSED_REPEAT: /* Long press repeat */
         printf("Long press repeat\n");
         break;
 
-    case LV_EVENT_RELEASED: /* 松开 */
+    case LV_EVENT_RELEASED: /* Released */
         printf("Released\n");
         break;
     }
@@ -445,7 +445,7 @@ void page_home_load()
     page_home_time();
     page_home_anim();
     ANIEND
-    /* 分配屏幕触摸事件处理 */
+    /* Assign the screen touch event handler */
     lv_obj_set_click(lv_layer_top(), true);
     lv_obj_set_event_cb(lv_layer_top(), event_handler_page_home);
 }
@@ -456,10 +456,10 @@ static void Exit(void)
     lv_task_handler();
 
     ANIEND
-    lv_obj_clean(scr_body); //清空页面scr_body
+    lv_obj_clean(scr_body); //Clear the page scr_body
     lv_obj_set_click(lv_layer_top(), false);
     lv_obj_clean(lv_layer_top());
-    lv_obj_set_event_cb(lv_layer_top(), NULL); /* 分配事件处理 */
+    lv_obj_set_event_cb(lv_layer_top(), NULL); /* Assign the event handler */
 
     ESP_LOGI("SYSTEM", "esp_get_free_heap_size : %d  ", esp_get_free_heap_size());
 }
@@ -510,8 +510,8 @@ void page_anim_time(lv_task_t *task)
 static void Setup(void)
 {
     page_home_load();
-    task_time = lv_task_create(page_task_time, 500, LV_TASK_PRIO_MID, NULL); //创建任务
-    task_anim = lv_task_create(page_anim_time, 100, LV_TASK_PRIO_MID, NULL); //创建任务
+    task_time = lv_task_create(page_task_time, 500, LV_TASK_PRIO_MID, NULL); //Create task
+    task_anim = lv_task_create(page_anim_time, 100, LV_TASK_PRIO_MID, NULL); //Create task
 
     ESP_LOGI("SYSTEM", "esp_get_free_heap_size : %d ", esp_get_free_heap_size());
 }
@@ -521,29 +521,29 @@ void move_task_home(uint8_t move)
     switch (move)
     {
 
-    case BT1_DOWN: //往上移动
+    case BT1_DOWN: //Move up
 
         break;
-    case BT1_DOUBLE: //往上移动
+    case BT1_DOUBLE: //Move up
 
         break;
-    case BT1_LONG: //往上移动
+    case BT1_LONG: //Move up
 
         break;
-    case BT1_LONGFREE: //往上移动
+    case BT1_LONGFREE: //Move up
 
         break;
     case BT2_DOWN:
 
         break;
-    case BT3_LONG: //往下移动
+    case BT3_LONG: //Move down
 
         break;
-    case BT3_LONGFREE: //往上移动
+    case BT3_LONGFREE: //Move up
 
         break;
 
-    case BT3_DOWN: //往下移动
+    case BT3_DOWN: //Move down
 
         break;
 
@@ -553,10 +553,10 @@ void move_task_home(uint8_t move)
 }
 
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
@@ -564,12 +564,12 @@ static void Event(void *btn, int event)
     // {
     //     if(event == ButtonEvent::EVENT_ButtonLongPressed)
     //     {
-    //         /*长按OK，退出上一个页面*/
+    //         /* Long press OK to exit the previous page */
     //         page.PagePop();
     //     }
     //     else if(event == ButtonEvent::EVENT_ButtonClick)
     //     {
-    //         /*单击OK，进入对应页面*/
+    //         /* Single click OK to enter the corresponding page */
     //         uint8_t pageID = ICON_Grp[ICON_NowSelIndex].pageID;
     //         if(pageID != PAGE_NONE)
     //         {
@@ -580,7 +580,7 @@ static void Event(void *btn, int event)
 
     // if(event == ButtonEvent::EVENT_ButtonPress || event == ButtonEvent::EVENT_ButtonLongPressRepeat)
     // {
-    //     /*按下或长按上下键，图标上下选择*/
+    //     /* Press or long-press the up/down keys to select icons up/down */
     //     if(btn == &btUP)
     //     {
     //         ICON_Grp_Move(-1);
@@ -593,16 +593,16 @@ static void Event(void *btn, int event)
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Home(uint8_t pageID)
 {
-    /*获取分配给此页面的窗口*/
+    /*Get the window assigned to this page*/
     // appWindow = AppWindow_GetCont(pageID);
 
-    /*注册至页面调度器*/
+    /*Register with the page scheduler*/
     page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-    printf("/*注册Home至页面调度器*/\r\n");
+    printf("/* Register Home with the page scheduler */\r\n");
 }

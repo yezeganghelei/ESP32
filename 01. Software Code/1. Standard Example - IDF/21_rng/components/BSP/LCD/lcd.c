@@ -4,8 +4,8 @@
 * @author      
 * @version     V1.0
 * @date        2023-08-26
-* @brief       SPI LCD(MCUscreen) Driver code
-*              Support driversICModels include:ILI9341wait
+* @brief       SPI LCD (MCU screen) driver code
+*              Supported driver IC models include: ILI9341, etc.
 
 * @license     Copyright (c) 2020-2032, 
 ****************************************************************************************************
@@ -19,13 +19,13 @@
 #include "lcd.h"
 #include "lcdfont.h"
 
-#define SPI_LCD_TYPE    1           /* SPIInterface screen type（1：2.4inchSPILCD  0：1.3inchSPILCD） */  
+#define SPI_LCD_TYPE    1           /* SPI interface screen type (1: 2.4-inch SPI LCD, 0: 1.3-inch SPI LCD) */  
 
 spi_device_handle_t MY_LCD_Handle;
 uint8_t lcd_buf[LCD_TOTAL_BUF_SIZE];
 lcd_obj_t lcd_self;
 
-/* LCDneedinitializationone组命令/Parameter value。They are stored in this structure  */
+/* LCD initialization command/parameter set, stored in this structure  */
 typedef struct
 {
     uint8_t cmd;
@@ -35,7 +35,7 @@ typedef struct
 
 /**
  * @brief Send commands to LCD, blocking and waiting for transmission to complete using polling (because the amount of data transmission is very small, processing in polling can improve the speed. The overhead of using interrupt methods exceeds that of polling methods)
- * @param cmd 8-bit command data transmitted
+ * @param cmd: 8-bit command to send
  * @retval None
  */
 void lcd_write_cmd(const uint8_t cmd)
@@ -45,8 +45,8 @@ void lcd_write_cmd(const uint8_t cmd)
 }
 
 /**
- * @brief       Send data toLCD，makeusePolling mode blockingwaitTo be transferred(Due to the small amount of data transmission，Therefore, processing in polling mode can increase the speed。The overhead of using interrupt methods exceeds that of polling methods)
- * @param       data transmitted8bit data
+ * @brief       Send data to the LCD using polling to block and wait for the transfer to complete (the amount of data is very small, so polling is faster; the overhead of interrupts exceeds that of polling)
+ * @param       data: 8-bit data to send
  * @retval      none
  */
 void lcd_write_data(const uint8_t *data, int len)
@@ -57,7 +57,7 @@ void lcd_write_data(const uint8_t *data, int len)
 
 /**
  * @brief sends data to LCD, blocking and waiting for transmission to complete using polling (because the amount of data transmission is very small, processing in polling can improve the speed. The overhead of using interrupt mode exceeds that of polling mode)
- * @param data 16-bit data transmitted
+ * @param data: 16-bit data to send
  * @retval None
  */
 void lcd_write_data16(uint16_t data)
@@ -94,12 +94,12 @@ void lcd_set_window(uint16_t xstar, uint16_t ystar,uint16_t xend,uint16_t yend)
     lcd_write_cmd(lcd_self.setycmd);
     lcd_write_data(databuf,4);
 
-    lcd_write_cmd(lcd_self.wramcmd);    /* Start writingGRAM */
+    lcd_write_cmd(lcd_self.wramcmd);    /* Start writing to GRAM */
 }   
 
 /**
- * @brief       Clear in one colorLCDscreen
- * @param       color Clear the screencolor
+ * @brief       Clear the LCD screen with a single color
+ * @param       color: Screen clear color
  * @retval      none
  */
 void lcd_clear(uint16_t color)
@@ -153,8 +153,8 @@ void lcd_fill(uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey, uint16_t color
 
 /**
  * @brief       Set the cursor position
- * @param       Xpos：Top left cornerxaxis
- * @param       Ypos：Top left corneryaxis
+ * @param       Xpos: Top-left corner X axis
+ * @param       Ypos: Top-left corner Y axis
  * @retval      none
  */
 void lcd_set_cursor(uint16_t xpos, uint16_t ypos)
@@ -163,8 +163,8 @@ void lcd_set_cursor(uint16_t xpos, uint16_t ypos)
 } 
 
 /**
- * @brief       set upLCDAutomatic scanning direction(rightRGBScreen is invalid)
- * @param       dir:0~7,represent8indivualdirection(See the specific definition forlcd.h)
+ * @brief       Set the LCD auto-scan direction (ignored for RGB screens)
+ * @param       dir: 0~7, one of 8 directions (see lcd.h for definitions)
  * @retval      none
  */
 void lcd_scan_dir(uint8_t dir)
@@ -173,49 +173,49 @@ void lcd_scan_dir(uint8_t dir)
     uint8_t dirreg = 0;
     uint16_t temp;
 
-    /* Horizontal screenhour，right1963Don't change the scanning direction, otherICChange the scanning direction！Vertical screenhour1963Change direction, otherICDon't change the scanning direction */
+    /* In landscape mode, the scan direction is not changed for ILI9341 but is changed for other ICs; in portrait mode, ILI9341 changes direction while other ICs do not */
     if (lcd_self.dir == 1)
     {
         dir = 5;
     }
 
-    /* According to the scanning method set up 0X36/0X3600 register bit 5,6,7 The value of the bit */
+    /* Set bits 5, 6, 7 of register 0X36/0X3600 according to the scan direction */
     switch (dir)
     {
-        case L2R_U2D:                           /* From left to right,from top to bottom */
+        case L2R_U2D:                           /* Left to right, top to bottom */
             regval |= (0 << 7) | (0 << 6) | (0 << 5);
             break;
 
-        case L2R_D2U:                           /* From left to right,From bottom to top */
+        case L2R_D2U:                           /* Left to right, bottom to top */
             regval |= (1 << 7) | (0 << 6) | (0 << 5);
             break;
 
-        case R2L_U2D:                           /* From right to left,from top to bottom */
+        case R2L_U2D:                           /* Right to left, top to bottom */
             regval |= (0 << 7) | (1 << 6) | (0 << 5);
             break;
 
-        case R2L_D2U:                           /* From right to left,From bottom to top */
+        case R2L_D2U:                           /* Right to left, bottom to top */
             regval |= (1 << 7) | (1 << 6) | (0 << 5);
             break;
 
-        case U2D_L2R:                           /* From top to bottom, from left to right */
+        case U2D_L2R:                           /* Top to bottom, left to right */
             regval |= (0 << 7) | (0 << 6) | (1 << 5);
             break;
 
-        case U2D_R2L:                           /* From top to bottom, from right to left */
+        case U2D_R2L:                           /* Top to bottom, right to left */
             regval |= (0 << 7) | (1 << 6) | (1 << 5);
             break;
 
-        case D2U_L2R:                           /* From bottom to top,From left to right */
+        case D2U_L2R:                           /* Bottom to top, left to right */
             regval |= (1 << 7) | (0 << 6) | (1 << 5);
             break;
 
-        case D2U_R2L:                           /* From bottom to top,From right to left */
+        case D2U_R2L:                           /* Bottom to top, right to left */
             regval |= (1 << 7) | (1 << 6) | (1 << 5);
             break;
     }
 
-    dirreg = 0x36;                              /* For most driversIC, Depend on0X36registercontrol */
+    dirreg = 0x36;                              /* For most driver ICs, controlled by register 0X36 */
     
     uint8_t date_send[1] = {regval};
     
@@ -224,7 +224,7 @@ void lcd_scan_dir(uint8_t dir)
     
     if (regval & 0x20)
     {
-        if (lcd_self.width < lcd_self.height)   /* exchangeX,Y */
+        if (lcd_self.width < lcd_self.height)   /* Swap X and Y */
         {
             temp = lcd_self.width;
             lcd_self.width = lcd_self.height;
@@ -233,7 +233,7 @@ void lcd_scan_dir(uint8_t dir)
     }
     else
     {
-        if (lcd_self.width > lcd_self.height)   /* exchangeX,Y */
+        if (lcd_self.width > lcd_self.height)   /* Swap X and Y */
         {
             temp = lcd_self.width;
             lcd_self.width = lcd_self.height;
@@ -245,15 +245,15 @@ void lcd_scan_dir(uint8_t dir)
 }
 
 /**
- * @brief       set upLCDShow direction
- * @param       dir:0,Vertical screen; 1,Horizontal screen
+ * @brief       Set the LCD display orientation
+ * @param       dir:0, portrait; 1, landscape
  * @retval      none
  */
 void lcd_display_dir(uint8_t dir)
 {
     lcd_self.dir = dir;
     
-    if (lcd_self.dir == 0)                  /* Vertical screen */
+    if (lcd_self.dir == 0)                  /* Portrait */
     {
         lcd_self.width      = 240;
         lcd_self.height     = 320;
@@ -261,7 +261,7 @@ void lcd_display_dir(uint8_t dir)
         lcd_self.setxcmd    = 0X2A;
         lcd_self.setycmd    = 0X2B;
     }
-    else                                    /* Horizontal screen */
+    else                                    /* Landscape */
     {
         lcd_self.width      = 320;          /* Default width */
         lcd_self.height     = 240;          /* Default height */
@@ -280,7 +280,7 @@ void lcd_display_dir(uint8_t dir)
  */
 void lcd_hard_reset(void)
 {
-    /* Resetshowscreen */
+    /* Reset the display */
     LCD_RST(0);
     vTaskDelay(100);
     LCD_RST(1);
@@ -288,11 +288,11 @@ void lcd_hard_reset(void)
 }
 
 /**
- * @brief       Painting oneindivualPixel dots
- * @param       self_in：LCDStructure
- * @param       x：xAxis coordinates
- * @param       y：yAxis coordinates
- * @param       color：Color value
+ * @brief       Draw a single pixel
+ * @param       self_in: LCD structure
+ * @param       x: X-axis coordinate
+ * @param       y: Y-axis coordinate
+ * @param       color: Color value
  * @retval      none
  */
 void lcd_draw_pixel(uint16_t x, uint16_t y, uint16_t color)
@@ -302,7 +302,7 @@ void lcd_draw_pixel(uint16_t x, uint16_t y, uint16_t color)
 }
 
 /**
- * @brief       Line drawing function(straight line、Slash)
+ * @brief       Line drawing function (horizontal/vertical and diagonal lines)
  * @param       x1,y1   Starting point coordinates
  * @param       x2,y2   End point coordinates
  * @param       color Fill color
@@ -315,7 +315,7 @@ void lcd_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t 
     
     int incx, incy, urow, ucol; 
 
-    delta_x = x2 - x1;                      /* calculatecoordinateIncrement */
+    delta_x = x2 - x1;                      /* Calculate coordinate increment */
     delta_y = y2 - y1; 
     urow = x1; 
     ucol = y1; 
@@ -349,7 +349,7 @@ void lcd_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t 
     
     if( delta_x>delta_y)
     {
-        distance = delta_x;                 /* 选取基本Incrementcoordinateaxis */
+        distance = delta_x;                 /* Select the dominant increment axis */
     }
     else
     {
@@ -358,7 +358,7 @@ void lcd_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t 
     
     for (t = 0;t <= distance + 1;t++ )      /* Line drawing output */
     {
-        lcd_draw_pixel(urow,ucol,color);    /* draw dots */ 
+        lcd_draw_pixel(urow,ucol,color);    /* Draw pixel */ 
         xerr += delta_x ; 
         yerr += delta_y ; 
         
@@ -391,7 +391,7 @@ void lcd_draw_hline(uint16_t x, uint16_t y, uint16_t len, uint16_t color)
 }
 
 /**
- * @brief       画oneindivualrectangle
+ * @brief       Draw a rectangle
  * @param       x1,y1   Starting point coordinates
  * @param       x2,y2   End point coordinates
  * @param       color Fill color
@@ -406,8 +406,8 @@ void lcd_draw_rectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,uint1
 }
 
 /**
- * @brief       画oneindivualround
- * @param       x0,y0   round心coordinate
+ * @brief       Draw a circle
+ * @param       x0,y0   circle center coordinate
  * @param       r   Circle radius
  * @param       color Fill color
  * @retval      none
@@ -448,7 +448,7 @@ void lcd_draw_circle(uint16_t x0, uint16_t y0, uint16_t r, uint16_t color)
 }
 
 /**
- * @brief       In the specified locationshowoneindivualcharacter
+ * @brief       Display one character at the specified position
  * @param       x,y  : coordinate
  * @param       chr  : Characters to be displayed:" "--->"~"
  * @param       size : Font size 12/16/24/32
@@ -460,12 +460,12 @@ void lcd_show_char(uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint8_t mo
 {
     uint8_t temp = 0,t1 = 0, t = 0;
     uint8_t *pfont = 0;
-    uint8_t csize = 0;                                      /* getFontoneindivualcharacterrightThe number of bytes that should be occupied by the dot matrix set */
+    uint8_t csize = 0;                                      /* Number of bytes occupied by one character in the selected font */
     uint16_t colortemp = 0;
     uint8_t sta = 0;
 
-    csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size / 2); /* getFontoneindivualcharacterrightThe number of bytes that should be occupied by the dot matrix set */
-    chr = chr - ' ';                                        /* Get the offset value（ASCIIFont library starts with spaces to get the modulus，so-' 'It is the font library of corresponding characters） */
+    csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size / 2); /* Number of bytes occupied by one character in the selected font */
+    chr = chr - ' ';                                        /* Get the offset value (the ASCII font library starts at space, so subtracting ' ' selects the corresponding character) */
 
     if ((x > (lcd_self.width - size / 2)) || (y > (lcd_self.height - size)))
     {
@@ -477,7 +477,7 @@ void lcd_show_char(uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint8_t mo
     switch (size)
     {
         case 12:
-            pfont = (uint8_t *)asc2_1206[chr];              /* Call1206Font */
+            pfont = (uint8_t *)asc2_1206[chr];              /* Use 1206 font */
             break;
 
         case 16:
@@ -510,7 +510,7 @@ void lcd_show_char(uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint8_t mo
                     {
                         colortemp = color;
                     }
-                    else if (mode == 0)                     /* Invalid point, not show */
+                    else if (mode == 0)                     /* Invalid pixel, do not display */
                     {
                         colortemp = 0xFFFF;
                     }
@@ -543,7 +543,7 @@ void lcd_show_char(uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint8_t mo
                 {
                     colortemp = color;
                 }
-                else if (mode == 0)                         /* Invalid point, not show */
+                else if (mode == 0)                         /* Invalid pixel, do not display */
                 {
                     colortemp = 0xFFFF;
                 }
@@ -556,9 +556,9 @@ void lcd_show_char(uint16_t x, uint16_t y, uint8_t chr, uint8_t size, uint8_t mo
 }
 
 /**
- * @brief       m^nfunction
- * @param       m,n     Enter parameters
- * @retval      m^nTo the power
+ * @brief       m^n function
+ * @param       m,n     Input parameters
+ * @retval      m to the power of n
  */
 uint32_t lcd_pow(uint8_t m, uint8_t n)
 {
@@ -570,7 +570,7 @@ uint32_t lcd_pow(uint8_t m, uint8_t n)
 }
 
 /**
- * @brief displays len numbers
+ * @brief Display len numbers
  * @param x,y : Start coordinates
  * @param num : Value (0 ~ 2^32)
  * @param len : Display the number of digits
@@ -582,16 +582,16 @@ void lcd_show_num(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t siz
     uint8_t t, temp;
     uint8_t enshow = 0;
 
-    for (t = 0; t < len; t++)                                               /* Cycling by total number of displayed digits */
+    for (t = 0; t < len; t++)                                               /* Loop over the total number of digits */
     {
-        temp = (num / lcd_pow(10, len - t - 1)) % 10;                       /* Get the number of the corresponding bit */
+        temp = (num / lcd_pow(10, len - t - 1)) % 10;                       /* Get the digit at the corresponding position */
 
-        if (enshow == 0 && t < (len - 1))                                   /* There is no enabled display, and there are bits to display */
+        if (enshow == 0 && t < (len - 1))                                   /* Display is not yet enabled and there are more digits to show */
         {
             if (temp == 0)
             {
-                lcd_show_char(x + (size / 2)*t, y, ' ', size, 0, color);    /* showSpaces,Placeholder */
-                continue;                                                   /* ContinueindivualOne */
+                lcd_show_char(x + (size / 2)*t, y, ' ', size, 0, color);    /* Display space as placeholder */
+                continue;                                                   /* Continue to next digit */
             }
             else
             {
@@ -605,16 +605,16 @@ void lcd_show_num(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t siz
 }
 
 /**
- * @brief       Extended displaylenindivualnumber(The high position is0alsoshow)
- * @param       x,y : starting coordinates
+ * @brief       Extended number display (also shows leading zeros)
+ * @param       x,y : Start coordinates
  * @param       num : Value(0 ~ 2^32)
  * @param       len : Display the number of digits
  * @param       size: Select a font 12/16/24/32
  * @param       mode: Display mode
- *              [7]:0,Nofilling;1,filling0.
- *              [6:1]:reserve
- *              [0]:0,NoOverlay display;1,Overlay display.
- * @param       color : The color of the numbers;
+ *              [7]: 0 = no fill, 1 = fill with 0.
+ *              [6:1]: Reserved
+ *              [0]: 0 = no overlay, 1 = overlay.
+ * @param       color : Color of the numbers;
  * @retval      none
  */
 void lcd_show_xnum(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t size, uint8_t mode, uint16_t color)
@@ -622,21 +622,21 @@ void lcd_show_xnum(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t si
     uint8_t t, temp;
     uint8_t enshow = 0;
 
-    for (t = 0; t < len; t++)                                                           /* Cycling by total number of displayed digits */
+    for (t = 0; t < len; t++)                                                           /* Loop over the total number of digits */
     {
-        temp = (num / lcd_pow(10, len - t - 1)) % 10;                                   /* Get the number of the corresponding bit */
+        temp = (num / lcd_pow(10, len - t - 1)) % 10;                                   /* Get the digit at the corresponding position */
 
-        if (enshow == 0 && t < (len - 1))                                               /* There is no enabled display, and there are bits to display */
+        if (enshow == 0 && t < (len - 1))                                               /* Display is not yet enabled and there are more digits to show */
         {
             if (temp == 0)
             {
-                if (mode & 0X80)                                                        /* High positions need to be filled0 */
+                if (mode & 0X80)                                                        /* Leading positions should be filled with 0 */
                 {
-                    lcd_show_char(x + (size / 2)*t, y, '0', size, mode & 0X01, color);  /* use0Placeholder */
+                    lcd_show_char(x + (size / 2)*t, y, '0', size, mode & 0X01, color);  /* Fill with 0 */
                 }
                 else
                 {
-                    lcd_show_char(x + (size / 2)*t, y, ' ', size, mode & 0X01, color);  /* useSpacesPlaceholder */
+                    lcd_show_char(x + (size / 2)*t, y, ' ', size, mode & 0X01, color);  /* Fill with space */
                 }
                 continue;
             }
@@ -650,11 +650,11 @@ void lcd_show_xnum(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t si
 }
 
 /**
- * @brief       Show charactersstring
- * @param       x,y         : starting coordinates
+ * @brief       Display a string of characters
+ * @param       x,y         : Start coordinates
  * @param       width,height: Area size
  * @param       size        : Select a font 12/16/24/32
- * @param       p           : String head address
+ * @param       p           : Start address of the string
  * @retval      none
  */
 void lcd_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t size, char *p, uint16_t color)
@@ -663,7 +663,7 @@ void lcd_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ui
     width += x;
     height += y;
 
-    while ((*p <= '~') && (*p >= ' '))   /* Determine whether it is an illegal character! */
+    while ((*p <= '~') && (*p >= ' '))   /* Check whether the character is valid */
     {
         if (x >= width)
         {
@@ -671,7 +671,7 @@ void lcd_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ui
             y += size;
         }
 
-        if (y >= height)break;  /* quit */
+        if (y >= height)break;  /* Exit */
 
         lcd_show_char(x, y, *p, size, 0, color);
         x += size / 2;
@@ -680,9 +680,9 @@ void lcd_show_string(uint16_t x, uint16_t y, uint16_t width, uint16_t height, ui
 }
 
 /**
- * @brief       OpenLCD
- * @param       self_in：SPIControl block
- * @retval      mp_const_none：Initialization successfully
+ * @brief       Turn on the LCD
+ * @param       self_in: SPI control block
+ * @retval      mp_const_none: Initialization succeeded
  */
 void lcd_on(void)
 {
@@ -691,9 +691,9 @@ void lcd_on(void)
 }
 
 /**
- * @brief       closureLCD
- * @param       self_in：SPIControl block
- * @retval      mp_const_none：Initialization successfully
+ * @brief       Turn off the LCD
+ * @param       self_in: SPI control block
+ * @retval      mp_const_none: Initialization succeeded
  */
 void lcd_off(void)
 {
@@ -712,33 +712,33 @@ void lcd_init(void)
     esp_err_t ret = 0;
     
     lcd_self.dir = 0;
-    lcd_self.wr = LCD_NUM_WR;                                       /* ConfigurationWRPin */
-    lcd_self.cs = LCD_NUM_CS;                                       /* ConfigurationCSPin */
+    lcd_self.wr = LCD_NUM_WR;                                       /* Configure the WR pin */
+    lcd_self.cs = LCD_NUM_CS;                                       /* Configure the CS pin */
     
     gpio_config_t gpio_init_struct;
 
-    /* SPIDriver interface configuration */
+    /* SPI driver interface configuration */
     spi_device_interface_config_t devcfg = {
         .clock_speed_hz = 60 * 1000 * 1000,                         /* SPI clock */
         .mode = 0,                                                  /* SPI mode 0 */
-        .spics_io_num = lcd_self.cs,                                /* SPIequipmentPin */
-        .queue_size = 7,                                            /* Transaction queue size 7indivual */
+        .spics_io_num = lcd_self.cs,                                /* SPI device pin */
+        .queue_size = 7,                                            /* Transaction queue size: 7 */
     };
     
     /* Add SPI bus device */
-    ret = spi_bus_add_device(SPI2_HOST, &devcfg, &MY_LCD_Handle);   /* ConfigurationSPIBus equipment */
+    ret = spi_bus_add_device(SPI2_HOST, &devcfg, &MY_LCD_Handle);   /* Configure the SPI bus device */
     ESP_ERROR_CHECK(ret);
 
     gpio_init_struct.intr_type = GPIO_INTR_DISABLE;                 /* Disable pin interrupt */
     gpio_init_struct.mode = GPIO_MODE_OUTPUT;                       /* Configure output mode */
     gpio_init_struct.pin_bit_mask = 1ull << lcd_self.wr;            /* Configure pin bit mask */
-    gpio_init_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;          /* Disabled pull-down */
-    gpio_init_struct.pull_up_en = GPIO_PULLUP_ENABLE;               /* Enable pull-down */
-    gpio_config(&gpio_init_struct);                                 /* PinConfiguration */
+    gpio_init_struct.pull_down_en = GPIO_PULLDOWN_DISABLE;          /* Disable pull-down */
+    gpio_init_struct.pull_up_en = GPIO_PULLUP_ENABLE;               /* Enable pull-up */
+    gpio_config(&gpio_init_struct);                                 /* Pin configuration */
 
     lcd_hard_reset();                                               /* LCD hardware reset */
 
-    /* initializationCode */
+    /* Initialization code */
 #if SPI_LCD_TYPE                                                    /* Set the 2.4-inch LCD register */
     lcd_init_cmd_t ili_init_cmds[] =
     {
@@ -750,7 +750,7 @@ void lcd_init(void)
         {0, {0}, 0xff},
     };
 
-#else                                                               /* Not for0则视为makeuse1.3inchSPILCDscreen，Then the screen will not display inversely */
+#else                                                               /* Otherwise it is treated as a 1.3-inch SPI LCD screen, which does not display inverted */
     lcd_init_cmd_t ili_init_cmds[] =
     {
         {0x11, {0}, 0x80},
@@ -773,7 +773,7 @@ void lcd_init(void)
     };
 #endif
 
-    /* Loop send sets all registers */
+    /* Send all initialization register settings */
     while (ili_init_cmds[cmd].databytes != 0xff)
     {
         lcd_write_cmd(ili_init_cmds[cmd].cmd);

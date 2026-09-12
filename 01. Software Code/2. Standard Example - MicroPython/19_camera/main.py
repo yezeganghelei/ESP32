@@ -8,9 +8,9 @@
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * Experiment purpose：How to driveOV2640andOV5640camera module
+ * Experiment purpose: How to drive the OV2640 and OV5640 camera modules
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,     LED --> ESP32S3 IO
  *        LED --> IO1
  * 2,  XL9555 --> ESP32S3 IO
@@ -42,7 +42,9 @@
  *       PWDN --> XL9535_P04
 
  * Experimental phenomenon
- * 1, This experimental code,开机的时候先initializationXL9555IOExpanding chip，然后Reset并Turn on the camera，Then check the camera andLCD进行initialization，Finally, call the function to display the camera data toLCDon the display。
+ * 1, At power-on, this experimental code first initializes the XL9555 IO expansion chip, then resets
+ *    and powers on the camera. Next it initializes the camera and the LCD, and finally calls the
+ *    function that displays the camera data on the LCD.
 
  * Things to note
  * none
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     xl9555 = io_ex.init(i2c0)
     xl9555.write_bit(io_ex.BEEP,1)
     
-    # Reset摄像头
+    # Reset camera
     xl9555.write_bit(io_ex.OV_RESET,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.OV_RESET,1)
@@ -81,10 +83,10 @@ if __name__ == '__main__':
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.OV_PWDN,0)
     time.sleep_ms(100)
-    # 给Reset留时间
+    # Allow time for reset
     time.sleep_ms(1000)
     
-    # initialization摄像头
+    # Initialize camera
     for i in range(5):
         cam = camera.init(0, format=camera.RGB565, fb_location=camera.PSRAM,framesize = camera.FRAME_240X240,xclk_freq = 24000000)
         print("Camera ready?: ", cam)
@@ -99,17 +101,17 @@ if __name__ == '__main__':
         print('Timeout')
         reset()
     
-    # ResetLCD
+    # Reset LCD
     xl9555.write_bit(io_ex.SLCD_RST,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.SLCD_RST,1)
     time.sleep_ms(100)
     
-    # initializationSPI
+    # Initialize SPI
     spi = SPI(2,baudrate = 80000000, sck = Pin(12), mosi = Pin(11), miso = Pin(13))
-    # initializationLCD,lcd = 0for2.4inchScreen;lcd = 1for1.3inchSPILCDScreen;
+    # Initialize LCD; lcd = 0 for a 2.4-inch screen, lcd = 1 for a 1.3-inch SPI LCD screen;
     display = lcd.init(spi,dc = Pin(40,Pin.OUT,Pin.PULL_UP,value = 1),cs = Pin(21,Pin.OUT,Pin.PULL_UP,value = 1),dir = 1,lcd = 0)
-    # Turn on backlight
+    # Turn on the backlight
     xl9555.write_bit(io_ex.SLCD_PWR,1)
     time.sleep_ms(100)
     display.camera(42,5)

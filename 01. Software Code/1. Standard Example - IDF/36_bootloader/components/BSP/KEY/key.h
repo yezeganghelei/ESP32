@@ -25,8 +25,8 @@
 /*IO operations*/
 #define BOOT            gpio_get_level(BOOT_GPIO_PIN)
 
-/* Press the button定义 */
-#define BOOT_PRES       1       /* BOOTPress the button */
+/* Button press definitions */
+#define BOOT_PRES       1       /* BOOT button pressed */
 
 /* Function declaration */
 void key_init(void);            /* Initialize button */

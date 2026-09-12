@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        lv_clock_demo.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-11-04
- * @brief       时钟
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Clock
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台: 正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -35,9 +35,9 @@ uint8_t Hour = 0;
 uint8_t Second = 0 ;
 
 /**
-  * @brief  时钟定时
-  * @param  timer:句柄
-  * @retval 无
+  * @brief  Clock timer
+  * @param  timer: handle
+  * @retval none
   */
 static void lv_meter_timer(lv_timer_t* timer)
 {
@@ -49,9 +49,9 @@ static void lv_meter_timer(lv_timer_t* timer)
 
 
 /**
-  * @brief  删除时钟demo
-  * @param  无
-  * @retval 无
+  * @brief  Delete the clock demo
+  * @param  none
+  * @retval none
   */
 void lv_clock_del(void)
 {
@@ -60,7 +60,7 @@ void lv_clock_del(void)
     {
         lv_timer_del(lv_clock);
         lv_timer_handler();
-        vTaskDelay(pdMS_TO_TICKS(5));  /* 延时5毫秒 */
+        vTaskDelay(pdMS_TO_TICKS(5));  /* Delay 5 ms */
         lv_clock = NULL;
     }
 
@@ -71,9 +71,9 @@ void lv_clock_del(void)
 }
 
 /**
- * @brief       时钟demo
- * @param       无
- * @retval      无
+ * @brief       Clock demo
+ * @param       none
+ * @retval      none
  */
 void lv_clock_demo(void)
 {
@@ -90,19 +90,19 @@ void lv_clock_demo(void)
     lv_obj_set_size(ui_Clock,lv_obj_get_width(lv_scr_act()),lv_obj_get_height(lv_scr_act()));
     
     lv_obj_t * img = lv_img_create(ui_Clock);
-    lv_img_set_src(img, &watch_bg);                     //加载表盘
+    lv_img_set_src(img, &watch_bg);                     // Load the dial
     lv_obj_set_size(img, 200, 200);
     lv_obj_align_to(img, ui_Clock, LV_ALIGN_CENTER, 0, 0);
 
-    ui_Hour = lv_img_create(ui_Clock);     // 时针
+    ui_Hour = lv_img_create(ui_Clock);     // Hour hand
     lv_img_set_src( ui_Hour, &hour);
     lv_obj_align_to(ui_Hour, img,LV_ALIGN_CENTER, 0, 0);
 
-    ui_Min = lv_img_create(ui_Clock);   // 分针
+    ui_Min = lv_img_create(ui_Clock);   // Minute hand
     lv_img_set_src( ui_Min, &minute);
     lv_obj_align_to(ui_Min, img,LV_ALIGN_CENTER, 0, 0);
 
-    ui_Sec = lv_img_create(ui_Clock);   //秒针
+    ui_Sec = lv_img_create(ui_Clock);   // Second hand
     lv_img_set_src(ui_Sec, &second);
     lv_obj_align_to(ui_Sec, img,LV_ALIGN_CENTER, 0, 0);
 
@@ -111,8 +111,8 @@ void lv_clock_demo(void)
     lv_img_set_angle(ui_Min, app_obj_btn.rtc.minute * 6 * 10);
     lv_img_set_angle(ui_Sec, app_obj_btn.rtc.second * 6 * 10);
 
-    app_obj_general.del_parent = ui_Clock;              /* 指向当前界面容器 */
-    app_obj_general.Function = lv_clock_del;            /* 删除此界面 */
+    app_obj_general.del_parent = ui_Clock;              /* Point to the current screen container */
+    app_obj_general.Function = lv_clock_del;            /* Delete this screen */
 
     if (lv_clock == NULL)
     {
@@ -120,5 +120,5 @@ void lv_clock_demo(void)
     }
     
     lv_group_add_obj(ctrl_g, ui_Clock);
-    lv_group_focus_obj(ui_Clock);                        /* 聚焦当前APP */
+    lv_group_focus_obj(ui_Clock);                        /* Focus the current app */
 }

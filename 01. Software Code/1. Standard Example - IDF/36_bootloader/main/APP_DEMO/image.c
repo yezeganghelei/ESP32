@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        image.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-12-01
- * @brief       图片库 代码(提供image_update_image和images_init用于图片库更新和初始化)
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Image library code (provides image_update_image and images_init for updating and initializing the image library)
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -23,22 +23,22 @@
 #include "ff.h"
 #include <string.h>
 
-/* 图片库区域占用的总扇区数大小 */
+/* Total number of sectors used by the image library area */
 #define IMAGESECSIZE         90
 
-/* 图片库存放起始地址 */
+/* Image library start address */
 #define IMAGEINFOADDR        0
 
-/* 每次操作限制在 4K 之内 */
+/* Limit each operation to 4K */
 #define SECTOR_SIZE          0X1000
 
-/* 用来保存图片库基本信息，地址，大小等 */
+/* Stores image library basic information, addresses, sizes, etc. */
 _image_info g_ftinfo;
 
 static const char *TAG = "storage_partition";
 const esp_partition_t *storage_partition;
 
-/* 图片库存放在磁盘中的路径 */
+/* Paths of the image library on disk */
 char *const IMAGE_GBK_PATH[10] =
 {
     "/SYSTEM/LVGLBIN/lv_camera.BIN",
@@ -53,7 +53,7 @@ char *const IMAGE_GBK_PATH[10] =
     "/SYSTEM/LVGLBIN/lv_background.BIN",
 };
 
-/* 更新时的提示信息 */
+/* Prompt messages during update */
 char *const IMAGE_UPDATE_REMIND_TBL[10] =
 {
     "Updating lv_camera.BIN",
@@ -72,11 +72,11 @@ char *const IMAGE_UPDATE_REMIND_TBL[10] =
 #define IMAGE_UPDATE_REMIND_NUM (int)(sizeof(IMAGE_UPDATE_REMIND_TBL) / sizeof(IMAGE_UPDATE_REMIND_TBL[0]))
 
 /**
- * @brief       分区表读取数据
- * @param       buffer    : 读取数据的存储区
- * @param       offset    : 读取数据的起始地址
- * @param       length    : 读取大小
- * @retval      ESP_OK:表示成功;其他:表示失败
+ * @brief       Read data from the partition table
+ * @param       buffer    : storage area for the read data
+ * @param       offset    : start address of the data to read
+ * @param       length    : read size
+ * @retval      ESP_OK: success; other: failure
  */
 esp_err_t images_partition_read(void *buffer, uint32_t offset, uint32_t length)
 {
@@ -100,11 +100,11 @@ esp_err_t images_partition_read(void *buffer, uint32_t offset, uint32_t length)
 }
 
 /**
- * @brief       分区表写入数据
- * @param       buffer    : 写入数据的存储区
- * @param       offset    : 写入数据的起始地址
- * @param       length    : 写入大小
- * @retval      ESP_OK:表示成功;其他:表示失败
+ * @brief       Write data to the partition table
+ * @param       buffer    : storage area for the data to write
+ * @param       offset    : start address of the data to write
+ * @param       length    : write size
+ * @retval      ESP_OK: success; other: failure
  */
 esp_err_t images_partition_write(void *buffer, uint32_t offset, uint32_t length)
 {
@@ -128,9 +128,9 @@ esp_err_t images_partition_write(void *buffer, uint32_t offset, uint32_t length)
 }
 
 /**
- * @brief       擦除某个扇区
- * @param       offset    : 擦除起始地址
- * @retval      ESP_OK:表示成功;其他:表示失败
+ * @brief       Erase a sector
+ * @param       offset    : erase start address
+ * @retval      ESP_OK: success; other: failure
  */
 esp_err_t images_partition_erase_sector(uint32_t offset)
 {
@@ -148,13 +148,13 @@ esp_err_t images_partition_erase_sector(uint32_t offset)
 }
 
 /**
- * @brief       显示当前图片更新进度
- * @param       x, y    : 坐标
- * @param       size    : 图片大小
- * @param       totsize : 整个文件大小
- * @param       pos     : 当前文件指针位置
- * @param       color   : 图片颜色
- * @retval      无
+ * @brief       Show the current image update progress
+ * @param       x, y    : coordinates
+ * @param       size    : image size
+ * @param       totsize : total file size
+ * @param       pos     : current file pointer position
+ * @param       color   : image color
+ * @retval      none
  */
 static void images_progress_show(uint16_t x, uint16_t y, uint8_t size, uint32_t totsize, uint32_t pos, uint16_t color)
 {
@@ -170,23 +170,23 @@ static void images_progress_show(uint16_t x, uint16_t y, uint8_t size, uint32_t 
 
         if (t > 100) t = 100;
 
-        lcd_show_num(x, y, t, 3, size, color);  /* 显示数值 */
+        lcd_show_num(x, y, t, 3, size, color);  /* Display the value */
     }
 }
 
 /**
- * @brief       更新某一个图片库
- * @param       x, y    : 提示信息的显示地址
- * @param       size    : 提示信息图片大小
- * @param       fpath   : 图片路径
- * @param       fx      : 更新的内容
+ * @brief       Update one image library
+ * @param       x, y    : display position of the prompt
+ * @param       size    : prompt image size
+ * @param       fpath   : image path
+ * @param       fx      : content to update
  *   @arg                 0, atk01;
  *   @Arg                 1, atk02;
  *   @arg                 2, atk03;
  *   @arg                 3, atk04;
  *   @arg                 4, atk05;
- * @param       color   : 图片颜色
- * @retval      0, 成功; 其他, 错误代码;
+ * @param       color   : image color
+ * @retval      0, success; other, error code;
  */
 static uint8_t images_update_imagex(uint16_t x, uint16_t y, uint8_t size, uint8_t *fpath, uint8_t fx, uint16_t color)
 {
@@ -198,17 +198,17 @@ static uint8_t images_update_imagex(uint16_t x, uint16_t y, uint8_t size, uint8_
     uint32_t offx = 0;
     uint8_t rval = 0;
 
-    fftemp = (FIL *)malloc(sizeof(FIL));  /* 分配内存 */
+    fftemp = (FIL *)malloc(sizeof(FIL));  /* Allocate memory */
 
     if (fftemp == NULL)rval = 1;
 
-    tempbuf = malloc(4096);               /* 分配4096个字节空间 */
+    tempbuf = malloc(4096);               /* Allocate 4096 bytes */
 
     if (tempbuf == NULL)rval = 1;
 
     res = f_open(fftemp, (const TCHAR *)fpath, FA_READ);
 
-    if (res) rval = 2;   /* 打开文件失败 */
+    if (res) rval = 2;   /* Failed to open the file */
 
     if (rval == 0)
     {
@@ -266,37 +266,37 @@ static uint8_t images_update_imagex(uint16_t x, uint16_t y, uint8_t size, uint8_
                 break;
         }
 
-        while (res == FR_OK)            /* 死循环执行 */
+        while (res == FR_OK)            /* Execute in a loop */
         {
-            res = f_read(fftemp, tempbuf, 4096, (UINT *)&bread);                /* 读取数据 */
+            res = f_read(fftemp, tempbuf, 4096, (UINT *)&bread);                /* Read data */
 
-            if (res != FR_OK) break;    /* 执行错误 */
+            if (res != FR_OK) break;    /* Execution error */
 
-            images_partition_write(tempbuf, offx + flashaddr, bread);          /* 从0开始写入bread个数据 */
+            images_partition_write(tempbuf, offx + flashaddr, bread);          /* Write bread bytes starting from 0 */
             offx += bread;
-            images_progress_show(x, y, size, fftemp->obj.objsize, offx, color); /* 进度显示 */
+            images_progress_show(x, y, size, fftemp->obj.objsize, offx, color); /* Show progress */
 
-            if (bread != 4096) break;   /* 读完了 */
+            if (bread != 4096) break;   /* Finished reading */
         }
 
         f_close(fftemp);
     }
 
-    free(fftemp);     /* 释放内存 */
-    free(tempbuf);    /* 释放内存 */
+    free(fftemp);     /* Free memory */
+    free(tempbuf);    /* Free memory */
     return res;
 }
 
 /**
- * @brief       更新图片文件
- *   @note      所有图片库一起更新(UNIGBK,GBK12,GBK16,GBK24,GBK32)
- * @param       x, y    : 提示信息的显示地址
- * @param       size    : 提示信息图片大小
- * @param       src     : 图片库来源磁盘
- *   @arg                 "0:", SD卡;
- *   @arg                 "1:", FLASH盘
- * @param       color   : 图片颜色
- * @retval      0, 成功; 其他, 错误代码;
+ * @brief       Update the image files
+ *   @note      All image libraries are updated together (UNIGBK, GBK12, GBK16, GBK24, GBK32)
+ * @param       x, y    : display position of the prompt
+ * @param       size    : prompt image size
+ * @param       src     : disk that is the source of the image library
+ *   @arg                 "0:", SD card;
+ *   @arg                 "1:", FLASH disk
+ * @param       color   : image color
+ * @retval      0, success; other, error code;
  */
 uint8_t images_update_image(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, uint16_t color)
 {
@@ -309,59 +309,59 @@ uint8_t images_update_image(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, 
     res = 0XFF;
     g_ftinfo.imageok = 0XFF;
 
-    pname = malloc(100);                    /* 申请100字节内存 */
-    buf = malloc(4096);                     /* 申请4K字节内存 */
-    fftemp = (FIL *)malloc(sizeof(FIL));    /* 分配内存 */
+    pname = malloc(100);                    /* Allocate 100 bytes */
+    buf = malloc(4096);                     /* Allocate 4K bytes */
+    fftemp = (FIL *)malloc(sizeof(FIL));    /* Allocate memory */
 
     if (buf == NULL || pname == NULL || fftemp == NULL)
     {
         free(fftemp);
         free(pname);
         free(buf);
-        return 5;   /* 内存申请失败 */
+        return 5;   /* Memory allocation failed */
     }
 
-    for (i = 0; i < IMAGE_GBK_NUM; i++)     /* 先查找文件atk01,atk02,atk03,money是否正常 */
+    for (i = 0; i < IMAGE_GBK_NUM; i++)     /* First check that the files atk01, atk02, atk03, money are valid */
     {
-        strcpy((char *)pname, (char *)src);                  /* copy src内容到pname */
-        strcat((char *)pname, (char *)IMAGE_GBK_PATH[i]);    /* 追加具体文件路径 */
-        res = f_open(fftemp, (const TCHAR *)pname, FA_READ); /* 尝试打开 */
+        strcpy((char *)pname, (char *)src);                  /* Copy src into pname */
+        strcat((char *)pname, (char *)IMAGE_GBK_PATH[i]);    /* Append the specific file path */
+        res = f_open(fftemp, (const TCHAR *)pname, FA_READ); /* Try to open */
 
         if (res)
         {
-            rval |= 1 << 7;     /* 标记打开文件失败 */
-            break;              /* 出错了,直接退出 */
+            rval |= 1 << 7;     /* Mark file open failure */
+            break;              /* On error, exit immediately */
         }
     }
 
-    free(fftemp);               /* 释放内存 */
+    free(fftemp);               /* Free memory */
 
-    if (rval == 0)  /* 图片库文件都存在 */
+    if (rval == 0)  /* All image library files exist */
     {
-        lcd_show_string(x, y, 240, 320, size, "Erasing sectors... ", color);    /* 提示正在擦除扇区 */
+        lcd_show_string(x, y, 240, 320, size, "Erasing sectors... ", color);    /* Indicate that sectors are being erased */
 
-        for (i = 0; i < IMAGESECSIZE; i++)          /* 先擦除图片库区域,提高写入速度 */
+        for (i = 0; i < IMAGESECSIZE; i++)          /* Erase the image library area first to improve write speed */
         {
-            images_progress_show(x + 20 * size / 2, y, size, IMAGESECSIZE, i, color);           /* 进度显示 */
-            images_partition_read((uint8_t *)buf, ((IMAGEINFOADDR / 4096) + i) * 4096, 4096);   /* 读出整个扇区的内容 */
+            images_progress_show(x + 20 * size / 2, y, size, IMAGESECSIZE, i, color);           /* Show progress */
+            images_partition_read((uint8_t *)buf, ((IMAGEINFOADDR / 4096) + i) * 4096, 4096);   /* Read the contents of the whole sector */
 
-            for (j = 0; j < 1024; j++)              /* 校验数据 */
+            for (j = 0; j < 1024; j++)              /* Verify the data */
             {
-                if (buf[j] != 0XFFFFFFFF) break;    /* 需要擦除 */
+                if (buf[j] != 0XFFFFFFFF) break;    /* Erase needed */
             }
 
             if (j != 1024)
             {
-                images_partition_erase_sector(((IMAGEINFOADDR / 4096) + i) * 4096);     /* 需要擦除的扇区 */
+                images_partition_erase_sector(((IMAGEINFOADDR / 4096) + i) * 4096);     /* Sector that needs erasing */
             }
         }
 
-        for (i = 0; i < IMAGE_UPDATE_REMIND_NUM; i++) /* 依次更新UNIGBK,GBK12,GBK16,GBK24 */
+        for (i = 0; i < IMAGE_UPDATE_REMIND_NUM; i++) /* Update UNIGBK, GBK12, GBK16, GBK24 in turn */
         {
             lcd_show_string(x, y, 240, 320, size, IMAGE_UPDATE_REMIND_TBL[i], color);
-            strcpy((char *)pname, (char *)src);                 /* copy src内容到pname */
-            strcat((char *)pname, (char *)IMAGE_GBK_PATH[i]);   /* 追加具体文件路径 */
-            res = images_update_imagex(x + 20 * size / 2, y, size, pname, i, color);    /* 更新字库 */
+            strcpy((char *)pname, (char *)src);                 /* Copy src into pname */
+            strcat((char *)pname, (char *)IMAGE_GBK_PATH[i]);   /* Append the specific file path */
+            res = images_update_imagex(x + 20 * size / 2, y, size, pname, i, color);    /* Update the library */
 
             if (res)
             {
@@ -371,21 +371,21 @@ uint8_t images_update_image(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, 
             }
         }
 
-        /* 全部更新好了 */
+        /* All updates completed */
         g_ftinfo.imageok = 0xBB;
-        images_partition_write((uint8_t *)&g_ftinfo, IMAGEINFOADDR, sizeof(g_ftinfo));    /* 保存字库信息 */
+        images_partition_write((uint8_t *)&g_ftinfo, IMAGEINFOADDR, sizeof(g_ftinfo));    /* Save the library information */
     }
 
-    free(pname);    /* 释放内存 */
-    free(buf);      /* 释放内存 */
+    free(pname);    /* Free memory */
+    free(buf);      /* Free memory */
 
     return rval;  
 }
 
 /**
- * @brief       初始化图片
- * @param       无
- * @retval      0, 图片库完好; 其他, 图片库丢失;
+ * @brief       Initialize images
+ * @param       none
+ * @retval      0, image library intact; other, image library missing;
  */
 uint8_t images_init(void)
 {
@@ -399,10 +399,10 @@ uint8_t images_init(void)
         return 1;
     }
 
-    while (t < 10)  /* 连续读取10次,都是错误,说明确实是有问题,得更新图片库了 */
+    while (t < 10)  /* Read 10 times in a row; if all fail, the image library must be updated */
     {
         t++;
-        images_partition_read((uint8_t *)&g_ftinfo, IMAGEINFOADDR, sizeof(g_ftinfo)); /* 连续读取10次,都是错误,说明确实是有问题,得更新图片库了 */
+        images_partition_read((uint8_t *)&g_ftinfo, IMAGEINFOADDR, sizeof(g_ftinfo)); /* Read 10 times in a row; if all fail, the image library must be updated */
 
         if (g_ftinfo.imageok == 0xBB)
         {

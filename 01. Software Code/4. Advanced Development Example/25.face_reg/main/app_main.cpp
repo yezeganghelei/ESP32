@@ -26,7 +26,7 @@ static QueueHandle_t xQueueEventLogic = NULL;
         // {4, 3200, 3600}, //up key 2.81v
 static button_adc_config_t buttons[5] = {{1, 2500, 2800}, {2, 1150, 1350}, {3, 1800, 2300}, {4, 500, 750}, {5, 3200, 3600}};
 
-/*human face webend identify*/
+/*Human face web-end recognition*/
 // extern "C" void app_main()
 // {
 //     app_wifi_main();
@@ -39,7 +39,7 @@ static button_adc_config_t buttons[5] = {{1, 2500, 2800}, {2, 1150, 1350}, {3, 1
 //     register_human_face_detection(xQueueAIFrame, NULL, NULL, xQueueHttpFrame);
 //     register_httpd(xQueueHttpFrame, NULL, true);
 // }
-/*human face检测 lcdshow*/
+/*Human face detection, LCD display*/
 // extern "C" void app_main()
 // {
 //     xQueueAIFrame = xQueueCreate(2, sizeof(camera_fb_t *));
@@ -53,7 +53,7 @@ static button_adc_config_t buttons[5] = {{1, 2500, 2800}, {2, 1150, 1350}, {3, 1
 // }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*human faceidentify LCDshow*/
+/*Human face recognition, LCD display*/
 // #define GPIO_BOOT GPIO_NUM_0
 
 // extern "C" void app_main()
@@ -74,7 +74,7 @@ static button_adc_config_t buttons[5] = {{1, 2500, 2800}, {2, 1150, 1350}, {3, 1
 //     register_lcd(xQueueLCDFrame, NULL, true);
 // }
 
-/*color recognition LCDshow*/
+/*Color recognition, LCD display*/
 // #define GPIO_BOOT GPIO_NUM_0
 
 // extern "C" void app_main()
@@ -111,7 +111,7 @@ extern "C" void app_main()
 
 }
 
-/*motion detection LCDshow*/
+/*Motion detection, LCD display*/
 // extern "C" void app_main()
 // {
 //     xQueueAIFrame = xQueueCreate(2, sizeof(camera_fb_t *));

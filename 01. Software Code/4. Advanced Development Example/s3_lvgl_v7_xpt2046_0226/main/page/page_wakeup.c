@@ -50,7 +50,7 @@ void wakeup_init(void)
 	lv_obj_set_pos(label_speech, 0, LV_VER_RES);
 	lv_obj_set_size(label_speech, LV_HOR_RES, 50);
     lv_label_set_recolor(label_speech, true);
-    lv_label_set_text(label_speech, "#0000ff 你好# \n我是酷世DIY制作的ESP32-CAM");
+    lv_label_set_text(label_speech, "#0000ff Hello# \nI'm ESP32-CAM made by KuShi DIY");
 }
 
 void page_wakeup_load()
@@ -58,12 +58,12 @@ void page_wakeup_load()
     wakeup_init();
 
     obj_add_anim(
-		label_speech,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-		lv_anim_speed_to_time(800, 0, 50), //动画速度
-		APP_WIN_HEIGHT,					  //起始值
-		APP_WIN_HEIGHT-60,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		label_speech,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+		lv_anim_speed_to_time(800, 0, 50), //Animation speed
+		APP_WIN_HEIGHT,					  //Start value
+		APP_WIN_HEIGHT-60,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
     ANIEND
 }
@@ -71,21 +71,21 @@ void page_wakeup_end()
 {
 
     obj_add_anim(
-		label_speech,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_y,		  //动画函数
-		lv_anim_speed_to_time(800, 0, 50), //动画速度
-		APP_WIN_HEIGHT-60,					  //起始值
-		APP_WIN_HEIGHT,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		label_speech,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_y,		  //Animation function
+		lv_anim_speed_to_time(800, 0, 50), //Animation speed
+		APP_WIN_HEIGHT-60,					  //Start value
+		APP_WIN_HEIGHT,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
     ANIEND
     lv_obj_del(label_speech);
 }
 void page_wakeup_start()
 {
-    //获取芯片可用内存
+    //Get the available heap size
     printf("     esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-    //获取从未使用过的最小内存
+    //Get the minimum free heap size ever
     printf("     esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
     page_wakeup_load();
 }

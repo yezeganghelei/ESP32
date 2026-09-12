@@ -44,17 +44,17 @@
 /* Scratch buffer size */
 #define SCRATCH_BUFSIZE  8192
 struct file_server_data {
-    /* 文件基路径 */
+    /* File base path */
     char base_path[ESP_VFS_PATH_MAX + 1];
 
-    /* 临时文件缓冲区 */
+    /* Temporary file buffer */
     char scratch[SCRATCH_BUFSIZE];
 };
 esp_err_t index_html_get_handler(httpd_req_t *req);
 esp_err_t favicon_get_handler(httpd_req_t *req);
 esp_err_t http_resp_dir_html(httpd_req_t *req, const char *dirpath);
 esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filename);
-esp_err_t start_file_server(const char *base_path);//开启文件服务
+esp_err_t start_file_server(const char *base_path);// Start the file service
 esp_err_t up_post_handler(httpd_req_t *req);
 void stop_webserver();
 #endif

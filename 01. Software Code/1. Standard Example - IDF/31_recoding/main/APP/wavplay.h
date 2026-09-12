@@ -29,7 +29,7 @@
 typedef struct
 {
     uint32_t ChunkID;           /* chunk id;Here fixed"RIFF",Right now0X46464952 */
-    uint32_t ChunkSize ;        /* Collection size;document总大小-8 */
+    uint32_t ChunkSize ;        /* Chunk size; total file size - 8 */
     uint32_t Format;            /* Format; WAVE, that is 0X45564157 */
 }ChunkRIFF;     /* RIFF block */
 
@@ -41,9 +41,9 @@ typedef struct
     uint16_t NumOfChannels;     /* Number of channels;1,Indicates mono;2,Indicates two channels; */
     uint32_t SampleRate;        /* Sampling rate;0X1F40,express8Khz */
     uint32_t ByteRate;          /* /Byte rate; */
-    uint16_t BlockAlign;        /* piece对齐(byte); */
+    uint16_t BlockAlign;        /* chunk alignment (bytes); */
     uint16_t BitsPerSample;     /* Single sampled data size; 4-bit ADPCM, set to 4 */
-//    uint16_t ByteExtraData;   /* 附加的数据byte;2indivual; LinearPCM,No this parameter */
+//    uint16_t ByteExtraData;   /* Additional data byte;2indivual; LinearPCM,No this parameter */
 }ChunkFMT;      /* fmt block */
 
 typedef struct 
@@ -77,7 +77,7 @@ typedef struct
 { 
     uint16_t audioformat;       /* Audio format;0X01,expressLinearPCM;0X11expressIMA ADPCM */
     uint16_t nchannels;         /* Number of channels;1,Indicates mono;2,Indicates two channels; */
-    uint16_t blockalign;        /* piece对齐(byte); */
+    uint16_t blockalign;        /* chunk alignment (bytes); */
     uint32_t datasize;          /* WAV data size */
 
     uint32_t totsec ;           /* The duration of the entire song, unit: seconds */
@@ -85,9 +85,9 @@ typedef struct
 
     uint32_t bitrate;           /* Bit rate (bit speed) */
     uint32_t samplerate;        /* Sampling rate */
-    uint16_t bps;               /* Bit数,for example16bit,24bit,32bit */
+    uint16_t bps;               /* Bit depth, e.g. 16-bit, 24-bit, 32-bit */
 
-    uint32_t datastart;         /* 数据帧开始的Bit置(在document里面的偏移) */
+    uint32_t datastart;         /* Bit position where the data frame starts (offset within the file) */
 }__wavctrl;                     /* wav Playback control structure */ 
 
 #define I2S_NUM                 (I2S_NUM_0)                         /* I2S port */

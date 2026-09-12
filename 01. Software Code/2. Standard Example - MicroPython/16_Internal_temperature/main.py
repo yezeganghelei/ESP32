@@ -8,9 +8,9 @@
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * Purpose of the experiment：Learn how to use the internal temperature sensor
+ * Purpose of the experiment: Learn how to use the internal temperature sensor
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 2,  XL9555 --> ESP32S3 IO
  *        SCL --> IO42
  *        SDA --> IO41
@@ -25,7 +25,8 @@
  *        RST --> XL9555_P12
 
  * Experimental phenomenon
- * 1, ADCCapture the voltage output from the internal temperature sensor，将其转换for温度值后，Show inLCDsuperior。
+ * 1, The ADC captures the voltage output by the internal temperature sensor and, after converting it
+ *    to a temperature value, displays it on the LCD.
 
  * Things to note
  * none
@@ -53,15 +54,15 @@ if __name__ == '__main__':
     # XL9555 Initialization
     xl9555 = io_ex.init(i2c0)
     
-    # resetLCD
+    # Reset LCD
     xl9555.write_bit(io_ex.SLCD_RST,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.SLCD_RST,1)
     time.sleep_ms(100)
     
-    # initializationSPI
+    # Initialize SPI
     spi = SPI(2,baudrate = 80000000, sck = Pin(12), mosi = Pin(11), miso = Pin(13))
-    # initializationLCD,lcd = 0for2.4inchScreen;lcd = 1for1.3inchSPILCDScreen;
+    # Initialize LCD; lcd = 0 for a 2.4-inch screen, lcd = 1 for a 1.3-inch SPI LCD screen;
     display = lcd.init(spi,dc = Pin(40,Pin.OUT,Pin.PULL_UP,value = 1),cs = Pin(21,Pin.OUT,Pin.PULL_UP,value = 1),dir = 1,lcd = 0)
     xl9555.write_bit(io_ex.SLCD_PWR,1)
     time.sleep_ms(100)
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     display.string(30, 70, 240, 16, 16, "Temperature TEST",lcd.RED)
     display.string(30, 90, 240, 16, 16, "ATOM@ALIENTEK",lcd.RED)
     display.string(30, 120, 200, 16, 16, "TEMPERATE: 00.00C", lcd.RED)
-    # initialization内部温度传感器
+    # Initialize the internal temperature sensor
     sensor.init()
       
     while True:

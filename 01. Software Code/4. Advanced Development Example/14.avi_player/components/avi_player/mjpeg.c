@@ -87,13 +87,13 @@ METHODDEF(void) my_error_exit (j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-//Initialize resources,do nothing
+//Initialize resources; do nothing
 static void init_source(j_decompress_ptr cinfo)
 {
     //No need to do anything.
     return;
 } 
-//填充输入缓冲区,Read the entire frame of data at once
+//Fill the input buffer; read the entire frame of data at once
 static boolean fill_input_buffer(j_decompress_ptr cinfo)
 {  
 	if(jbufsize==0)//it's over
@@ -112,7 +112,7 @@ static boolean fill_input_buffer(j_decompress_ptr cinfo)
 	}
   return TRUE;
 }
-//inside the file,jump overnum_bytesdata
+//Within the file, skip num_bytes of data
 static void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 { 
   /* Just a dumb implementation for now.  Could use fseek() except
@@ -133,13 +133,13 @@ static void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
     cinfo->src->bytes_in_buffer -= (size_t) num_bytes;
   }
 } 
-//After decoding is completed,quiltjpeg_finish_decompressfunction call
+//Called by jpeg_finish_decompress after decoding is complete
 static void term_source(j_decompress_ptr cinfo)
 {
     //No processing
     return;
 }
-//初始化jpegDecode data source
+//Initialize the JPEG decode data source
 static void jpeg_filerw_src_init(j_decompress_ptr cinfo)
 { 
     if (cinfo->src == NULL)     /* first time for this JPEG object? */

@@ -10,10 +10,10 @@
 /**
  ******************************************************************************
  * @file    PAGE_game_2048.c
- * @author  百问科技
+ * @author  100ask
  * @version V1.2
  * @date    2020-12-12
- * @brief	2048游戏
+ * @brief	2048 game
  ******************************************************************************
  * Change Logs:
  * Date           Author          Notes
@@ -22,7 +22,7 @@
  ******************************************************************************
  * @attention
  *
- * Copyright (C) 2008-2021 深圳百问网科技有限公司<https://www.100ask.net/>
+ * Copyright (C) 2008-2021 Shenzhen Baiwen Network Technology Co., Ltd. <https://www.100ask.net/>
  * All rights reserved
  *
  ******************************************************************************
@@ -45,128 +45,128 @@ LV_FONT_DECLARE(myFont);
 /**********************
  *  STATIC VARIABLES
  **********************/
-static PT_PAGE_2048_game g_pt_PAGE_2048_game; // 数据结构体
+static PT_PAGE_2048_game g_pt_PAGE_2048_game; // Data structure
 
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static void PAGE_game_2048_init(void);												// 界面初始化
-static void PAGE_game_2048_init_board(lv_obj_t *parent, uint8_t board[SIZE][SIZE]); // 初始化画板，展示主界面效果
-static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE]);			// 初始化小方块数据
+static void PAGE_game_2048_init(void);												// Screen initialization
+static void PAGE_game_2048_init_board(lv_obj_t *parent, uint8_t board[SIZE][SIZE]); // Initialize the board and render the main screen
+static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE]);			// Initialize the tile data
 static void PAGE_game_2048_draw_board(lv_obj_t *parent, char *number,
 									  uint16_t canvas_w, uint16_t canvas_h,
 									  uint16_t rect_dsc_x, uint16_t rect_dsc_y,
-									  lv_color_t rgb32);								 // 填充绘制小方块
-static void PAGE_game_2048_add_random(uint8_t board[SIZE][SIZE]);						 // 为二维数组初始化随机位置的随机数
-static void PAGE_game_2048_rotate_board(uint8_t board[SIZE][SIZE]);						 // 旋转矩阵
-static bool PAGE_game_2048_slide_array(uint8_t array[SIZE]);							 // 检查数组是否还有空间
-static bool PAGE_game_2048_move_up(uint8_t board[SIZE][SIZE]);							 // 检查是否可以上滑动(触摸屏控制)
-static bool PAGE_game_2048_move_left(uint8_t board[SIZE][SIZE]);						 // 检查是否可以左滑动(触摸屏控制)
-static bool PAGE_game_2048_move_down(uint8_t board[SIZE][SIZE]);						 // 检查是否可以下滑动(触摸屏控制)
-static bool PAGE_game_2048_move_right(uint8_t board[SIZE][SIZE]);						 // 检查是否可以右滑动(触摸屏控制)
-static bool PAGE_game_2048_find_pair_down(uint8_t board[SIZE][SIZE]);					 // 检查是否可以右滑动
-static bool PAGE_game_2048_game_ended(uint8_t board[SIZE][SIZE]);						 // 判断游戏是否应该结束
-static char *PAGE_game_2048_int_to_string(int num, char *str);							 // 整型数值转为字符串
-static lv_color_t PAGE_game_2048_num_to_color(uint32_t num);							 // 为数字设置对应的颜色
-static uint8_t PAGE_game_2048_find_target(uint8_t array[SIZE], uint8_t x, uint8_t stop); // 检查是否应该停止滑动以避免双重合并
-static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE]);					 // 查找当前二维数组是否有可以合并的数值(数值一样即可合并)
-// 任务
-static void PAGE_game_2048_game_key_up(void);	 // 按键控制上移(按键控制)
-static void PAGE_game_2048_game_key_down(void);	 // 按键控制下移(按键控制)
-static void PAGE_game_2048_game_key_left(void);	 // 按键控制左移(按键控制)
-static void PAGE_game_2048_game_key_right(void); // 按键控制右移(按键控制)
-// 触摸屏检测事件
-static void event_handler_play_2048(lv_obj_t *obj, lv_event_t event); // 触摸屏检测事件处理函数(上、下、左、右滑动
+									  lv_color_t rgb32);								 // Fill and draw a tile
+static void PAGE_game_2048_add_random(uint8_t board[SIZE][SIZE]);						 // Initialize a random value at a random position in the 2D array
+static void PAGE_game_2048_rotate_board(uint8_t board[SIZE][SIZE]);						 // Rotate the matrix
+static bool PAGE_game_2048_slide_array(uint8_t array[SIZE]);							 // Check whether the array still has room
+static bool PAGE_game_2048_move_up(uint8_t board[SIZE][SIZE]);							 // Check whether an upward move is possible (touchscreen control)
+static bool PAGE_game_2048_move_left(uint8_t board[SIZE][SIZE]);						 // Check whether a left move is possible (touchscreen control)
+static bool PAGE_game_2048_move_down(uint8_t board[SIZE][SIZE]);						 // Check whether a downward move is possible (touchscreen control)
+static bool PAGE_game_2048_move_right(uint8_t board[SIZE][SIZE]);						 // Check whether a right move is possible (touchscreen control)
+static bool PAGE_game_2048_find_pair_down(uint8_t board[SIZE][SIZE]);					 // Check whether a right move is possible
+static bool PAGE_game_2048_game_ended(uint8_t board[SIZE][SIZE]);						 // Determine whether the game should end
+static char *PAGE_game_2048_int_to_string(int num, char *str);							 // Convert an integer value to a string
+static lv_color_t PAGE_game_2048_num_to_color(uint32_t num);							 // Set the color corresponding to a number
+static uint8_t PAGE_game_2048_find_target(uint8_t array[SIZE], uint8_t x, uint8_t stop); // Check whether sliding should stop to avoid a double merge
+static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE]);					 // Find whether the 2D array has values that can be merged (equal values can merge)
+// Tasks
+static void PAGE_game_2048_game_key_up(void);	 // Button-controlled move up (button control)
+static void PAGE_game_2048_game_key_down(void);	 // Button-controlled move down (button control)
+static void PAGE_game_2048_game_key_left(void);	 // Button-controlled move left (button control)
+static void PAGE_game_2048_game_key_right(void); // Button-controlled move right (button control)
+// Touchscreen detection event
+static void event_handler_play_2048(lv_obj_t *obj, lv_event_t event); // Touchscreen detection event handler (up, down, left, right swipes)
 /*
- *  函数名：   void PAGE_ _tool_widget_test(void)
- *  输入参数： 无
- *  返回值：   无
- *  函数作用： 应用入口
+ *  Function:    void PAGE_ _tool_widget_test(void)
+ *  Input:      None
+ *  Return:     None
+ *  Purpose:   Application entry
 */
 void PAGE_game_2048(void)
 {
-	/* 申请内存 */
+	/* Allocate memory */
 	g_pt_PAGE_2048_game = (T_PAGE_2048_game *)malloc(sizeof(T_PAGE_2048_game));
 
-	/* 初始化桌面背景 */
+	/* Initialize the desktop background */
 	g_pt_PAGE_2048_game->bg = lv_obj_create(lv_scr_act(), NULL);
 	lv_obj_set_size(g_pt_PAGE_2048_game->bg, LV_HOR_RES, LV_VER_RES);
 	lv_obj_set_y(g_pt_PAGE_2048_game->bg, 0);
 
-	/* 初始化游戏舞台 */
+	/* Initialize the game stage */
 	g_pt_PAGE_2048_game->canvas_stage = lv_obj_create(g_pt_PAGE_2048_game->bg, NULL);
-	lv_obj_set_style_local_radius(g_pt_PAGE_2048_game->canvas_stage, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);						  // 设置圆角
-	lv_obj_set_style_local_bg_color(g_pt_PAGE_2048_game->canvas_stage, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, PAGE_2048_GAME_BOX_COLOR); //设置颜色
+	lv_obj_set_style_local_radius(g_pt_PAGE_2048_game->canvas_stage, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);						  // Set corner radius
+	lv_obj_set_style_local_bg_color(g_pt_PAGE_2048_game->canvas_stage, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, PAGE_2048_GAME_BOX_COLOR); //Set color
 	lv_obj_set_size(g_pt_PAGE_2048_game->canvas_stage, PAGE_2048_GAME_BOX_W, PAGE_2048_GAME_BOX_H);
 	lv_obj_align(g_pt_PAGE_2048_game->canvas_stage, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 
-	/* 初始化主界面 */
+	/* Initialize the main screen */
 	g_pt_PAGE_2048_game->play_game = true;
 	g_pt_PAGE_2048_game->current_score_value = 0;
 	PAGE_game_2048_init();
-	/* 分配屏幕触摸事件处理 */
+	/* Assign the screen touch event handler */
 	lv_obj_set_click(lv_layer_top(), true);
 	lv_obj_set_event_cb(lv_layer_top(), event_handler_play_2048);
 }
 
 /*
- *  函数名：   static void PAGE_ _tool_music_player_init(void)
- *  输入参数： 无
- *  返回值：   无
- *  函数作用： 应用界面初始化
+ *  Function:    static void PAGE_ _tool_music_player_init(void)
+ *  Input:      None
+ *  Return:     None
+ *  Purpose:   Application screen initialization
 */
 static void PAGE_game_2048_init(void)
 {
 
-	/* 最高记录显示区域 */
+	/* Best score display area */
 	lv_obj_t *obj_best_source = lv_obj_create(g_pt_PAGE_2048_game->bg, NULL);
 	lv_obj_set_size(obj_best_source, 65, 35);
 	lv_obj_align(obj_best_source, g_pt_PAGE_2048_game->canvas_stage, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, 0);
 
-	/* 最高记录标题 */
-	lv_obj_t *best_source_tip_text = lv_label_create(obj_best_source, NULL); /* 创建标签 */
+	/* Best score title */
+	lv_obj_t *best_source_tip_text = lv_label_create(obj_best_source, NULL); /* Create label */
 	lv_label_set_text(best_source_tip_text, "BEST");
-	lv_obj_align(best_source_tip_text, NULL, LV_ALIGN_IN_TOP_MID, 0, 0); /* 居中 */
+	lv_obj_align(best_source_tip_text, NULL, LV_ALIGN_IN_TOP_MID, 0, 0); /* Center */
 
-	/* 最高记录分数 */
-	g_pt_PAGE_2048_game->label_best_score = lv_label_create(obj_best_source, NULL); /* 创建标签 */
+	/* Best score value */
+	g_pt_PAGE_2048_game->label_best_score = lv_label_create(obj_best_source, NULL); /* Create label */
 	lv_label_set_text(g_pt_PAGE_2048_game->label_best_score, "1024");
-	lv_obj_align(g_pt_PAGE_2048_game->label_best_score, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0); /* 居中 */
+	lv_obj_align(g_pt_PAGE_2048_game->label_best_score, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0); /* Center */
 
-	/* 当前分数显示区域 */
+	/* Current score display area */
 	lv_obj_t *obj_current_source = lv_obj_create(g_pt_PAGE_2048_game->bg, NULL);
 	lv_obj_set_size(obj_current_source, 65, 35);
 	lv_obj_align(obj_current_source, g_pt_PAGE_2048_game->canvas_stage, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
 
-	/* 当前分提示 */
-	lv_obj_t *current_source_tip_text = lv_label_create(obj_current_source, NULL); /* 创建标签 */
+	/* Current score label */
+	lv_obj_t *current_source_tip_text = lv_label_create(obj_current_source, NULL); /* Create label */
 	lv_label_set_text(current_source_tip_text, "SORCE");
-	lv_obj_align(current_source_tip_text, NULL, LV_ALIGN_IN_TOP_MID, 0, 0); /* 居中 */
+	lv_obj_align(current_source_tip_text, NULL, LV_ALIGN_IN_TOP_MID, 0, 0); /* Center */
 
-	/* 当前分数 */
-	g_pt_PAGE_2048_game->label_current_score = lv_label_create(obj_current_source, NULL); /* 创建标签 */
+	/* Current score */
+	g_pt_PAGE_2048_game->label_current_score = lv_label_create(obj_current_source, NULL); /* Create label */
 	lv_label_set_text(g_pt_PAGE_2048_game->label_current_score, "0");
-	lv_obj_align(g_pt_PAGE_2048_game->label_current_score, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0); /* 当前画布居中 */
+	lv_obj_align(g_pt_PAGE_2048_game->label_current_score, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, 0); /* Center on the current canvas */
 
-	/* 初始化游戏数字 */
+	/* Initialize the game numbers */
 	PAGE_game_2048_init_board_number(g_pt_PAGE_2048_game->game_board);
 
-	/* 初始化游戏舞台中的每个方格块 */
+	/* Initialize each tile in the game stage */
 	PAGE_game_2048_init_board(g_pt_PAGE_2048_game->canvas_stage, g_pt_PAGE_2048_game->game_board);
 }
 
 /*
- *  函数名：   static void PAGE_game_2048_init_board(lv_obj_t * parent, uint8_t board[SIZE][SIZE])
- *  输入参数： 父对象
- *  返回值：   需要操作的数组
- *  函数作用： 初始化画板，展示主界面效果
+ *  Function:    static void PAGE_game_2048_init_board(lv_obj_t * parent, uint8_t board[SIZE][SIZE])
+ *  Input:     parent object
+ *  Return:    array to operate on
+ *  Purpose:   Initialize the board and render the main screen
 */
 static void PAGE_game_2048_init_board(lv_obj_t *parent, uint8_t board[SIZE][SIZE])
 {
-	/* 清除之前所有的子对象 */
+	/* Clear all previous child objects */
 	lv_obj_clean(parent);
 
-	/* 当前分数 */
+	/* Current score */
 	char str_current_score[8] = {0};
 	lv_label_set_text(g_pt_PAGE_2048_game->label_current_score, PAGE_game_2048_int_to_string(g_pt_PAGE_2048_game->current_score_value, str_current_score));
 
@@ -194,93 +194,93 @@ static void PAGE_game_2048_init_board(lv_obj_t *parent, uint8_t board[SIZE][SIZE
 }
 
 /*
- *  函数名：   static void PAGE_game_2048_draw_board(lv_obj_t * parent, char * number, \
+ *  Function:    static void PAGE_game_2048_draw_board(lv_obj_t * parent, char * number, \
 														 uint16_t canvas_w, uint16_t canvas_h, \
 														 uint16_t rect_dsc_x, uint16_t rect_dsc_y, \
 														 lv_color_t rgb32)
- *  输入参数： 绘制所依托的父对象
- *  输入参数： 展示的数值
- *  输入参数： 宽度
- *  输入参数： 高度
- *  输入参数： x轴上的偏移值
- *  输入参数： y轴上的偏移值
- *  输入参数： 方块背景颜色
- *  返回值：   无
- *  函数作用： 填充绘制小方块
+ *  Input:     parent object to draw on
+ *  Input:     value to display
+ *  Input:     width
+ *  Input:     height
+ *  Input:     x-axis offset
+ *  Input:     y-axis offset
+ *  Input:     tile background color
+ *  Return:     None
+ *  Purpose:   Fill and draw a tile
 */
 static void PAGE_game_2048_draw_board(lv_obj_t *parent, char *number,
 									  uint16_t canvas_w, uint16_t canvas_h,
 									  uint16_t rect_dsc_x, uint16_t rect_dsc_y,
 									  lv_color_t rgb32)
 {
-	/* 创建方格块 */
+	/* Create tile */
 	lv_obj_t *obj = lv_obj_create(parent, NULL);
 	lv_obj_set_size(obj, canvas_w, canvas_h);
 	lv_obj_set_style_local_bg_color(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, rgb32);
 	//lv_obj_set_style_local_bg_opa(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_COVER);
-	lv_obj_set_style_local_radius(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);			  // 设置圆角
-	lv_obj_set_style_local_border_opa(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_0); // 边框透明度
-	lv_obj_set_style_local_text_font(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, &myFont);	  // 字体大小
+	lv_obj_set_style_local_radius(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);			  // Set corner radius
+	lv_obj_set_style_local_border_opa(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_0); // Border transparency
+	lv_obj_set_style_local_text_font(obj, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, &myFont);	  // Font size
 
 	lv_obj_align(obj, NULL, LV_ALIGN_IN_TOP_LEFT, rect_dsc_x, rect_dsc_y);
 
-	/* 数字 */
-	lv_obj_t *icon = lv_label_create(obj, NULL); /* 创建标签 */
+	/* Number */
+	lv_obj_t *icon = lv_label_create(obj, NULL); /* Create label */
 
 	lv_obj_set_style_local_text_color(icon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_RED);
 	lv_obj_set_style_local_text_font(icon, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
 	lv_label_set_text(icon, number);
 
-	lv_obj_align(icon, NULL, LV_ALIGN_CENTER, 0, 0); /* 当前画布居中 */
+	lv_obj_align(icon, NULL, LV_ALIGN_CENTER, 0, 0); /* Center on the current canvas */
 }
 
 /*
- *  函数名：   static char* PAGE_game_2048_int_to_string(int num, char *str)
- *  输入参数： 需要转换的整型数值
- *  返回值：   转换后的字符串
- *  函数作用： 整型数值转为字符串
+ *  Function:    static char* PAGE_game_2048_int_to_string(int num, char *str)
+ *  Input:     integer value to convert
+ *  Return:    converted string
+ *  Purpose:   Convert an integer value to a string
 */
 static char *PAGE_game_2048_int_to_string(int num, char *str)
 {
-	int i = 0;	 //指示填充str
-	if (num < 0) //如果num为负数，将num变正
+	int i = 0;	 //Index for filling str
+	if (num < 0) //If num is negative, make it positive
 	{
 		num = -num;
 		str[i++] = '-';
 	}
-	//转换
+	//Convert
 	do
 	{
-		str[i++] = num % 10 + 48; //取num最低位 字符0~9的ASCII码是48~57；简单来说数字0+48=48，ASCII码对应字符'0'
-		num /= 10;				  //去掉最低位
-	} while (num);				  //num不为0继续循环
+		str[i++] = num % 10 + 48; //Take the least significant digit of num; ASCII codes for characters '0'-'9' are 48-57; simply put, digit 0 + 48 = 48, whose ASCII code corresponds to the character '0'
+		num /= 10;				  //Remove the least significant digit
+	} while (num);				  //Continue looping while num is not 0
 
 	str[i] = '\0';
 
-	//确定开始调整的位置
+	//Determine the starting position for adjustment
 	int j = 0;
-	if (str[0] == '-') //如果有负号，负号不用调整
+	if (str[0] == '-') //If there is a minus sign, it does not need to be adjusted
 	{
-		j = 1; //从第二位开始调整
-		++i;   //由于有负号，所以交换的对称轴也要后移1位
+		j = 1; //Start adjusting from the second character
+		++i;   //Because of the minus sign, the symmetry axis for swapping also shifts back by one
 	}
-	//对称交换
+	//Symmetric swap
 	for (; j < i / 2; j++)
 	{
-		//对称交换两端的值 其实就是省下中间变量交换a+b的值：a=a+b;b=a-b;a=a-b;
+		//Symmetric swap of the two ends; this swaps a and b without a temporary variable: a=a+b; b=a-b; a=a-b;
 		str[j] = str[j] + str[i - 1 - j];
 		str[i - 1 - j] = str[j] - str[i - 1 - j];
 		str[j] = str[j] - str[i - 1 - j];
 	}
 
-	return str; //返回转换后的值
+	return str; //Return the converted value
 }
 
 /*
- *  函数名：   static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE])
- *  输入参数： 需要进行初始化的数组
- *  返回值：   无
- *  函数作用： 为二维数组初始化数值(全写0)
+ *  Function:    static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE])
+ *  Input:     array to initialize
+ *  Return:     None
+ *  Purpose:   Initialize the 2D array values (all set to 0)
 */
 static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE])
 {
@@ -293,7 +293,7 @@ static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE])
 		}
 	}
 
-	/* 初始化两个随机位置的随机数 */
+	/* Initialize random values at two random positions */
 	PAGE_game_2048_add_random(board);
 	PAGE_game_2048_add_random(board);
 
@@ -307,10 +307,10 @@ static void PAGE_game_2048_init_board_number(uint8_t board[SIZE][SIZE])
 // }
 
 /*
- *  函数名：   static void PAGE_game_2048_add_random(uint8_t board[SIZE][SIZE])
- *  输入参数： 需要初始化随机位置的随机数的数组
- *  返回值：   无
- *  函数作用： 为二维数组初始化随机位置的随机数
+ *  Function:    static void PAGE_game_2048_add_random(uint8_t board[SIZE][SIZE])
+ *  Input:     array in which to initialize a random value at a random position
+ *  Return:     None
+ *  Purpose:   Initialize a random value at a random position in the 2D array
 */
 static void PAGE_game_2048_add_random(uint8_t board[SIZE][SIZE])
 {
@@ -349,10 +349,10 @@ static void PAGE_game_2048_add_random(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static lv_color_t PAGE_game_2048_num_to_color(uint32_t num)
- *  输入参数： 需要设置颜色的数值
- *  返回值：   颜色值
- *  函数作用： 为数字设置对应的颜色
+ *  Function:    static lv_color_t PAGE_game_2048_num_to_color(uint32_t num)
+ *  Input:     number whose color is to be set
+ *  Return:    color value
+ *  Purpose:   Set the color corresponding to a number
 */
 static lv_color_t PAGE_game_2048_num_to_color(uint32_t num)
 {
@@ -386,10 +386,10 @@ static lv_color_t PAGE_game_2048_num_to_color(uint32_t num)
 }
 
 /*
- *  函数名：   static uint8_t PAGE_game_2048_find_target(uint8_t array[SIZE],uint8_t x,uint8_t stop) 
- *  输入参数： 需要检查的二维数组
- *  返回值：   目标位置
- *  函数作用： 检查是否应该停止滑动以避免双重合并
+ *  Function:    static uint8_t PAGE_game_2048_find_target(uint8_t array[SIZE],uint8_t x,uint8_t stop) 
+ *  Input:     2D array to check
+ *  Return:    target position
+ *  Purpose:   Check whether sliding should stop to avoid a double merge
 */
 static uint8_t PAGE_game_2048_find_target(uint8_t array[SIZE], uint8_t x, uint8_t stop)
 {
@@ -424,10 +424,10 @@ static uint8_t PAGE_game_2048_find_target(uint8_t array[SIZE], uint8_t x, uint8_
 }
 
 /*
- *  函数名：   static bool PAGE_game_2048_slide_array(uint8_t array[SIZE]) 
- *  输入参数： 需要检查的数组
- *  返回值：   true - 尚有空间； false - 无多余空间
- *  函数作用： 检查数组是否还有空间
+ *  Function:    static bool PAGE_game_2048_slide_array(uint8_t array[SIZE]) 
+ *  Input:     array to check
+ *  Return:    true - space available; false - no free space
+ *  Purpose:   Check whether the array still has room
 */
 static bool PAGE_game_2048_slide_array(uint8_t array[SIZE])
 {
@@ -465,10 +465,10 @@ static bool PAGE_game_2048_slide_array(uint8_t array[SIZE])
 }
 
 /*
- *  函数名：   static bool PAGE_game_2048_rotate_board(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要旋转的矩阵
- *  返回值：   无
- *  函数作用： 旋转矩阵
+ *  Function:    static bool PAGE_game_2048_rotate_board(uint8_t board[SIZE][SIZE]) 
+ *  Input:     matrix to rotate
+ *  Return:     None
+ *  Purpose:   Rotate the matrix
 */
 static void PAGE_game_2048_rotate_board(uint8_t board[SIZE][SIZE])
 {
@@ -488,10 +488,10 @@ static void PAGE_game_2048_rotate_board(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static bool PAGE_game_2048_move_up(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要检查的二维数组
- *  返回值：   true - 可以滑动； false - 不可以滑动
- *  函数作用： 检查是否可以上滑动
+ *  Function:    static bool PAGE_game_2048_move_up(uint8_t board[SIZE][SIZE]) 
+ *  Input:     2D array to check
+ *  Return:    true - can move; false - cannot move
+ *  Purpose:   Check whether an upward move is possible
 */
 static bool PAGE_game_2048_move_up(uint8_t board[SIZE][SIZE])
 {
@@ -505,10 +505,10 @@ static bool PAGE_game_2048_move_up(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static bool PAGE_game_2048_move_left(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要检查的二维数组
- *  返回值：   true - 可以滑动； false - 不可以滑动
- *  函数作用： 检查是否可以上滑动
+ *  Function:    static bool PAGE_game_2048_move_left(uint8_t board[SIZE][SIZE]) 
+ *  Input:     2D array to check
+ *  Return:    true - can move; false - cannot move
+ *  Purpose:   Check whether an upward move is possible
 */
 static bool PAGE_game_2048_move_left(uint8_t board[SIZE][SIZE])
 {
@@ -522,10 +522,10 @@ static bool PAGE_game_2048_move_left(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static bool PAGE_game_2048_move_down(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要检查的二维数组
- *  返回值：   true - 可以滑动； false - 不可以滑动
- *  函数作用： 检查是否可以下滑动
+ *  Function:    static bool PAGE_game_2048_move_down(uint8_t board[SIZE][SIZE]) 
+ *  Input:     2D array to check
+ *  Return:    true - can move; false - cannot move
+ *  Purpose:   Check whether a downward move is possible
 */
 static bool PAGE_game_2048_move_down(uint8_t board[SIZE][SIZE])
 {
@@ -539,10 +539,10 @@ static bool PAGE_game_2048_move_down(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static bool PAGE_game_2048_move_right(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要检查的二维数组
- *  返回值：   true - 可以滑动； false - 不可以滑动
- *  函数作用： 检查是否可以右滑动
+ *  Function:    static bool PAGE_game_2048_move_right(uint8_t board[SIZE][SIZE]) 
+ *  Input:     2D array to check
+ *  Return:    true - can move; false - cannot move
+ *  Purpose:   Check whether a right move is possible
 */
 static bool PAGE_game_2048_move_right(uint8_t board[SIZE][SIZE])
 {
@@ -556,10 +556,10 @@ static bool PAGE_game_2048_move_right(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要查找的二维数组
- *  返回值：   true - 有可以合并的数值； false - 没有可以合并的数值
- *  函数作用： 查找当前二维数组是否有可以合并的数值(数值一样即可合并)
+ *  Function:    static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE]) 
+ *  Input:     2D array to search
+ *  Return:    true - has mergeable values; false - has no mergeable values
+ *  Purpose:   Find whether the 2D array has values that can be merged (equal values can merge)
 */
 static bool PAGE_game_2048_find_pair_down(uint8_t board[SIZE][SIZE])
 {
@@ -577,10 +577,10 @@ static bool PAGE_game_2048_find_pair_down(uint8_t board[SIZE][SIZE])
 }
 
 /*
- *  函数名：   static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE]) 
- *  输入参数： 需要统计的二维数组
- *  返回值：   空闲的方格个数
- *  函数作用： 统计空闲的方格个数
+ *  Function:    static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE]) 
+ *  Input:     2D array to count
+ *  Return:    number of empty tiles
+ *  Purpose:   Count the number of empty tiles
 */
 static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE])
 {
@@ -598,23 +598,23 @@ static uint8_t PAGE_game_2048_count_empty(uint8_t board[SIZE][SIZE])
 	}
 	return count;
 }
-static void game_message(const char *str, uint16_t t) //系统通知盒
+static void game_message(const char *str, uint16_t t) //System notification box
 {
 
-	lv_obj_t *mbox1 = lv_msgbox_create(g_pt_PAGE_2048_game->bg, NULL); //box全局通知
+	lv_obj_t *mbox1 = lv_msgbox_create(g_pt_PAGE_2048_game->bg, NULL); //Global notification box
 	lv_obj_set_style_local_text_font(mbox1, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
 	lv_msgbox_set_text(mbox1, str);
 	lv_obj_set_size(mbox1, 240, 50);
 	lv_msgbox_start_auto_close(mbox1, t);
 	lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 0, 0); /*Align to the corner*/
 }
-// 游戏结束
+// Game over
 
 /*
- *  函数名：   static bool PAGE_game_2048_game_ended(uint8_t board[SIZE][SIZE])
- *  输入参数： 无
- *  返回值：   true - 游戏结束， false - 可继续游戏
- *  函数作用： 判断游戏是否应该结束
+ *  Function:    static bool PAGE_game_2048_game_ended(uint8_t board[SIZE][SIZE])
+ *  Input:      None
+ *  Return:    true - game over, false - game can continue
+ *  Purpose:   Determine whether the game should end
 */
 static bool PAGE_game_2048_game_ended(uint8_t board[SIZE][SIZE])
 {
@@ -633,11 +633,11 @@ static bool PAGE_game_2048_game_ended(uint8_t board[SIZE][SIZE])
 	return ended;
 }
 /*
- *  函数名：   static void event_handler_play_2048(lv_obj_t * obj, lv_event_t event)
- *  输入参数： 触发事件的对象
- *  输入参数： 触发的事件类型
- *  返回值：   无
- *  函数作用： 触摸屏检测事件处理函数(上、下、左、右滑动)
+ *  Function:    static void event_handler_play_2048(lv_obj_t * obj, lv_event_t event)
+ *  Input:     object that triggered the event
+ *  Input:     type of the triggered event
+ *  Return:     None
+ *  Purpose:   Touchscreen detection event handler (up, down, left, right swipes)
 */
 static void event_handler_play_2048(lv_obj_t *obj, lv_event_t event)
 {
@@ -668,18 +668,18 @@ static void event_handler_play_2048(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
 	}
 }
 /*
- *  函数名：   static void PAGE_game_2048_game_key_right(void)
- *  输入参数： 无
- *  输入参数： 无
- *  返回值：   无
- *  函数作用： 按键控制上移
+ *  Function:    static void PAGE_game_2048_game_key_right(void)
+ *  Input:      None
+ *  Input:      None
+ *  Return:     None
+ *  Purpose:   Button-controlled move up
 */
 static void PAGE_game_2048_game_key_up(void)
 {
@@ -697,11 +697,11 @@ static void PAGE_game_2048_game_key_up(void)
 }
 
 /*
- *  函数名：   static void PAGE_game_2048_game_key_right(void)
- *  输入参数： 无
- *  输入参数： 无
- *  返回值：   无
- *  函数作用： 按键控制下移
+ *  Function:    static void PAGE_game_2048_game_key_right(void)
+ *  Input:      None
+ *  Input:      None
+ *  Return:     None
+ *  Purpose:   Button-controlled move down
 */
 static void PAGE_game_2048_game_key_down(void)
 {
@@ -719,11 +719,11 @@ static void PAGE_game_2048_game_key_down(void)
 }
 
 /*
- *  函数名：   static void PAGE_game_2048_game_key_right(void)
- *  输入参数： 无
- *  输入参数： 无
- *  返回值：   无
- *  函数作用： 按键控制左移
+ *  Function:    static void PAGE_game_2048_game_key_right(void)
+ *  Input:      None
+ *  Input:      None
+ *  Return:     None
+ *  Purpose:   Button-controlled move left
 */
 static void PAGE_game_2048_game_key_left(void)
 {
@@ -741,11 +741,11 @@ static void PAGE_game_2048_game_key_left(void)
 }
 
 /*
- *  函数名：   static void PAGE_game_2048_game_key_right(void)
- *  输入参数： 无
- *  输入参数： 无
- *  返回值：   无
- *  函数作用： 按键控制右移
+ *  Function:    static void PAGE_game_2048_game_key_right(void)
+ *  Input:      None
+ *  Input:      None
+ *  Return:     None
+ *  Purpose:   Button-controlled move right
 */
 static void PAGE_game_2048_game_key_right(void)
 {
@@ -763,36 +763,36 @@ static void PAGE_game_2048_game_key_right(void)
 }
 
 /*
- *  函数名：   static void event_handler_back_to_home(lv_obj_t * obj, lv_event_t event)
- *  输入参数： 触发事件的对象
- *  输入参数： 触发的事件类型
- *  返回值：   无
- *  函数作用： 返回桌面事件处理函数
+ *  Function:    static void event_handler_back_to_home(lv_obj_t * obj, lv_event_t event)
+ *  Input:     object that triggered the event
+ *  Input:     type of the triggered event
+ *  Return:     None
+ *  Purpose:   Return-to-home event handler
 */
 static void event_handler_back_to_home(lv_obj_t *obj, lv_event_t event)
 {
 	if (event == LV_EVENT_CLICKED)
 	{
 		if (g_pt_PAGE_2048_game->task_handle != NULL)
-			lv_task_del(g_pt_PAGE_2048_game->task_handle); /* 删除任务 */
+			lv_task_del(g_pt_PAGE_2048_game->task_handle); /* Delete task */
 		if (g_pt_PAGE_2048_game->canvas_stage != NULL)
-			lv_obj_del(g_pt_PAGE_2048_game->canvas_stage); /* 删除游戏舞台 */
+			lv_obj_del(g_pt_PAGE_2048_game->canvas_stage); /* Delete the game stage */
 		if (g_pt_PAGE_2048_game->label_best_score != NULL)
-			lv_obj_del(g_pt_PAGE_2048_game->label_best_score); /* 删除最高分数对象 */
+			lv_obj_del(g_pt_PAGE_2048_game->label_best_score); /* Delete the best score object */
 		if (g_pt_PAGE_2048_game->label_current_score != NULL)
-			lv_obj_del(g_pt_PAGE_2048_game->label_current_score); /* 删除当前分数对象 */
+			lv_obj_del(g_pt_PAGE_2048_game->label_current_score); /* Delete the current score object */
 		if (g_pt_PAGE_2048_game->bg != NULL)
-			lv_obj_del(g_pt_PAGE_2048_game->bg); /* 删除背景 */
+			lv_obj_del(g_pt_PAGE_2048_game->bg); /* Delete the background */
 
-		/* 释放内存 */
+		/* Free memory */
 		free(g_pt_PAGE_2048_game);
 
-		/* 清除lv_layer_top */
+		/* Clear lv_layer_top */
 		lv_obj_set_click(lv_layer_top(), false);
 		lv_obj_clean(lv_layer_top());
-		lv_obj_set_event_cb(lv_layer_top(), NULL); /* 分配事件处理 */
+		lv_obj_set_event_cb(lv_layer_top(), NULL); /* Assign the event handler */
 
-		/* 清空屏幕并返回桌面 */
+		/* Clear the screen and return to the home screen */
 		// PAGE_ _anim_out_all(lv_scr_act(), 0);
 		// PAGE_ _demo_home(0);
 	}
@@ -803,12 +803,12 @@ void page_game_2048_load(void)
 	PAGE_game_2048();
 
 	obj_add_anim(
-		g_pt_PAGE_2048_game->bg,		  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x, //动画函数
-		300,							  //动画速度
-		-APP_WIN_WIDTH,							  //起始值
-		0,								  //结束值
-		lv_anim_path_linear				  //动画特效:模拟弹性物体下落
+		g_pt_PAGE_2048_game->bg,		  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x, //Animation function
+		300,							  //Animation speed
+		-APP_WIN_WIDTH,							  //Start value
+		0,								  //End value
+		lv_anim_path_linear				  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 }
@@ -816,36 +816,36 @@ void page_game_2048_load(void)
 static void Exit(void)
 {
 	obj_add_anim(
-		g_pt_PAGE_2048_game->bg,		  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x, //动画函数
-		300,							  //动画速度
-		0,								  //起始值
-		-APP_WIN_WIDTH,							  //结束值
-		lv_anim_path_linear				  //动画特效:模拟弹性物体下落
+		g_pt_PAGE_2048_game->bg,		  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x, //Animation function
+		300,							  //Animation speed
+		0,								  //Start value
+		-APP_WIN_WIDTH,							  //End value
+		lv_anim_path_linear				  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	// lv_obj_del(game_2048);
 	// if (g_pt_PAGE_2048_game->task_handle != NULL)
-	// 	lv_task_del(g_pt_PAGE_2048_game->task_handle); /* 删除任务 */
+	// 	lv_task_del(g_pt_PAGE_2048_game->task_handle); /* Delete task */
 	if (g_pt_PAGE_2048_game->canvas_stage != NULL)
-		lv_obj_del(g_pt_PAGE_2048_game->canvas_stage); /* 删除游戏舞台 */
+		lv_obj_del(g_pt_PAGE_2048_game->canvas_stage); /* Delete the game stage */
 	if (g_pt_PAGE_2048_game->label_best_score != NULL)
-		lv_obj_del(g_pt_PAGE_2048_game->label_best_score); /* 删除最高分数对象 */
+		lv_obj_del(g_pt_PAGE_2048_game->label_best_score); /* Delete the best score object */
 	if (g_pt_PAGE_2048_game->label_current_score != NULL)
-		lv_obj_del(g_pt_PAGE_2048_game->label_current_score); /* 删除当前分数对象 */
+		lv_obj_del(g_pt_PAGE_2048_game->label_current_score); /* Delete the current score object */
 	if (g_pt_PAGE_2048_game->bg != NULL)
-		lv_obj_del(g_pt_PAGE_2048_game->bg); /* 删除背景 */
+		lv_obj_del(g_pt_PAGE_2048_game->bg); /* Delete the background */
 	lv_obj_set_click(lv_layer_top(), false);
 	lv_obj_clean(lv_layer_top());
-	lv_obj_set_event_cb(lv_layer_top(), NULL); /* 分配事件处理 */
-	/* 释放内存 */
+	lv_obj_set_event_cb(lv_layer_top(), NULL); /* Assign the event handler */
+	/* Free memory */
 	free(g_pt_PAGE_2048_game);
 }
 static void Setup(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf("     esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf("     esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
 	page_game_2048_load();
@@ -856,28 +856,28 @@ void move_task_game_2048(uint8_t move)
 	switch (move)
 	{
 
-	case BT1_LONG: //往上移动
+	case BT1_LONG: //Move up
 		PAGE_game_2048_game_key_down();
 		break;
-	case BT1_LONGFREE: //往上移动
+	case BT1_LONGFREE: //Move up
 
 		break;
-	case BT3_LONG: //往下移动
+	case BT3_LONG: //Move down
 		PAGE_game_2048_game_key_up();
 		break;
-	case BT3_LONGFREE: //往上移动
+	case BT3_LONGFREE: //Move up
 
 		break;
-	case BT1_DOWN: //往上移动
+	case BT1_DOWN: //Move up
 		PAGE_game_2048_game_key_up();
 		break;
-	case BT3_DOWN: //往下移动
+	case BT3_DOWN: //Move down
 		PAGE_game_2048_game_key_down();
 		break;
-	case BT1_DOUBLE: //往上移动
+	case BT1_DOUBLE: //Move up
 		PAGE_game_2048_game_key_left();
 		break;
-	case BT3_DOUBLE: //往下移动
+	case BT3_DOUBLE: //Move down
 		PAGE_game_2048_game_key_right();
 		break;
 	default:
@@ -885,10 +885,10 @@ void move_task_game_2048(uint8_t move)
 	}
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
@@ -896,16 +896,16 @@ static void Event(void *btn, int event)
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Game_2048(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Game_2048至页面调度器*/\r\n");
+	printf("/* Register Game_2048 with the page scheduler */\r\n");
 }

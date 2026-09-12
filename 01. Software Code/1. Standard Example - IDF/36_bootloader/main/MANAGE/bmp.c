@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        bmp.c
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK Team (ALIENTEK)
  * @version     V1.0
  * @date        2023-12-01
- * @brief       图片解码-bmp解码 代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Image decoding - BMP decoder
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台:正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -22,23 +22,23 @@
 
 
 /**
- * @brief       BMP图片解码
- * @param       filename      : 包含路径的文件名(.bmp/.jpg/.jpeg/.gif/.png等)
- * @param       width, height : 显示区域
- * @retval      返回BMP解码速度
+ * @brief       Decode a BMP image
+ * @param       filename      : File name with path (.bmp/.jpg/.jpeg/.gif/.png, etc.)
+ * @param       width, height : Display area
+ * @retval      BMP decoding speed
  */
 TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb lcd_cb)
 {
     TickType_t startTick, endTick, diffTick;
     startTick = xTaskGetTickCount();
 
-    /* 打开文件 */
+    /* Open file */
     esp_err_t ret;
     FIL* fp;
     uint16_t br = 0;
-    fp = (FIL *)malloc(sizeof(FIL));    /* 申请内存 */
+    fp = (FIL *)malloc(sizeof(FIL));    /* Allocate memory */
 
-    ret = f_open(fp, (const TCHAR *)filename, FA_READ); /* 打开文件 */
+    ret = f_open(fp, (const TCHAR *)filename, FA_READ); /* Open file */
 
     if (fp == NULL)
     {
@@ -46,11 +46,11 @@ TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb l
         return 0;
     }
 
-    /* 读取BMP首部 */
+    /* Read BMP header */
     bmpfile_t *result = (bmpfile_t*)malloc(sizeof(bmpfile_t));
     ret |= f_read(fp,result->header.magic, 2, (UINT *)&br);
 
-    /* 判断图像是否是BMP文件 */
+    /* Check whether the image is a BMP file */
     if (result->header.magic[0]!='B' || result->header.magic[1] != 'M')
     {
         ESP_LOGW(__FUNCTION__, "File is not BMP");
@@ -59,7 +59,7 @@ TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb l
         return 0;
     }
 
-    /* 读取BMP首部相关信息，如图片大小，偏移及深度等 */
+    /* Read BMP header info: image size, offset, depth, etc. */
     ret |= f_read(fp,&result->header.filesz, 4, (UINT *)&br);
     ret |= f_read(fp,&result->header.creator1, 2, (UINT *)&br);
     ret |= f_read(fp,&result->header.creator2, 2, (UINT *)&br);
@@ -76,14 +76,14 @@ TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb l
     ret |= f_read(fp,&result->dib.ncolors, 4, (UINT *)&br);
     ret |= f_read(fp,&result->dib.nimpcolors, 4, (UINT *)&br);
 
-    /* 判断BMP图像深度 */
+    /* Check BMP image depth */
     if ((result->dib.depth == 1) && (result->dib.compress_type == 0))
     {
-        /* 还未实现 */
+        /* Not implemented yet */
     }
     else if((result->dib.depth == 24) && (result->dib.compress_type == 0))
     {
-        /* BMP行填充（如果需要）到4字节边界 */
+        /* BMP row padding (if needed) to a 4-byte boundary */
         uint32_t rowSize = (result->dib.width * 3 + 3) & ~3;
         int w = result->dib.width;
         int h = result->dib.height;
@@ -123,7 +123,7 @@ TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb l
             _rowe = _rows + height - 1;
         }
 
-        uint8_t sdbuffer[3 * 20]; /* 像素缓冲区（每个像素R+G+B）*/
+        uint8_t sdbuffer[3 * 20]; /* Pixel buffer (R+G+B per pixel) */
         uint8_t *colors = (uint8_t*)malloc(h * w * 2);;
 
         for (int row = 0; row < h; row++)
@@ -134,10 +134,10 @@ TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb l
                 continue;
             }
 
-            /* 寻找扫描线的起点 */
+            /* Seek to the start of the scan line */
             int pos = result->header.offset + (h - 1 - row) * rowSize;
             f_lseek(fp, pos);
-            int buffidx = sizeof(sdbuffer); /* 强制重新加载缓冲区 */
+            int buffidx = sizeof(sdbuffer); /* Force buffer reload */
 
             for (int col = 0; col < w; col++)
             {
@@ -152,7 +152,7 @@ TickType_t bmp_decode(const char *filename, int width, int height,lcd_write_cb l
                     continue;
                 }
 
-                /* 将像素从BMP转换为TFT格式 */
+                /* Convert pixels from BMP to TFT format */
                 uint8_t b = sdbuffer[buffidx++];
                 uint8_t g = sdbuffer[buffidx++];
                 uint8_t r = sdbuffer[buffidx++];

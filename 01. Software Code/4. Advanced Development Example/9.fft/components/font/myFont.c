@@ -1957,7 +1957,7 @@ static const uint8_t glyph_bitmap[] = {
 0x1e,0xff,0xf9,0x00,0x00,0x15,0xae,0xff,0xf5,  //+@@@@%....+*%@@@@*
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x22,0x10,  //.++++........+++++
 
-/* 吧 */
+/* Chinese character U+5427 */
 0x00,0x00,0x00,0x00,0x11,0x11,0x11,0x11,0x11,0x00,  //.+......+++++++++++.
 0x0f,0xfe,0xee,0xe4,0xdf,0xff,0xff,0xff,0xff,0xb0,  //.@@@@@@*@@@@@@@@@@@.
 0x0f,0xfe,0x8f,0xf5,0xdf,0xf6,0xcf,0xc9,0xff,0xb0,  //.@@@%@@*@@@*@@@%@@@.
@@ -3111,9 +3111,9 @@ static lv_font_fmt_txt_dsc_t font_dsc = {
 static int binsearch(const uint16_t *sortedSeq, int seqLength, uint16_t keyData) {
     int low = 0, mid, high = seqLength - 1;
     while (low <= high) {
-        mid = (low + high)>>1;//Move right1bit equal to/2，odd number，Regardless of odd or even，have个值就行
+        mid = (low + high)>>1;//Right shift by 1 bit equals /2; whether odd or even, any value works
         if (keyData < sortedSeq[mid]) {
-            high = mid - 1;//yesmid-1，becausemidalreadythrough比较过了
+            high = mid - 1;//mid - 1, because mid has already been compared
         }
         else if (keyData > sortedSeq[mid]) {
             low = mid + 1;
@@ -3176,7 +3176,7 @@ static bool __user_font_get_glyph_dsc(const lv_font_t * font, lv_font_glyph_dsc_
 //AliHYAiHei-Beta,,-1
 //Font height: 27
 //internal font
-//use排序和二分查表
+//Uses sorting and binary search
 lv_font_t myFont = {
     .dsc = &font_dsc,
     .get_glyph_bitmap = __user_font_get_bitmap,

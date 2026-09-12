@@ -151,14 +151,14 @@ esp_err_t http_get_handler(httpd_req_t *req)
 
     while (true)
     {
-        fb = esp_camera_fb_get();//Get pictures
+        fb = esp_camera_fb_get();//Get image
         if (!fb)
         {
             ESP_LOGE(TAG, "Camera capture failed");
             res = ESP_FAIL;
             break;
         }
-        if (fb->format != PIXFORMAT_JPEG)//如果Get的图片格式不是JPG It's about to be converted intojpg Because of small size Fast upload The browser also displays quickly
+        if (fb->format != PIXFORMAT_JPEG)//If the acquired image format is not JPEG, convert it to JPEG: the size is small, upload is fast, and the browser displays it quickly
         {
             bool jpeg_converted = frame2jpg(fb, 50, &_jpg_buf, &_jpg_buf_len);
             if (!jpeg_converted)
@@ -180,13 +180,13 @@ esp_err_t http_get_handler(httpd_req_t *req)
         }
         if (res == ESP_OK)
         {
-            size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART, _jpg_buf_len);//Send pictures尺寸大小
+            size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART, _jpg_buf_len);//Send the image size
 
             res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
         }
         if (res == ESP_OK)
         {
-            res = httpd_resp_send_chunk(req, (const char *)_jpg_buf, _jpg_buf_len);//Send pictures
+            res = httpd_resp_send_chunk(req, (const char *)_jpg_buf, _jpg_buf_len);//Send image
         }
         if (fb->format != PIXFORMAT_JPEG)
         {
@@ -234,7 +234,7 @@ static void http_test_task(void *pvParameters)
 
     // Start the httpd server
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
-    if (httpd_start(&server, &config) == ESP_OK)//Create ahttpconnect
+    if (httpd_start(&server, &config) == ESP_OK)//Create an http connection
     {
         // Set URI handlers
         ESP_LOGI(TAG, "Registering URI handlers");
@@ -266,16 +266,16 @@ void app_main()
     printf("\n\n-------------------------------- Get Systrm Info------------------------------------------\n");
     //Get IDF version
     printf("     SDK version:%s\n", esp_get_idf_version());
-    //Get芯片可用内存
+    //Get the available memory of the chip
     printf("     esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
     //Get the minimum memory that has never been used
     printf("     esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
-    //Getmacaddress（stationmodel）
+    //Get the MAC address (station mode)
     uint8_t mac[6];
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
     sprintf(deviceUUID, "%02x%02x%02x%02x%02x%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-    app_wifi_init();//initializationwifi  
+    app_wifi_init();//Initialize WiFi
 
     init_camera();//Initialize camera
 

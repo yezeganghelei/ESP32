@@ -10,7 +10,7 @@
 /*base64.c*/
 #include "base64.h"
 
-//定义base64编码表
+// Define the base64 encoding table
 #define base64_table "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 char *base64_encode(uint8_t *str, uint32_t img_len)
@@ -19,7 +19,7 @@ char *base64_encode(uint8_t *str, uint32_t img_len)
 	long str_len;
 	char *res = NULL;
 	int i, j;
-	//计算经过base64编码后的字符串长度
+	// Calculate the length of the base64-encoded string
 	str_len = img_len;
 	if (str_len % 3 == 0)
 		len = str_len / 3 * 4;
@@ -29,13 +29,13 @@ char *base64_encode(uint8_t *str, uint32_t img_len)
 	res = malloc(sizeof(char) * len + 1);
 	res[len] = '\0';
 
-	//以3个8位字符为一组进行编码
+	// Encode in groups of three 8-bit characters
 	for (i = 0, j = 0; i < len - 2; j += 3, i += 4)
 	{
-		res[i] = base64_table[str[j] >> 2];										//取出第一个字符的前6位并找出对应的结果字符
-		res[i + 1] = base64_table[(str[j] & 0x3) << 4 | (str[j + 1] >> 4)];		//将第一个字符的后位与第二个字符的前4位进行组合并找到对应的结果字符
-		res[i + 2] = base64_table[(str[j + 1] & 0xf) << 2 | (str[j + 2] >> 6)]; //将第二个字符的后4位与第三个字符的前2位组合并找出对应的结果字符
-		res[i + 3] = base64_table[str[j + 2] & 0x3f];							//取出第三个字符的后6位并找出结果字符
+		res[i] = base64_table[str[j] >> 2];										// Take the first 6 bits of the first character and find the corresponding result character
+		res[i + 1] = base64_table[(str[j] & 0x3) << 4 | (str[j + 1] >> 4)];		// Combine the low bits of the first character with the high 4 bits of the second character
+		res[i + 2] = base64_table[(str[j + 1] & 0xf) << 2 | (str[j + 2] >> 6)]; // Combine the low 4 bits of the second character with the high 2 bits of the third character
+		res[i + 3] = base64_table[str[j + 2] & 0x3f];							// Take the low 6 bits of the third character and find the result character
 	}
 
 	switch (str_len % 3)
@@ -54,7 +54,7 @@ char *base64_encode(uint8_t *str, uint32_t img_len)
 
 uint8_t *base64_decode(uint8_t *code)
 {
-	//根据base64表，以字符找到对应的十进制数据
+	// Look up the corresponding decimal value for a character using the base64 table
 	int table[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,9 +72,9 @@ uint8_t *base64_decode(uint8_t *code)
 	uint8_t *res;
 	int i, j;
 
-	//计算解码后的字符串长度
+	// Calculate the length of the decoded string
 	len = strlen((const char *)code);
-	//判断编码后的字符串后是否有=
+	// Check whether the encoded string ends with '='
 	if (strstr((const char *)code, "=="))
 		str_len = len / 4 * 3 - 2;
 	else if (strstr((const char *)code, "="))
@@ -85,12 +85,12 @@ uint8_t *base64_decode(uint8_t *code)
 	res = malloc(sizeof(uint8_t) * str_len + 1);
 	res[str_len] = '\0';
 
-	//以4个字符为一位进行解码
+	// Decode in groups of four characters
 	for (i = 0, j = 0; i < len - 2; j += 3, i += 4)
 	{
-		res[j] = ((uint8_t)table[code[i]]) << 2 | (((uint8_t)table[code[i + 1]]) >> 4);			  //取出第一个字符对应base64表的十进制数的前6位与第二个字符对应base64表的十进制数的后2位进行组合
-		res[j + 1] = (((uint8_t)table[code[i + 1]]) << 4) | (((uint8_t)table[code[i + 2]]) >> 2); //取出第二个字符对应base64表的十进制数的后4位与第三个字符对应bas464表的十进制数的后4位进行组合
-		res[j + 2] = (((uint8_t)table[code[i + 2]]) << 6) | ((uint8_t)table[code[i + 3]]);		  //取出第三个字符对应base64表的十进制数的后2位与第4个字符进行组合
+		res[j] = ((uint8_t)table[code[i]]) << 2 | (((uint8_t)table[code[i + 1]]) >> 4);			  // Combine the high 6 bits of the first character with the low 2 bits of the second character
+		res[j + 1] = (((uint8_t)table[code[i + 1]]) << 4) | (((uint8_t)table[code[i + 2]]) >> 2); // Combine the low 4 bits of the second character with the high 4 bits of the third character
+		res[j + 2] = (((uint8_t)table[code[i + 2]]) << 6) | ((uint8_t)table[code[i + 3]]);		  // Combine the low 2 bits of the third character with the fourth character
 	}
 
 	return res;

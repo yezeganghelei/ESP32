@@ -40,11 +40,11 @@ extern "C"
 
 typedef struct
 {
-	const void *img_buffer; //图标图像数据
-	const char *text;		//文字描述
-	lv_obj_t *img;			//图标img对象
-	bool focus;				//图标当前是否被聚焦
-	uint8_t pageID;			//对应的页面ID
+	const void *img_buffer; //Icon image data
+	const char *text;		//Text description
+	lv_obj_t *img;			//Icon img object
+	bool focus;				//Whether the icon is currently focused
+	uint8_t pageID;			//Corresponding page ID
 } ICON_TypeDef;
 
 

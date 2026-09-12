@@ -4,13 +4,13 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    DHT11experiment
+ * @brief    DHT11 experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：ReadDS18B20The temperature and humidity of the sensor
+ * Experiment purpose: Read the temperature and humidity of the DHT11 sensor
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1, LED --> ESP32S3 IO
  *      LED --> IO1
  * 2, XL9555-->ESP32S3 IO
@@ -27,9 +27,9 @@
  * 4, DHT11-->ESP32S3 IO
  *      DQ --> IO0(Jumper cap connection)
 
- * experiment现象
- * 1, LCDThe display updates the temperature and humidity values ​​in real time。
- * 2, LEDflashing，Prompt the program to run。
+ * Experiment phenomenon
+ * 1, The LCD display updates the temperature and humidity values in real time.
+ * 2, The LED flashes, indicating that the program is running.
 
  * Things to note
  * none
@@ -59,19 +59,19 @@ if __name__ == '__main__':
     # XL9555 Initialization
     xl9555 = io_ex.init(i2c0)
     
-    # ResetLCD
+    # Reset LCD
     xl9555.write_bit(io_ex.SLCD_RST,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.SLCD_RST,1)
     time.sleep_ms(100)
-    # initializationSPI
+    # Initialize SPI
     spi = SPI(2,baudrate = 80000000, sck = Pin(12), mosi = Pin(11), miso = Pin(13))
-    # initializationLCD,lcd = 0for2.4inchScreen;lcd = 1for1.3inchSPILCDScreen;
+    # Initialize LCD; lcd = 0 for a 2.4-inch screen, lcd = 1 for a 1.3-inch SPI LCD screen;
     display = lcd.init(spi,dc = Pin(40,Pin.OUT,Pin.PULL_UP,value = 1),cs = Pin(21,Pin.OUT,Pin.PULL_UP,value = 1),dir = 1,lcd = 0)
     # Turn on the backlight
     xl9555.write_bit(io_ex.SLCD_PWR,1)
     time.sleep_ms(100)
-    # 提示experiment信息
+    # Display experiment information
     display.string(5, 10, 240, 32, 32, "ESP32-S3",lcd.RED)
     display.string(5, 43, 240, 24, 24, "DHT11 TEST",lcd.RED)
     display.string(5, 68, 240, 16, 16, "ATOM@ALIENTEK",lcd.RED)
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     
     while True:
         
-        # Measurement data
+        # Measure data
         dht11.measure()
         # Extract temperature data
         temperature = float(dht11.temperature())

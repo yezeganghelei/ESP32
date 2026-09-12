@@ -20,12 +20,12 @@ esp_lcd_panel_handle_t panel_handle = NULL;                         /* RGBLCDHan
 static portMUX_TYPE my_spinlock = portMUX_INITIALIZER_UNLOCKED;     /* definitionportMUX_TYPEtypeofSpinlock variable,For critical area protection */
 uint32_t g_back_color  = 0xFFFF;                                    /* Background color */
 
-/* manageLTDC重wantparameter */
+/* LTDC management parameters */
 _ltdc_dev ltdcdev;
 
 /**
  * @brief       LTDCRead panelID
- * @note        profituseLCD RGBWireof最highBit(R7,G7,B7)To identifypanelID
+ * @note        Use the highest bits of the LCD RGB lines (R7, G7, B7) to identify the panel ID
  *              PG6 = R7(M0); PI2 = G7(M1); PI7 = B7(M2);
  *              M2:M1:M0
  *              0 :0 :0     4.3 inch480*272  RGBscreen,ID = 0X4342
@@ -109,13 +109,13 @@ void ltdc_init(void)
         .hsync_gpio_num = GPIO_NUM_NC,          /* HSYNCSignal pin,DEMode is not used */
         .vsync_gpio_num = GPIO_NUM_NC,          /* VSYNCSignal pin,DEMode is not used */
         .de_gpio_num = GPIO_LCD_DE,             /* DESignal pin */
-        .data_gpio_nums = {                     /* numberaccording toWire引脚 */
+        .data_gpio_nums = {                     /* Data line pins */
             GPIO_LCD_B3, GPIO_LCD_B4, GPIO_LCD_B5, GPIO_LCD_B6, GPIO_LCD_B7,
             GPIO_LCD_G2, GPIO_LCD_G3, GPIO_LCD_G4, GPIO_LCD_G5, GPIO_LCD_G6, GPIO_LCD_G7,
             GPIO_LCD_R3, GPIO_LCD_R4, GPIO_LCD_R5, GPIO_LCD_R6, GPIO_LCD_R7,
         },
         .timings = {                            /* RGBLCDhour sequence parameter */
-            .pclk_hz = ltdcdev.pclk_hz,         /* Pixelshourbell频率 */
+            .pclk_hz = ltdcdev.pclk_hz,         /* Pixel clock frequency */
             .h_res = ltdcdev.pwidth,            /* Horizontal resolution，That is, in a lineofPixelsnumber */
             .v_res = ltdcdev.pheight,           /* Vertical resolution, that is, ofNumber of rows in frame */
             .hsync_back_porch = ltdcdev.hbp,    /* PCLK number between horizontal back porch, hsync and row activity data start */
@@ -207,7 +207,7 @@ void ltdc_display_dir(uint8_t dir)
     {
         ltdcdev.width = ltdcdev.pwidth;
         ltdcdev.height = ltdcdev.pheight;
-        esp_lcd_panel_swap_xy(panel_handle, false);         /* No需wantexchangeXandYaxis */
+        esp_lcd_panel_swap_xy(panel_handle, false);         /* X and Y axes do not need to be swapped */
         esp_lcd_panel_mirror(panel_handle, false, false);   /* To the screenXYThe axis is not mirrored */
     }
 }
@@ -243,7 +243,7 @@ void ltdc_color_fill(uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey, uint16_
         return; /* Coordinates exceedLCDscope，Don't executefilling */
     }  
       
-    /* make sureStart coordinates小AtEnd coordinates */
+    /* Ensure the start coordinates are smaller than the end coordinates */
     if (sx > ex || sy > ey)
     {
         return; /* Invalid fill area，Don't executefilling */
@@ -281,7 +281,7 @@ void ltdc_app_show_mono_icos(uint16_t x,uint16_t y,uint8_t width,uint8_t height,
     uint8_t temp;
     uint8_t t = 0;
     uint16_t x0 = x;//reservexofBit
-    rsize = width / 8 + ((width % 8) ? 1 : 0);//Each lineofCharacter节number
+    rsize = width / 8 + ((width % 8) ? 1 : 0);// Number of bytes per line
 
     for (i = 0;i < rsize * height;i++)
     {
@@ -360,7 +360,7 @@ void ltdc_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t
 
     if ( delta_x > delta_y)
     {
-        distance = delta_x; /* 选取基本增量coordinateaxis */
+        distance = delta_x; /* Select the dominant increment axis */
     }
     else
     {
@@ -459,7 +459,7 @@ void ltdc_show_char(uint16_t x, uint16_t y, char chr, uint8_t size, uint8_t mode
     uint8_t *pfont = 0;
 
     csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size / 2); /* Get the number of bytes occupied by a character in the font corresponding to the dot matrix set */
-    chr = (char)chr - ' ';      /* 得到偏shift后ofvalue（ASCIIFont library starts with spaces to get the modulus，so-' 'It is the font library for corresponding characters） */
+    chr = (char)chr - ' ';      /* Get the offset value (the ASCII font starts with a space, so subtract ' ' to index the corresponding character) */
 
     switch (size)
     {
@@ -485,7 +485,7 @@ void ltdc_show_char(uint16_t x, uint16_t y, char chr, uint8_t size, uint8_t mode
 
     for (t = 0; t < csize; t++)
     {
-        temp = pfont[t];                                    /* 获取Character符oflatticenumberaccording to */
+        temp = pfont[t];                                    /* Get the dot matrix data of the character */
 
         for (t1 = 0; t1 < 8; t1++)                          /* One byte8One dot */
         {
@@ -564,7 +564,7 @@ void ltdc_show_num(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t si
             }
             else
             {
-                enshow = 1;                                                 /* make能show */
+                enshow = 1;                                                 /* Enable display */
             }
         }
 
@@ -598,7 +598,7 @@ void ltdc_show_xnum(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t s
         {
             if (temp == 0)
             {
-                if (mode & 0x80)                                                            /* highBit需wantfilling0 */
+                if (mode & 0x80)                                                            /* The high bit requires zero padding */
                 {
                     ltdc_show_char(x + (size / 2) * t, y, '0', size, mode & 0x01, color);   /* use0 accounts for Bit */
                 }
@@ -611,7 +611,7 @@ void ltdc_show_xnum(uint16_t x, uint16_t y, uint32_t num, uint8_t len, uint8_t s
             }
             else
             {
-                enshow = 1;                                                                 /* make能show */
+                enshow = 1;                                                                 /* Enable display */
             }
 
         }

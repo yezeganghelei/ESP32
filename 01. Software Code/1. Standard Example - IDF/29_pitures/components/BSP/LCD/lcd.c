@@ -25,7 +25,7 @@ spi_device_handle_t MY_LCD_Handle;
 uint8_t lcd_buf[LCD_TOTAL_BUF_SIZE];
 lcd_obj_t lcd_self;
 
-/* LCDneedinitializationone组命令/Parameter value。They are stored in this structure  */
+/* Commands/parameter values needed to initialize the LCD. They are stored in this structure */
 typedef struct
 {
     uint8_t cmd;
@@ -215,7 +215,7 @@ void lcd_scan_dir(uint8_t dir)
             break;
     }
 
-    dirreg = 0x36;                              /* For most driversIC, Depend on0X36register控制 */
+    dirreg = 0x36;                              /* For most driver ICs, controlled by register 0x36 */
     
     uint8_t date_send[1] = {regval};
     
@@ -349,7 +349,7 @@ void lcd_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t 
     
     if( delta_x>delta_y)
     {
-        distance = delta_x;                 /* 选取基本Incrementcoordinateaxis */
+        distance = delta_x;                 /* Select the dominant increment axis */
     }
     else
     {
@@ -391,7 +391,7 @@ void lcd_draw_hline(uint16_t x, uint16_t y, uint16_t len, uint16_t color)
 }
 
 /**
- * @brief       画oneindivualrectangle
+ * @brief       Draw a rectangle
  * @param       x1,y1   Starting point coordinates
  * @param       x2,y2   End point coordinates
  * @param       color Fill color
@@ -406,8 +406,8 @@ void lcd_draw_rectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,uint1
 }
 
 /**
- * @brief       画oneindivualround
- * @param       x0,y0   round心coordinate
+ * @brief       Draw a circle
+ * @param       x0,y0   Center coordinates
  * @param       r   Circle radius
  * @param       color Fill color
  * @retval      none
@@ -738,7 +738,7 @@ void lcd_init(void)
 
     lcd_hard_reset();                                               /* LCD hardware reset */
 
-    /* initialization代码 */
+    /* Initialization code */
 #if SPI_LCD_TYPE                                                    /* Set the 2.4-inch LCD register */
     lcd_init_cmd_t ili_init_cmds[] =
     {
@@ -750,7 +750,7 @@ void lcd_init(void)
         {0, {0}, 0xff},
     };
 
-#else                                                               /* Not for0则视为makeuse1.3inchSPILCDscreen，Then the screen will not display inversely */
+#else                                                               /* If not 0, treat it as a 1.3-inch SPI LCD screen, which does not display inversely */
     lcd_init_cmd_t ili_init_cmds[] =
     {
         {0x11, {0}, 0x80},

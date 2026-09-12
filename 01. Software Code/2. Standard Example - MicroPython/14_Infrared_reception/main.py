@@ -8,9 +8,9 @@
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：学习Infrared remote control的使用
+ * Experiment purpose: Learn to use the infrared remote control
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,     LED --> ESP32S3 IO
  *        LED --> IO1
  * 2,  XL9555 --> ESP32S3 IO
@@ -27,10 +27,11 @@
  * 4,    R_IN --> ESP32S3 IO
  *         IN --> IO2
 
- * experiment现象
- * 1.本experiment开机在LCDAfter displaying some information on it，Enter and wait for infrared trigger，If the correct infrared signal is received，
-     Then decode，And inLCDDisplay the key value and its meaning，and information such as the number of key presses。
- * 2.LEDflashing, Prompt program to run。
+ * Experiment phenomenon
+ * 1, In this experiment, after some information is displayed on the LCD at power-on, the program
+ *    waits for an infrared trigger. If the correct infrared signal is received, it is decoded and
+ *    the key value, its meaning and the number of key presses are displayed on the LCD.
+ * 2, The LED flashes, indicating that the program is running.
 
  * Things to note
  * none
@@ -53,22 +54,22 @@ import time
 """
 if __name__ == "__main__":
     
-    # initializationLED
+    # Initialize LED
     led = Pin(1,Pin.OUT, value = 1)
     # IIC Initialization
     i2c0 = I2C(0, scl = Pin(42), sda = Pin(41), freq = 400000)
     # XL9555 initialization
     xl9555 = io_ex.init(i2c0)
     
-    # ResetLCD
+    # Reset LCD
     xl9555.write_bit(io_ex.SLCD_RST,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.SLCD_RST,1)
     time.sleep_ms(100)
     
-    # initializationSPI
+    # Initialize SPI
     spi = SPI(2,baudrate = 80000000, sck = Pin(12), mosi = Pin(11), miso = Pin(13))
-    # initializationLCD,lcd = 0for2.4inchScreen;lcd = 1for1.3inchSPILCDScreen;
+    # Initialize LCD; lcd = 0 for a 2.4-inch screen, lcd = 1 for a 1.3-inch SPI LCD screen;
     display = lcd.init(spi,dc = Pin(40,Pin.OUT,Pin.PULL_UP,value = 1),cs = Pin(21,Pin.OUT,Pin.PULL_UP,value = 1),dir = 1,lcd = 0)
     xl9555.write_bit(io_ex.SLCD_PWR,1)
     time.sleep_ms(100)
@@ -89,4 +90,4 @@ if __name__ == "__main__":
         display.string(30 + 11 * 8, 150, 200, 16, 16, str(key_str), lcd.BLUE)
         led_state = led.value()
         led.value(not led_state)
-        time.sleep_ms(500)         # Delay500ms
+        time.sleep_ms(500)         # Delay 500 ms

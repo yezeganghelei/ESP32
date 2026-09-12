@@ -102,11 +102,11 @@ void app_main(void)
     ret = exfuns_init();        /* Apply for memory for fatfs-related variables */
 
     text_show_string(30, 30, 200, 16, "ESP32Development board", 16, 0, RED);
-    text_show_string(30, 50, 200, 16, "视频播放器experiment", 16, 0, RED);
+    text_show_string(30, 50, 200, 16, "Video player experiment", 16, 0, RED);
     text_show_string(30, 70, 200, 16, "@ALIENTEK", 16, 0, RED);
     text_show_string(30, 90, 200, 16, "KEY0:NEXT KEY2:PREV ", 16, 0, RED);
     text_show_string(30, 110, 200, 16, "KEY_UP:FF   KEY1:REW", 16, 0, RED);
-    vTaskDelay(500);            /* experiment信息显示延时 */
+    vTaskDelay(500);            /* Delay for experiment information display */
 
     while (1)
     {

@@ -21,7 +21,7 @@
 #define SECTOR_SIZE         0X1000
 
 /* PartitionsurfaceFont libraryStorage startaddress
- * UNIGBK.BIN,Total size3.09M, 791sectors,quiltFont library占用It's,Can't move!
+ * UNIGBK.BIN, total size 3.09M, 791 sectors, occupied by the font library, cannot be moved!
  */
 #define FONTINFOADDR        0
 
@@ -40,7 +40,7 @@ char *const FONT_GBK_PATH[4] =
     "/SYSTEM/FONT/GBK24.FON",       /* GBK24Storage location */
 };
 
-/* renew时的提Showinformation */
+/* Prompt displayed during update */
 char *const FONT_UPDATE_REMIND_TBL[4] =
 {
     "Updating UNIGBK.BIN",          /* Prompt to renewUNIGBK.bin */
@@ -126,7 +126,7 @@ esp_err_t fonts_partition_erase_sector(uint32_t offset)
 }
 
 /**
- * @brief       显Show当前字体renewschedule
+ * @brief       Show the current font update progress
  * @param       x, y    : coordinate
  * @param       size    : Font size
  * @param       totsize : The entire file size
@@ -238,7 +238,7 @@ static uint8_t fonts_update_fontx(uint16_t x, uint16_t y, uint8_t size, uint8_t 
 
 /**
  * @brief       renewFont file
- *   @note      allFont libraryone起renew(UNIGBK,GBK12,GBK16,GBK24)
+ *   @note      Update all font libraries together (UNIGBK, GBK12, GBK16, GBK24)
  * @param       x, y    : The display address of the prompt message
  * @param       size    : Prompt message font size
  * @param       src     : Font librarySource magnetplate
@@ -319,7 +319,7 @@ uint8_t fonts_update_font(uint16_t x, uint16_t y, uint8_t size, uint8_t *src, ui
             }
         }
 
-        /* allrenew好It's */
+        /* All updates completed */
         ftinfo.fontok = 0XAA;
         fonts_partition_write((uint8_t *)&ftinfo, FONTINFOADDR, sizeof(ftinfo));    /* Save font library information */
     }

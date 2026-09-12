@@ -4,21 +4,23 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    SDexperiment
+ * @brief    SD experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：How to driveSDCard，And realize read and write operations
+ * Experiment purpose: How to drive the SD card and implement read and write operations
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,   SD --> ESP32S3 IO
  *    SDCS --> IO2
  *     SCK --> IO12
  *    MOSI --> IO11
  *    MISO --> IO13
 
- * experiment现象
- * 1, 本experiment代码,首先读取mountSDSystem file directory before the card，mount成功之后再次读取系统文件目录，At this time, the system file directory containssdCard文件夹，Then rightSDRead and write files on the card。
+ * Experiment phenomenon
+ * 1, In this experiment code, the system file directory is first read before mounting the SD card.
+ *    After a successful mount, the system file directory is read again; it now contains the sd card
+ *    folder. Files on the SD card are then read and written.
 
  * Things to note
  * none
@@ -48,17 +50,17 @@ if __name__ == '__main__':
     # XL9555 Initialization
     xl9555 = io_ex.init(i2c0)
     
-    # resetLCD
+    # Reset LCD
     xl9555.write_bit(io_ex.SLCD_RST,0)
     time.sleep_ms(100)
     xl9555.write_bit(io_ex.SLCD_RST,1)
     time.sleep_ms(100)
     
-    # initializationSPI
+    # Initialize SPI
     spi = SPI(2,baudrate = 24000000, sck = Pin(12), mosi = Pin(11), miso = Pin(13))
-    # initializationLCD,lcd = 0for2.4inchScreen;lcd = 1for1.3inchSPILCDScreen;
+    # Initialize LCD; lcd = 0 for a 2.4-inch screen, lcd = 1 for a 1.3-inch SPI LCD screen;
     display = lcd.init(spi,dc = Pin(40,Pin.OUT,Pin.PULL_UP,value = 1),cs = Pin(21,Pin.OUT,Pin.PULL_UP,value = 1),dir = 1,lcd = 0)
-    # Turn on backlight
+    # Turn on the backlight
     xl9555.write_bit(io_ex.SLCD_PWR,1)
     time.sleep_ms(100)
     sd = SDCard(spi,Pin(2,Pin.OUT))
@@ -67,18 +69,18 @@ if __name__ == '__main__':
     display.string(30, 80, 240, 24, 24, "SD TEST",lcd.RED)
     display.string(30, 110, 240, 16, 16, "ATOM@ALIENTEK",lcd.RED)
     display.string(30, 130, 200, 16, 16, "File Read:", lcd.BLUE)
-    # Hang to SD/sd
+    # Mount the SD card at /sd
     uos.mount(sd,'/sd')
     # Re-query the system file directory
     print('mountSDThe system directory after:{}'.format(uos.listdir()))
     with open("/sd/test.txt", "w") as f:
             f.write(str("Hello ALIENTEK"))
 
-    # fromsdRead in the card directoryhello.txtFile content
+    # Read the contents of test.txt from the sd directory
     with open("/sd/test.txt", "r") as f:
         # Print the read content
         data = f.read()
     
     display.string(130, 130, 200, 16, 16, str(data), lcd.BLUE)
-    # UnloadSDCard  
+    # Unmount the SD card  
     uos.umount('/sd')

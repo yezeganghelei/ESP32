@@ -4,18 +4,18 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    LEDexperiment
+ * @brief    LED experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：How to light up oneLED
+ * Experiment purpose: How to light up one LED
 
- * Hardware resources and pin allocation： 
+ * Hardware resources and pin allocation: 
  * 1, LED --> ESP32S3 IO
  *    LED --> IO1
 
- * experiment现象
- * 1, LEDEvery500msFlashing。
+ * Experiment phenomenon
+ * 1, The LED flashes every 500 ms.
 
  * Things to note
  * none
@@ -40,7 +40,7 @@ if  __name__ == '__main__':
     
     while True:
         
-        led.value(0)                    # set upGPIO1Output low level
-        time.sleep_ms(500)              # Delay500ms
+        led.value(0)                    # Set GPIO1 output low level
+        time.sleep_ms(500)              # Delay 500 ms
         led.value(1)                    # Set GPIO1 output high level
-        time.sleep_ms(500)              # Delay500ms
+        time.sleep_ms(500)              # Delay 500 ms

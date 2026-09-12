@@ -8,9 +8,9 @@
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * Purpose of the experiment：How to drive4.3inchRGBscreen
+ * Purpose of the experiment: How to drive a 4.3-inch RGB screen
 
- * Hardware resources and pin assignments： 
+ * Hardware resources and pin assignments: 
  * 1,     LED --> ESP32S3 IO
  *        LED --> IO1
  * 2,  XL9555 --> ESP32S3 IO
@@ -41,8 +41,9 @@
  *     LCD_B7 --> IO6
 
  * Experimental phenomenon
- * 1, After the program download is successful，RGBDisplay experimental information，并Refresh color。
- * 2, LEDFlashing，Prompt program to run。
+ * 1, After the program is downloaded successfully, the RGB screen displays the experiment information
+ *    and refreshes the color.
+ * 2, The LED flashes, indicating that the program is running.
 
  * Things to note
  * none
@@ -74,13 +75,13 @@ if __name__ == '__main__':
     
     # Initialize RGB
     display = ltdc.init(dir = 1)
-    # OpenRGBscreen背光
+    # Turn on the RGB screen backlight
     xl9555.write_bit(io_ex.LCD_BL,1)
     time.sleep_ms(100)
     
     while True:
         
-        #Create a dictionary
+        # Create a dictionary
         seasondict = {
         0: ltdc.BLACK,
         1: ltdc.BLUE,
@@ -90,9 +91,9 @@ if __name__ == '__main__':
         5: ltdc.MAGENTA,
         6: ltdc.YELLOW}
 
-        #Refresh color
+        # Refresh color
         display.clear(seasondict[x])
-        #display font
+        # Display text
         display.string(0, 5, 240, 32, 32, "ESP32S3",ltdc.RED)
         display.string(0, 34, 240, 16, 16, "RGB Test",ltdc.RED)
         display.string(0, 50, 240, 16, 16, "ATOM@ALIENTEK",ltdc.RED)

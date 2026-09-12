@@ -27,7 +27,7 @@ static void Add_Button(Button_t *btn);
   * @brief   Button creation
 	* @param   name : Button name
 	* @param   btn : Button structure
-  * @param   read_btn_level : Key level reading function，Users need to implement return by themselvesuint8_ttype level
+  * @param   read_btn_level : Key level read function; the user must implement it to return a uint8_t level
   * @param   btn_trigger_level : Key trigger level
   * @return  NULL
   * @author  jiejie
@@ -168,7 +168,7 @@ uint8_t Get_Button_State(Button_t *btn)
   * @github  https://github.com/jiejieTop
   * @date    2018-xx-xx
   * @version v1.0
-  * @note    This function must be called at a certain period，The recommended period is20~50ms
+  * @note    This function must be called at a certain period; the recommended period is 20~50ms
   ***********************************************************/
 void Button_Cycle_Process(Button_t *btn)
 {
@@ -179,7 +179,7 @@ void Button_Cycle_Process(Button_t *btn)
     btn->Button_Last_Level = current_level; //Update current key level
     btn->Debounce_Time = 0;                 //Confirmed by pressing
 
-    //If the last status button was not pressed，Change button state to pressed(first press/double click按下)
+    //If the previous state was not pressed, change the button state to pressed (first press of a double click)
     if (((btn->Button_State == NONE_TRIGGER) || (btn->Button_State == BUTTON_DOUBLE)))
     {
       btn->Button_State = BUTTON_DOWN;
@@ -241,7 +241,7 @@ void Button_Cycle_Process(Button_t *btn)
 
 #else
 
-        if (++(btn->Button_Cycle) >= BUTTON_LONG_CYCLE) //连续触发Long press的周期
+        if (++(btn->Button_Cycle) >= BUTTON_LONG_CYCLE) //Period of continuous long-press triggering
         {
           btn->Button_Cycle = 0;
           btn->Button_Trigger_Event = BUTTON_LONG;
@@ -264,7 +264,7 @@ void Button_Cycle_Process(Button_t *btn)
 
   case BUTTON_UP: // Pop up state
   {
-    if (btn->Button_Trigger_Event == BUTTON_DOWN) //触发click
+    if (btn->Button_Trigger_Event == BUTTON_DOWN) //Trigger click
     {
       if ((btn->Timer_Count <= BUTTON_DOUBLE_TIME) && (btn->Button_Last_State == BUTTON_DOUBLE)) // double click
       {

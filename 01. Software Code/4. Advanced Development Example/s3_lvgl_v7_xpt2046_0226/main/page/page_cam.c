@@ -28,7 +28,7 @@
 #include "lv_port_indev.h"
 #define TAG "PAGE_CAM"
 
-lv_obj_t *img_cam; //要显示图像
+lv_obj_t *img_cam; //Image to display
 lv_group_t *group_button;
 extern lv_img_dsc_t imgfft;
 extern lv_img_dsc_t img_dsc;
@@ -36,15 +36,15 @@ extern camera_fb_t *fb;
 RESULT Resu;
 uint8_t color_type = 0;
 TARGET_CONDI Condition[3] = {
-	{50, 120, 70, 250, 10, 180, 40, 40, 120, 120},	//绿色
-	{180, 255, 70, 250, 10, 180, 40, 40, 120, 120}, //红色
-	{130, 170, 70, 250, 10, 180, 40, 40, 120, 120}, //蓝色
+	{50, 120, 70, 250, 10, 180, 40, 40, 120, 120},	//Green
+	{180, 255, 70, 250, 10, 180, 40, 40, 120, 120}, //Red
+	{130, 170, 70, 250, 10, 180, 40, 40, 120, 120}, //Blue
 };
 
 void Cam_Task(void *pvParameters)
 {
 
-	// /* 入口处检测一次 */
+	// /* Detect once at entry */
 	ESP_LOGI(TAG, "Run Run uxHighWaterMark = %d", uxTaskGetStackHighWaterMark(NULL));
 	// FILE *fp = NULL;
 	portTickType xLastWakeTime;
@@ -109,58 +109,58 @@ void Cam_Task(void *pvParameters)
 		vTaskDelay(2000 / portTICK_PERIOD_MS);
 	}
 }
-//当前界面是菜单时MOVE任务要做的事情
+//What the MOVE task should do when the current screen is the menu
 void move_task_cam(uint8_t move)
 {
 
 	switch (move)
 	{
-	case BT1_DOWN: //往上移动
+	case BT1_DOWN: //Move up
 		// color_type--;
 		// color_type = color_type <= 0 ? 0 : color_type;
 		break;
-	case BT1_LONG: //往上移动
+	case BT1_LONG: //Move up
 
 		break;
-	case BT1_LONGFREE: //往上移动
+	case BT1_LONGFREE: //Move up
 		break;
-	case BT3_DOWN: //往下移动
+	case BT3_DOWN: //Move down
 		// color_type++;
 		// color_type = color_type >= 2 ? 2 : color_type;
 		break;
-	case BT3_LONG: //往下移动
+	case BT3_LONG: //Move down
 
 		break;
-	case BT3_LONGFREE: //往上移动
+	case BT3_LONGFREE: //Move up
 		break;
 
 	default:
 		break;
 	}
 }
-//当前界面是菜单时MOVE任务要做的事情
+//What the MOVE task should do when the current screen is the menu
 void move_task_color(uint8_t move)
 {
 
 	switch (move)
 	{
-	case BT1_DOWN: //往上移动
+	case BT1_DOWN: //Move up
 		color_type--;
 		color_type = color_type < 0 ? 0 : color_type;
 		break;
-	case BT1_LONG: //往上移动
+	case BT1_LONG: //Move up
 
 		break;
-	case BT1_LONGFREE: //往上移动
+	case BT1_LONGFREE: //Move up
 		break;
-	case BT3_DOWN: //往下移动
+	case BT3_DOWN: //Move down
 		color_type++;
 		color_type = color_type > 2 ? 2 : color_type;
 		break;
-	case BT3_LONG: //往下移动
+	case BT3_LONG: //Move down
 
 		break;
-	case BT3_LONGFREE: //往上移动
+	case BT3_LONGFREE: //Move up
 		break;
 
 	default:
@@ -196,7 +196,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -213,7 +213,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -226,12 +226,12 @@ void page_cam_load()
 	app_camera_init();
 	imgcam_init();
 	obj_add_anim(
-		img_cam,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		240,							   //起始值
-		0,								   //结束值
-		lv_anim_path_linear				   //动画特效:模拟弹性物体下落
+		img_cam,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		240,							   //Start value
+		0,								   //End value
+		lv_anim_path_linear				   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	xTaskCreatePinnedToCore(&Cam_Task, "Cam_Task", 1024 * 5, NULL, 14, NULL, 0);
@@ -245,12 +245,12 @@ static void Exit(void)
 	vTaskDelay(200);
 	esp_camera_deinit();
 	obj_add_anim(
-		img_cam,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,								   //起始值
-		240,							   //结束值
-		lv_anim_path_linear				   //动画特效:模拟弹性物体下落
+		img_cam,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,								   //Start value
+		240,							   //End value
+		lv_anim_path_linear				   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	if (fb)
@@ -264,9 +264,9 @@ static void Exit(void)
 
 static void Setup_Cam(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" page_cam_start    esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" page_cam_start    esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	cam_en = 1;
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
@@ -274,9 +274,9 @@ static void Setup_Cam(void)
 }
 static void Setup_Color(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" page_cam_start    esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" page_cam_start    esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	cam_en = 1;
 	color_en = 1;
@@ -285,9 +285,9 @@ static void Setup_Color(void)
 }
 static void Setup_Face(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" page_cam_start    esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" page_cam_start    esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
@@ -297,54 +297,54 @@ static void Setup_Face(void)
 	xTaskCreatePinnedToCore(&Face_DEC, "Face_DEC", 1024 * 4, NULL, 5, NULL, 0);
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Cam(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup_Cam, NULL, Exit, NULL);
-	printf("/*注册Cam至页面调度器*/");
+	printf("/* Register Cam with the page scheduler */");
 }
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Color(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup_Color, NULL, Exit, NULL);
-	printf("/*注册Color至页面调度器*/");
+	printf("/* Register Color with the page scheduler */");
 }
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Face(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup_Face, NULL, Exit, NULL);
-	printf("/*注册Face至页面调度器*/");
+	printf("/* Register Face with the page scheduler */");
 }

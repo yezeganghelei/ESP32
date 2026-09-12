@@ -18,7 +18,7 @@ uint8_t frameup;
 esp_timer_handle_t esp_tim_handle;                          /* Timer callback function handle */
 
 /**
- * @brief       初始化高分辨率Timer
+ * @brief       Initialize the high-resolution timer
  * @param       arr: Automatic reinstall value
  * @param       tp: Timer cycle
  * @retval      none
@@ -36,17 +36,17 @@ void esptim_int_init(uint16_t arr, uint64_t tp)
     /* Configure timer */
     esp_timx_handle.alarm_en = TIMER_ALARM_DIS;             /* Disable timer alarm */
     esp_timx_handle.counter_en = TIMER_START;               /* Enable timer */
-    esp_timx_handle.intr_type = TIMER_INTR_MAX;             /* Configure timer中断模式 */
+    esp_timx_handle.intr_type = TIMER_INTR_MAX;             /* Configure timer interrupt mode */
     esp_timx_handle.counter_dir = TIMER_COUNT_UP;           /* Incremental Count Mode */
     esp_timx_handle.auto_reload = arr;                      /* Auto reload value */
-    esp_timx_handle.clk_src = TIMER_SRC_CLK_DEFAULT;        /* Configure timer中断源 */
+    esp_timx_handle.clk_src = TIMER_SRC_CLK_DEFAULT;        /* Configure timer interrupt source */
 
     esp_timer_create(&tim_periodic_arg, &esp_tim_handle);   /* Create an event */
     esp_timer_start_periodic(esp_tim_handle, tp);           /* Triggered once per cycle */
 }
 
 /**
- * @brief       Timer回调函数
+ * @brief       Timer callback function
  * @param       none
  * @retval      none
  */

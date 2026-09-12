@@ -30,7 +30,7 @@ static void text_get_hz_mat(unsigned char *code, unsigned char *mat, uint8_t siz
     unsigned long foffset;
     uint8_t csize;
     
-    csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size);             /* 计算字体onecharacterCorresponding to the dot matrix setbytenumber */
+    csize = (size / 8 + ((size % 8) ? 1 : 0)) * (size);             /* Calculate the number of bytes of the dot matrix for one character */
     qh = *code;
     ql = *(++code);
     if ((qh < 0x81) || (ql < 0x40) || (ql == 0xFF) || (qh == 0xFF)) /* Very use of Chinese characters */
@@ -93,7 +93,7 @@ void text_show_font(uint16_t x, uint16_t y, uint8_t *font, uint8_t size, uint8_t
     uint8_t csize;
     uint8_t font_size = size;
     
-    csize = (font_size / 8 + ((font_size % 8) ? 1 : 0)) * (font_size);         /* 计算字体onecharacterCorresponding to the dot matrix setbytenumber */
+    csize = (font_size / 8 + ((font_size % 8) ? 1 : 0)) * (font_size);         /* Calculate the number of bytes of the dot matrix for one character */
     
     if ((font_size != 12) && (font_size != 16) && (font_size != 24))
     {

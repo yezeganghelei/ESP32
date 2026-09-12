@@ -2958,10 +2958,10 @@ uint16_t uni2gbk2(uint16_t uni)
 }
 
 /**
- * @brief       Will gbkchange为 utf8
+ * @brief       Convert GBK to UTF-8
  * @param       pin_buf:Input buffer
  * @param       in_len :Enter the length
- * @retval      change换后的length, < 0 fail,Other success
+ * @retval      Length after conversion, < 0 fail, otherwise success
  */
 int convet_gbk_to_utf8(char **ptr, void *pin_buf, int in_len)
 {
@@ -3013,10 +3013,10 @@ int convet_gbk_to_utf8(char **ptr, void *pin_buf, int in_len)
 }
 
 /**
- * @brief       Will utf8change为 gbk
+ * @brief       Convert UTF-8 to GBK
  * @param       pin_buf:Input buffer
  * @param       in_len :Enter the length
- * @retval      change换后的length, < 0 fail,Other success
+ * @retval      Length after conversion, < 0 fail, otherwise success
  */
 int convet_utf8_to_gbk(char **ptr, void *pin_buf, int in_len)
 {
@@ -3078,7 +3078,7 @@ int convet_utf8_to_gbk(char **ptr, void *pin_buf, int in_len)
 }
 
 /**
- * @brief       编码change换测试
+ * @brief       Encoding conversion test
  * @param       none
  * @retval      none
  */

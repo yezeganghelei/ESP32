@@ -107,7 +107,7 @@ static uint8_t gif_readcolortbl(FIL *filename, gif89a *gif, uint16_t numcolors)
 }
 
 /**
- * @brief       get逻辑屏幕describe,imageSize, etc.
+ * @brief       Get the logical screen descriptor, image size, etc.
  * @param       filename : File name containing path
  * @param       gif      : GIFinformation
  * @retval      Operation results
@@ -536,7 +536,7 @@ static uint8_t gif_dispimage(FIL *filename, gif89a *gif, uint16_t x0, uint16_t y
  * @brief       Revert to background color
  * @param       x, y     : coordinate
  * @param       gif      : GIFinformation
- * @param       pimge    : imagedescribe块information
+ * @param       pimge    : Image descriptor block information
  * @retval      none
  */
 static void gif_clear2bkcolor(uint16_t x, uint16_t y, gif89a *gif, ImageScreenDescriptor pimge)
@@ -600,7 +600,7 @@ static void gif_clear2bkcolor(uint16_t x, uint16_t y, gif89a *gif, ImageScreenDe
 }
 
 /**
- * @brief       paintingGIFimageof一帧
+ * @brief       Draw one frame of a GIF image
  * @param       filename : File name containing path(.gif)
  * @param       gif      : GIFinformation
  * @param       x0, y0   : The coordinates to start displaying
@@ -686,7 +686,7 @@ static uint8_t gif_drawimage(FIL *filename, gif89a *gif, uint16_t x0, uint16_t y
 }
 
 /**
- * @brief       quitwhen前untiecode.
+ * @brief       Exit the current decoding.
  * @param       none
  * @retval      none
  */

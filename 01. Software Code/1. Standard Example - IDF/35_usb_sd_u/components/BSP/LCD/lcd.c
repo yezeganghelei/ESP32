@@ -19,13 +19,13 @@
 #include "lcd.h"
 #include "lcdfont.h"
 
-#define SPI_LCD_TYPE    1           /* SPIInterface screen type（1：2.4inchSPILCD  0：1.3inchSPILCD） */  
+#define SPI_LCD_TYPE    1           /* SPI interface screen type (1: 2.4-inch SPI LCD, 0: 1.3-inch SPI LCD) */  
 
 spi_device_handle_t MY_LCD_Handle;
 uint8_t lcd_buf[LCD_TOTAL_BUF_SIZE];
 lcd_obj_t lcd_self;
 
-/* LCDneedinitializationone组命令/Parameter value。They are stored in this structure  */
+/* A set of commands/parameter values needed to initialize the LCD. They are stored in this structure  */
 typedef struct
 {
     uint8_t cmd;
@@ -349,7 +349,7 @@ void lcd_draw_line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t 
     
     if( delta_x>delta_y)
     {
-        distance = delta_x;                 /* 选取基本Incrementcoordinateaxis */
+        distance = delta_x;                 /* Choose the basic increment coordinate axis */
     }
     else
     {
@@ -391,7 +391,7 @@ void lcd_draw_hline(uint16_t x, uint16_t y, uint16_t len, uint16_t color)
 }
 
 /**
- * @brief       画oneindivualrectangle
+ * @brief       Draw a rectangle
  * @param       x1,y1   Starting point coordinates
  * @param       x2,y2   End point coordinates
  * @param       color Fill color
@@ -406,8 +406,8 @@ void lcd_draw_rectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,uint1
 }
 
 /**
- * @brief       画oneindivualround
- * @param       x0,y0   round心coordinate
+ * @brief       Draw a circle
+ * @param       x0,y0   Circle center coordinates
  * @param       r   Circle radius
  * @param       color Fill color
  * @retval      none
@@ -750,7 +750,7 @@ void lcd_init(void)
         {0, {0}, 0xff},
     };
 
-#else                                                               /* Not for0则视为makeuse1.3inchSPILCDscreen，Then the screen will not display inversely */
+#else                                                               /* If not 0, it is treated as using a 1.3-inch SPI LCD screen, and the screen will not display inversely */
     lcd_init_cmd_t ili_init_cmds[] =
     {
         {0x11, {0}, 0x80},

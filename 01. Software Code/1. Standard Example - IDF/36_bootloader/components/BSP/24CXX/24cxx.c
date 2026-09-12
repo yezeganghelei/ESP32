@@ -17,8 +17,8 @@
 i2c_obj_t at24cxx_master;
 
 /**
- * @brief       initializationIICinterface
- * @param       i2c_obj_t self: IncomingIICinitialization参数，Used to determine whether it has been completedIICinitialization
+ * @brief       Initialize the IIC interface
+ * @param       i2c_obj_t self: Incoming IIC initialization parameter, used to determine whether IIC initialization has been completed
  * @retval      none
  */
 void at24cxx_init(i2c_obj_t self)
@@ -32,7 +32,7 @@ void at24cxx_init(i2c_obj_t self)
 }
 
 /**
- * @brief       existAT24CXXRead a data with a specified address
+ * @brief       Read one byte at the specified address from AT24CXX
  * @param       addr: Address to start reading from
  * @retval      Read data
  */
@@ -42,16 +42,16 @@ uint8_t at24cxx_read_one_byte(uint16_t addr)
 
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
-    /* According to different24CXXmodel, Send high address
-     * 1, 24C16The above models, point2Byte sending address
-     * 2, 24C16and below models, point1low byte address + Occupies device addressbit1~bit3Bit 用于表示高Bit地址, most11Bit地址
-     *    right于24C01/02, Its device address format(8bit)for: 1  0  1  0  A2  A1  A0  R/W
-     *    right于24C04,    Its device address format(8bit)for: 1  0  1  0  A2  A1  a8  R/W
-     *    right于24C08,    Its device address format(8bit)for: 1  0  1  0  A2  a9  a8  R/W
-     *    right于24C16,    Its device address format(8bit)for: 1  0  1  0  a10 a9  a8  R/W
-     *    R/W      : read/write control bit 0,Indicate writing; 1,Indicates reading;
-     *    A0/A1/A2 : right应器件的1,2,3pin(only24C01/02/04/8have these feet)
-     *    a8/a9/a10: right应存储整列的高Bit地址, 11bit地址most可以表示2048个Bit置,Can be addressed24C16Models within
+    /* Send the high address according to the different 24CXX model
+     * 1. For 24C16 and above, send the address in 2 bytes
+     * 2. For 24C16 and below, send 1 low byte address + the device address bits 1~3 are used to represent the high address bits, up to 11 address bits
+     *    For 24C01/02, its device address format (8 bits) is: 1  0  1  0  A2  A1  A0  R/W
+     *    For 24C04,    its device address format (8 bits) is: 1  0  1  0  A2  A1  a8  R/W
+     *    For 24C08,    its device address format (8 bits) is: 1  0  1  0  A2  a9  a8  R/W
+     *    For 24C16,    its device address format (8 bits) is: 1  0  1  0  a10 a9  a8  R/W
+     *    R/W      : read/write control bit, 0 = write; 1 = read;
+     *    A0/A1/A2 : correspond to pins 1, 2, 3 of the device (only 24C01/02/04/8 have these pins)
+     *    a8/a9/a10: correspond to the high address bits of the storage array; 11 address bits can represent 2048 bits, enough to address 24C16 models
      */
     if(EE_TYPE > AT24C16)
     {
@@ -75,7 +75,7 @@ uint8_t at24cxx_read_one_byte(uint16_t addr)
 }
 
 /**
- * @brief       existAT24CXXWrite a data to the specified address
+ * @brief       Write one byte to the specified address in AT24CXX
  * @param       addr: Destination address for writing data
  * @param       data: Data to be written
  * @retval      none
@@ -104,9 +104,9 @@ void at24cxx_write_one_byte(uint16_t addr, uint8_t data)
 }
 
 /**
- * @brief       examineAT24CXXIs it normal?
- * @note        Detection principle: exist器件的末地址写如0X55, and then read, 如果read取值for0X55
- *              It means the detection is normal. otherwise,则表示Detection failed.
+ * @brief       Check whether AT24CXX is normal
+ * @note        Detection principle: write 0X55 to the last address of the device, then read it back; if the read value is 0X55
+ *              it means the detection is normal, otherwise it indicates detection failed.
  * @param       none
  * @retval      Test results
  *              0: Detection successful
@@ -123,7 +123,7 @@ uint8_t at24cxx_check(void)
     {
         return 0;
     }
-    else                                    /* 排除第一次initialization的情况 */
+    else                                    /* Exclude the case of first-time initialization */
     {
         at24cxx_write_one_byte(addr, 0X55); /* Write data first */
         temp = at24cxx_read_one_byte(255);  /* Read data again */
@@ -138,7 +138,7 @@ uint8_t at24cxx_check(void)
 }
 
 /**
- * @brief       existAT24CXXStart reading the specified number of data from the specified address inside
+ * @brief       Read the specified number of bytes starting from the specified address in AT24CXX
  * @param       addr    : The address to start reading right24c02for0~255
  * @param       pbuf    : Data array first address
  * @param       datalen : The number of data to be read out
@@ -153,7 +153,7 @@ void at24cxx_read(uint16_t addr, uint8_t *pbuf, uint16_t datalen)
 }
 
 /**
- * @brief       existAT24CXXThe specified address starts writing the specified number of data
+ * @brief       Write the specified number of bytes starting at the specified address in AT24CXX
  * @param       addr    : The address to start writing right24c02for0~255
  * @param       pbuf    : Data array first address
  * @param       datalen : The number of data to be written

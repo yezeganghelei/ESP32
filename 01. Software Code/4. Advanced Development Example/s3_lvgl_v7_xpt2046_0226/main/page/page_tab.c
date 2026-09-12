@@ -18,11 +18,11 @@ LV_FONT_DECLARE(myFont);
 extern lv_obj_t *scr;
 extern lv_obj_t *scr_body;
 
-extern httpd_handle_t server; //文件服务句柄
+extern httpd_handle_t server; //File server handle
 lv_group_t *group_button;
 lv_obj_t *tabview;
 lv_obj_t *tab1, *tab2, *tab3;
-uint8_t clock_change = 0; //时间是否发生改变
+uint8_t clock_change = 0; //Whether the time has changed
 extern struct _ksdiy_sys_t ksdiy_sys_t;
 struct
 {
@@ -56,73 +56,73 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 	if (event == LV_EVENT_VALUE_CHANGED)
 	{
 		int8_t i = lv_switch_get_state(obj);
-		if (obj == tab1_t.sw_wifi) //文件设置网页管理
+		if (obj == tab1_t.sw_wifi) //Web-based file settings management
 		{
-			if (i) //开启web
+			if (i) //Enable web
 			{
 				if (server == NULL)
 				{
-					if (start_file_server("/spiffs") != ESP_OK) //启动文件系统
+					if (start_file_server("/spiffs") != ESP_OK) //Start the file system
 					{
 						ksdiy_sys_t.state.web_set = 0;
 					}
 					else
 					{
-						ESP_LOGI("WEB_SET", "web服务开启");
-						lv_ico_web_show(1); //显示web图标
+						ESP_LOGI("WEB_SET", "web service on");
+						lv_ico_web_show(1); //Show the web icon
 						ksdiy_sys_t.state.web_set = 1;
 						web_switch_save(1);
 					}
 				}
 				else
 				{
-					ESP_LOGI("WEB_SET", "web服务已经开启");
+					ESP_LOGI("WEB_SET", "web service already on");
 				}
 			}
 			else
 			{
-				lv_ico_web_show(0); //删除web图标
+				lv_ico_web_show(0); //Delete the web icon
 				ksdiy_sys_t.state.web_set = 0;
 				web_switch_save(0);
 				stop_webserver();
-				ESP_LOGI("WEB", "web服务准备关闭");
+				ESP_LOGI("WEB", "web service stopping");
 			}
 		}
-		else if (obj == tab1_t.sw_cam) //如果是打开摄像头网页图传
+		else if (obj == tab1_t.sw_cam) //If enabling the camera web video stream
 		{
-			if (i) //开启web
+			if (i) //Enable web
 			{
 				web_camera_init();
 				if (server == NULL)
 				{
 
-					if (start_cam_web() != ESP_OK) //启动摄像头web
+					if (start_cam_web() != ESP_OK) //Start the camera web server
 					{
 						ksdiy_sys_t.state.web_cam = 0;
 					}
 					else
 					{
-						ESP_LOGI("WEB_CAM", "WEB_CAM 服务开启");
-						lv_ico_web_show(1); //显示web图标
+						ESP_LOGI("WEB_CAM", "WEB_CAM service on");
+						lv_ico_web_show(1); //Show the web icon
 						ksdiy_sys_t.state.web_cam = 1;
 						cam_switch_save(1);
 					}
 				}
 				else
 				{
-					ESP_LOGI("WEB_CAM", "WEB_CAM 服务已经开启");
+					ESP_LOGI("WEB_CAM", "WEB_CAM service already on");
 				}
 			}
 			else
 			{
-				lv_ico_web_show(0); //删除web图标
+				lv_ico_web_show(0); //Delete the web icon
 				ksdiy_sys_t.state.web_cam = 0;
 				cam_switch_save(0);
 				stop_cam_web();
-				ESP_LOGI("WEB_CAM", "WEB_CAM 服务已关闭");
+				ESP_LOGI("WEB_CAM", "WEB_CAM service stopped");
 			}
 		}
-		else if (obj == tab1_t.sw_cam_vflip) //如果是打开摄像头网页图传
+		else if (obj == tab1_t.sw_cam_vflip) //If enabling the camera web video stream
 		{
 			// sensor_t *s = esp_camera_sensor_get();
 			// s->set_vflip(s, i);
@@ -130,15 +130,15 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 			if (i)
 			{
 				cam_vflip_switch_save(1);
-				ESP_LOGI("WEB_CAM", "sw_cam_vflip 已打开");
+				ESP_LOGI("WEB_CAM", "sw_cam_vflip on");
 			}
 			else
 			{
 				cam_vflip_switch_save(0);
-				ESP_LOGI("WEB_CAM", "sw_cam_vflip 已关闭");
+				ESP_LOGI("WEB_CAM", "sw_cam_vflip off");
 			}
 		}
-		else if (obj == tab1_t.sw_cam_hmirror) //如果是打开摄像头网页图传
+		else if (obj == tab1_t.sw_cam_hmirror) //If enabling the camera web video stream
 		{
 
 			// sensor_t *s = esp_camera_sensor_get();
@@ -147,12 +147,12 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 			if (i)
 			{
 				cam_hmirror_switch_save(1);
-				ESP_LOGI("WEB_CAM", "sw_cam_hmirror 已打开");
+				ESP_LOGI("WEB_CAM", "sw_cam_hmirror on");
 			}
 			else
 			{
 				cam_hmirror_switch_save(0);
-				ESP_LOGI("WEB_CAM", "scam_hmirror 已关闭");
+				ESP_LOGI("WEB_CAM", "scam_hmirror off");
 			}
 		}
 		else if (obj == tab3_t.sw_temp)
@@ -169,7 +169,7 @@ void tab_wifi_init(lv_obj_t *obj)
 	/******wifi_switch********/
 	tab1_t.label_wifi = lv_label_create(obj, NULL);
 	lv_obj_set_style_local_text_font(tab1_t.label_wifi, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
-	lv_label_set_text(tab1_t.label_wifi, "网页设置");
+	lv_label_set_text(tab1_t.label_wifi, "Web Settings");
 	lv_obj_set_pos(tab1_t.label_wifi, 20, 5);
 	lv_label_set_align(tab1_t.label_wifi, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
 
@@ -182,7 +182,7 @@ void tab_wifi_init(lv_obj_t *obj)
 
 	tab1_t.label_cam = lv_label_create(obj, NULL);
 	lv_obj_set_style_local_text_font(tab1_t.label_cam, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
-	lv_label_set_text(tab1_t.label_cam, "网页图传");
+	lv_label_set_text(tab1_t.label_cam, "Web Stream");
 	lv_obj_set_pos(tab1_t.label_cam, 20, 5 + 23);
 	lv_label_set_align(tab1_t.label_cam, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
 
@@ -195,7 +195,7 @@ void tab_wifi_init(lv_obj_t *obj)
 
 	tab1_t.label_cam_vflip = lv_label_create(obj, NULL);
 	lv_obj_set_style_local_text_font(tab1_t.label_cam_vflip, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
-	lv_label_set_text(tab1_t.label_cam_vflip, "垂直翻转");
+	lv_label_set_text(tab1_t.label_cam_vflip, "Vertical Flip");
 	lv_obj_set_pos(tab1_t.label_cam_vflip, 20, 5 + 23 + 23);
 	lv_label_set_align(tab1_t.label_cam_vflip, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
 
@@ -208,7 +208,7 @@ void tab_wifi_init(lv_obj_t *obj)
 
 	tab1_t.label_cam_hmirror = lv_label_create(obj, NULL);
 	lv_obj_set_style_local_text_font(tab1_t.label_cam_hmirror, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
-	lv_label_set_text(tab1_t.label_cam_hmirror, "水平翻转");
+	lv_label_set_text(tab1_t.label_cam_hmirror, "Horizontal Flip");
 	lv_obj_set_pos(tab1_t.label_cam_hmirror, 20, 5 + 23 + 23 + 23);
 	lv_label_set_align(tab1_t.label_cam_hmirror, LV_LABEL_ALIGN_CENTER); /*Center aligned lines*/
 
@@ -230,7 +230,7 @@ void tab_wifi_init(lv_obj_t *obj)
 	lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);			 /*Center aligned lines*/
 	lv_obj_set_style_local_text_font(label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
 	char str[150];
-	sprintf(str, "已连接到WIFI:\n%s\nIP:%s", get_ssid(), get_ip());
+	sprintf(str, "Connected to WIFI:\n%s\nIP:%s", get_ssid(), get_ip());
 	lv_label_set_text(label, (const char *)str);
 }
 struct _tab2_ac_t
@@ -242,7 +242,7 @@ struct _tab2_ac_t
 void page_tab_save_ac_type()
 {
 
-	if (clock_change) //时间改变
+	if (clock_change) //Time changed
 	{
 		clock_change = 0;
 		ac_set_type1(lv_dropdown_get_selected(tab2_ac_t.list_type),lv_dropdown_get_selected(tab2_ac_t.list_code));
@@ -261,7 +261,7 @@ static void event_handler_clock(lv_obj_t *obj, lv_event_t event)
 
 void creat_list(void)
 {
-	/*******下滑选择*********/
+	/*******Drop-down selection*********/
 	tab2_ac_t.list_type = lv_dropdown_create(tab2_ac_t.cont, NULL);
 	lv_obj_set_style_local_border_opa(tab2_ac_t.list_type, LV_DROPDOWN_PART_MAIN, LV_STATE_DEFAULT, 0);
 	lv_obj_set_style_local_text_font(tab2_ac_t.list_type, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
@@ -291,7 +291,7 @@ void tab_ac_init(lv_obj_t *obj)
 	/*********time_switch**********/
 	tab2_t.label_tips = lv_label_create(obj, NULL);
 	lv_obj_set_style_local_text_font(tab2_t.label_tips, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
-	lv_label_set_text(tab2_t.label_tips, "空调选择");
+	lv_label_set_text(tab2_t.label_tips, "AC Select");
 
 	lv_obj_set_pos(tab2_t.label_tips, 80, 5);
 
@@ -301,14 +301,14 @@ void tab_ac_init(lv_obj_t *obj)
 
 	creat_list();
 
-	lv_dropdown_set_selected(tab2_ac_t.list_type, 0);      //更新时钟；
-	lv_dropdown_set_selected(tab2_ac_t.list_code, 0); //更新时钟；
+	lv_dropdown_set_selected(tab2_ac_t.list_type, 0);      //Update the clock;
+	lv_dropdown_set_selected(tab2_ac_t.list_code, 0); //Update the clock;
 
 }
 /****
 *
-    温湿度上传间隔
-    简介：使用方法 开源地址
+    Temperature and humidity upload interval
+    Description: usage, open-source address
 *
 ***/
 void tab_set_init(lv_obj_t *obj)
@@ -335,8 +335,8 @@ void tab_set_init(lv_obj_t *obj)
 	lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);			 /*Automatically break long lines*/
 	lv_obj_set_width(label, lv_page_get_width_fit(tab3_t.page)); /*Set the label width to max value to not show hor. scroll bars*/
 	lv_obj_set_style_local_text_font(label, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &myFont);
-	lv_label_set_text(label, "这是一个开源项目\n"
-							 "作者：Kevincoooool\n"
+	lv_label_set_text(label, "This is an open-source project\n"
+							 "Author: Kevincoooool\n"
 							 "https://github.com/Kevincoooool/KS_ESP32_CAM\n");
 }
 static void event_handler_tab(lv_obj_t *obj, lv_event_t event)
@@ -348,24 +348,24 @@ static void event_handler_tab(lv_obj_t *obj, lv_event_t event)
 		{
 		case 0:
 			lv_group_remove_all_objs(group_button);
-			lv_group_add_obj(group_button, tabview);			   //加入解码组
-			lv_group_add_obj(group_button, tab1_t.sw_wifi);		   //加入解码组
-			lv_group_add_obj(group_button, tab1_t.sw_cam);		   //加入解码组
-			lv_group_add_obj(group_button, tab1_t.sw_cam_vflip);   //加入解码组
-			lv_group_add_obj(group_button, tab1_t.sw_cam_hmirror); //加入解码组
-			lv_group_add_obj(group_button, tab1_t.page);		   //加入解码组
+			lv_group_add_obj(group_button, tabview);			   //Add to the decoder group
+			lv_group_add_obj(group_button, tab1_t.sw_wifi);		   //Add to the decoder group
+			lv_group_add_obj(group_button, tab1_t.sw_cam);		   //Add to the decoder group
+			lv_group_add_obj(group_button, tab1_t.sw_cam_vflip);   //Add to the decoder group
+			lv_group_add_obj(group_button, tab1_t.sw_cam_hmirror); //Add to the decoder group
+			lv_group_add_obj(group_button, tab1_t.page);		   //Add to the decoder group
 
 			break;
 		case 1:
 			lv_group_remove_all_objs(group_button);
-			lv_group_add_obj(group_button, tabview); //加入解码组
-			lv_group_add_obj(group_button, tab2_ac_t.list_type); //加入解码组
-			lv_group_add_obj(group_button, tab2_ac_t.list_code); //加入解码组
+			lv_group_add_obj(group_button, tabview); //Add to the decoder group
+			lv_group_add_obj(group_button, tab2_ac_t.list_type); //Add to the decoder group
+			lv_group_add_obj(group_button, tab2_ac_t.list_code); //Add to the decoder group
 			break;
 		case 2:
 			lv_group_remove_all_objs(group_button);
-			lv_group_add_obj(group_button, tabview);		//加入解码组
-			lv_group_add_obj(group_button, tab3_t.sw_temp); //加入解码组
+			lv_group_add_obj(group_button, tabview);		//Add to the decoder group
+			lv_group_add_obj(group_button, tab3_t.sw_temp); //Add to the decoder group
 			break;
 		default:
 			break;
@@ -398,12 +398,12 @@ static void group_init()
 {
 
 	lv_group_remove_all_objs(group_button);
-	lv_group_add_obj(group_button, tabview);			   //加入解码组
-	lv_group_add_obj(group_button, tab1_t.sw_wifi);		   //加入解码组
-	lv_group_add_obj(group_button, tab1_t.sw_cam);		   //加入解码组
-	lv_group_add_obj(group_button, tab1_t.sw_cam_vflip);   //加入解码组
-	lv_group_add_obj(group_button, tab1_t.sw_cam_hmirror); //加入解码组
-	lv_group_add_obj(group_button, tab1_t.page);		   //加入解码组
+	lv_group_add_obj(group_button, tabview);			   //Add to the decoder group
+	lv_group_add_obj(group_button, tab1_t.sw_wifi);		   //Add to the decoder group
+	lv_group_add_obj(group_button, tab1_t.sw_cam);		   //Add to the decoder group
+	lv_group_add_obj(group_button, tab1_t.sw_cam_vflip);   //Add to the decoder group
+	lv_group_add_obj(group_button, tab1_t.sw_cam_hmirror); //Add to the decoder group
+	lv_group_add_obj(group_button, tab1_t.page);		   //Add to the decoder group
 	lv_button_set_group(group_button);
 }
 static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
@@ -419,7 +419,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -436,7 +436,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -448,12 +448,12 @@ static void Exit(void)
 {
 	page_tab_save_ac_type();
 	obj_add_anim(
-		tabview,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,					  //起始值
-		APP_WIN_HEIGHT,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		tabview,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,					  //Start value
+		APP_WIN_HEIGHT,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(tabview);
@@ -463,12 +463,12 @@ static void Setup(void)
 
 	lv_tabview_init();
 	obj_add_anim(
-		tabview,								  //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_HEIGHT,					  //起始值
-		0,  //结束值
-		lv_anim_path_linear						  //动画特效:模拟弹性物体下落
+		tabview,								  //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,		  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_HEIGHT,					  //Start value
+		0,  //End value
+		lv_anim_path_linear						  //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	group_init();
@@ -478,10 +478,10 @@ static void Setup(void)
 	ESP_LOGI("SYSTEM", "esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
@@ -489,16 +489,16 @@ static void Event(void *btn, int event)
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_Setting(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册Setting至页面调度器*/\r\n");
+	printf("/* Register Setting with the page scheduler */\r\n");
 }

@@ -4,18 +4,18 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    PWMexperiment
+ * @brief    PWM experiment
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
- * experiment目的：studyPWMOutput function
+ * Experiment purpose: Study the PWM output function
 
- * Hardware resources and pin allocation： 
+ * Hardware resources and pin allocation: 
  * 1, LED --> ESP32S3 IO
  *    LED --> IO1
 
- * experiment现象
- * 1, LED0From dark to bright，From bright to dark，Cycle in turn。
+ * Experiment phenomenon
+ * 1, LED0 goes from dark to bright, then from bright to dark, cycling in turn.
 
  * Things to note
  * none
@@ -38,12 +38,12 @@ if __name__ == '__main__':
     pwm = PWM(Pin(1),freq = 1000)
     
     while True:
-        # gradually brighten
+        # Gradually brighten
         for i in range(0,1024):
             pwm.duty(i)
             time.sleep_ms(1)
             
-        # Darker
+        # Gradually dim
         for i in range(1023,0,-1):
             pwm.duty(i)
             time.sleep_ms(1)

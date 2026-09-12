@@ -152,7 +152,7 @@ void app_main(void)
 
 	/*createlvglTask display*/
 	xTaskCreatePinnedToCore(&gui_task, "gui task", 1024 * 5, NULL, 5, NULL, 1);
-	/*create按键任务 Scan key values ​​regularly*/
+	/*create button task; scan key values regularly*/
 	xTaskCreatePinnedToCore(&button_task, "button_task", 1024 * 3, NULL, 8, NULL, 0);
 	adc_init();
 	printf("adc_value: %d\n", get_adc());

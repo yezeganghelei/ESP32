@@ -3067,58 +3067,58 @@ void IMU_update(float dT, _xyz_f_st *gyr, _xyz_f_st *acc, _imu_st *imu)
 	q1q2 = x_q * y_q;
 	q0q3 = w_q * z_q;
 
-	// 加速度计的读数，单位化。
+	// Accelerometer reading, normalized.
 	acc_length = sqrt(my_pow(acc->x) + my_pow(acc->y) + my_pow(acc->z));
 	acc_norm.x = acc->x / acc_length;
 	acc_norm.y = acc->y / acc_length;
 	acc_norm.z = acc->z / acc_length;
 
-	// 载体坐标下的x方向向量，单位化。
+	// Body-frame x-axis direction vector, normalized.
 	imu->x_vec.x = 1 - (2 * q2q2 + 2 * q3q3);
 	imu->x_vec.y = 2 * q1q2 - 2 * q0q3;
 	imu->x_vec.z = 2 * q1q3 + 2 * q0q2;
 
-	// 载体坐标下的y方向向量，单位化。
+	// Body-frame y-axis direction vector, normalized.
 	imu->y_vec.x = 2 * q1q2 + 2 * q0q3;
 	imu->y_vec.y = 1 - (2 * q1q1 + 2 * q3q3);
 	imu->y_vec.z = 2 * q2q3 - 2 * q0q1;
 
-	// 载体坐标下的z方向向量（等效重力向量、重力加速度向量），单位化。
+	// Body-frame z-axis direction vector (equivalent gravity vector), normalized.
 	imu->z_vec.x = 2 * q1q3 - 2 * q0q2;
 	imu->z_vec.y = 2 * q2q3 + 2 * q0q1;
 	imu->z_vec.z = 1 - (2 * q1q1 + 2 * q2q2);
 
-	// 计算载体坐标下的运动加速度。(与姿态解算无关)
+	// Compute motion acceleration in the body frame. (unrelated to attitude estimation)
 	imu->a_acc.x = acc->x - 9800 * imu->z_vec.x;
 	imu->a_acc.y = acc->y - 9800 * imu->z_vec.y;
 	imu->a_acc.z = acc->z - 9800 * imu->z_vec.z;
 
-	// 计算世界坐标下的运动加速度。(与姿态解算无关)
+	// Compute motion acceleration in the world frame. (unrelated to attitude estimation)
 	imu->w_acc.x = imu->x_vec.x * imu->a_acc.x + imu->x_vec.y * imu->a_acc.y;
 	imu->w_acc.y = imu->y_vec.x * imu->a_acc.x + imu->y_vec.y * imu->a_acc.y;
 	imu->w_acc.z = imu->z_vec.x * imu->a_acc.x + imu->z_vec.y * imu->a_acc.y + imu->z_vec.z * imu->a_acc.z;
 
-	// 测量值与等效重力向量的叉积（计算向量误差）。
+	// Cross product of the measurement and the equivalent gravity vector (vector error).
 	vec_err.x = (acc_norm.y * imu->z_vec.z - imu->z_vec.y * acc_norm.z);
 	vec_err.y = -(acc_norm.x * imu->z_vec.z - imu->z_vec.x * acc_norm.z);
 	vec_err.z = 0;
 
-	//截止频率1hz的低通限幅滤波
+	//Low-pass limiting filter with 1 Hz cutoff
 	limit_filter(dT, 0.2f, &err_lf_x, vec_err.x);
 	limit_filter(dT, 0.2f, &err_lf_y, vec_err.y);
 	limit_filter(dT, 0.2f, &err_lf_z, vec_err.z);
 
-	//误差积分
+	//Error integration
 	vec_err_i.x += err_lf_x.out * dT * ki;
 	vec_err_i.y += err_lf_y.out * dT * ki;
 	vec_err_i.z += err_lf_z.out * dT * ki;
 
-	// 构造增量旋转（含融合纠正）。
+	// Construct incremental rotation (with fusion correction).
 	d_angle.x = (gyr->x * RAD_PER_DEG + (err_lf_x.out + vec_err_i.x) * kp) * dT / 2;
 	d_angle.y = (gyr->y * RAD_PER_DEG + (err_lf_y.out + vec_err_i.y) * kp) * dT / 2;
 	d_angle.z = (gyr->z * RAD_PER_DEG + (err_lf_z.out + vec_err_i.z) * kp) * dT / 2;
 
-	// 计算姿态。
+	// Compute attitude.
 	imu->w = w_q - x_q * d_angle.x - y_q * d_angle.y - z_q * d_angle.z;
 	imu->x = w_q * d_angle.x + x_q + y_q * d_angle.z - z_q * d_angle.y;
 	imu->y = w_q * d_angle.y - x_q * d_angle.z + y_q + z_q * d_angle.x;

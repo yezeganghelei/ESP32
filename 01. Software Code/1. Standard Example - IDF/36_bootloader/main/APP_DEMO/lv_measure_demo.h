@@ -1,19 +1,19 @@
 ﻿/**
  ****************************************************************************************************
  * @file        lv_measure_demo.h
- * @author      正点原子团队(ALIENTEK)
+ * @author      ALIENTEK team
  * @version     V1.0
  * @date        2023-11-04
- * @brief       测量系统
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ * @brief       Measurement system
+ * @license     Copyright (c) 2020-2032, Guangzhou Xingyi Electronic Technology Co., Ltd.
  ****************************************************************************************************
  * @attention
  *
- * 实验平台: 正点原子 ESP32-S3 开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
+ * Platform: ALIENTEK ESP32-S3 development board
+ * Online video: www.yuanzige.com
+ * Technical forum: www.openedv.com
+ * Company website: www.alientek.com
+ * Purchase: openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -29,7 +29,7 @@
 #include "driver/temperature_sensor.h"
 
 
-/* 测量结构体 */
+/* Measurement structure */
 typedef struct
 {
     lv_obj_t *lv_main_cont;
@@ -66,7 +66,7 @@ typedef struct
    }small_cont;
 }measure_obj_t;
 
-/* 函数声明 */
+/* Function declarations */
 void lv_measure_demo(void);
 
 #endif

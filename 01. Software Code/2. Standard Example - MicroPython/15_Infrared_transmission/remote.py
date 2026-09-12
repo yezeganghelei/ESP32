@@ -4,7 +4,7 @@
  * @author   team()
  * @version  V1.0
  * @date     2023-12-01
- * @brief    红外take over驱动
+ * @brief    Infrared receiver driver
  * @license  Copyright (c) 2020-2032, 
  ******************************************************************************
 
@@ -27,7 +27,7 @@ class REMOTE_IR(object):
         90: "9", 66: "0", 82: "DELETE"
     }
 
-    # 红外take over初始化
+    # Infrared receive initialization
     def __init__(self, gpio_num):
         self.irRecv = Pin(gpio_num, Pin.IN, Pin.PULL_UP)
         self.irRecv.irq(trigger = Pin.IRQ_RISING | Pin.IRQ_FALLING, handler = self.ex_handler)  # Configure interrupt information
@@ -62,7 +62,7 @@ class REMOTE_IR(object):
                 self.ir_step = 2
                 self.rx_ok = False
                 self.ir_count = 0
-            elif curtime >= 2000 and curtime <= 3000:    # 长按repeattake over
+            elif curtime >= 2000 and curtime <= 3000:    # Long-press repeat reception
                 self.ir_step = 3
                 self.repeat += 1
 
@@ -71,7 +71,7 @@ class REMOTE_IR(object):
             self.ir_count += 1
             if self.ir_count >= 64:
                 self.rx_ok = True
-                self.t_ok = self.start                  # record lastoktime
+                self.t_ok = self.start                  # Record the last OK time
                 self.ir_step = 0
 
         elif self.ir_step == 3:                         # repeat
@@ -90,7 +90,7 @@ class REMOTE_IR(object):
         self.cmd = cmd_data
 
     def remote_scan(self):        
-        # take over到数据
+        # Data received
         if self.rx_ok:
             self.check_cmd()
             self.rx_ok = False

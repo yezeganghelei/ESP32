@@ -25,7 +25,7 @@
 #include "esp_log.h"
 
 #define TAG "ESP32S3"
-/*Give with timerLVGLProvide clock*/
+/*Use a timer to provide LVGL with its clock tick*/
 static void lv_tick_task(void *arg)
 {
 	(void)arg;
@@ -39,8 +39,8 @@ static void gui_task(void *arg)
 	xGuiSemaphore = xSemaphoreCreateMutex();
 	lv_init(); // lvgl kernel initialization
 
-	lvgl_driver_init(); // lvgl显示接口initialization
-	/*externalPSRAMWay*/
+	lvgl_driver_init(); // lvgl display interface initialization
+	/*External PSRAM mode*/
 	// lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 	// lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 
@@ -94,7 +94,7 @@ extern char *Font_buff;
 void app_main(void)
 {
 
-	// initializationnvsfor storagewifiOr other things that need to be saved after power off
+	// Initialize NVS for storing WiFi or other data that must persist across power-off
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
 	{

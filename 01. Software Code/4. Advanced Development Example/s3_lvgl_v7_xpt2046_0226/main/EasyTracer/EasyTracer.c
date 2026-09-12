@@ -8,14 +8,14 @@ typedef struct
 	unsigned char red;	 // [0,255]
 	unsigned char green; // [0,255]
 	unsigned char blue;	 // [0,255]
-} COLOR_RGB;			 //RGB格式颜色
+} COLOR_RGB;			 // RGB format color
 
 typedef struct
 {
 	unsigned char hue;		  // [0,240]
 	unsigned char saturation; // [0,240]
 	unsigned char luminance;  // [0,240]
-} COLOR_HSL;				  //HSL格式颜色
+} COLOR_HSL;				  // HSL format color
 
 typedef struct
 {
@@ -23,9 +23,9 @@ typedef struct
 	unsigned int X_End;
 	unsigned int Y_Start;
 	unsigned int Y_End;
-} SEARCH_AREA; //区域
+} SEARCH_AREA; // Area
 
-//读取RBG格式颜色，唯一需要移植的函数
+// Read RGB format color; the only function that needs to be ported
 extern unsigned short RGB_ReadBit16Point(unsigned short x, unsigned short y);
 static void ReadColor(unsigned int x, unsigned int y, COLOR_RGB *Rgb)
 {
@@ -38,7 +38,7 @@ static void ReadColor(unsigned int x, unsigned int y, COLOR_RGB *Rgb)
 	Rgb->blue = (unsigned char)((C16 & 0x001f) << 3);
 }
 
-//RGB转HSL
+// Convert RGB to HSL
 static void RGBtoHSL(const COLOR_RGB *Rgb, COLOR_HSL *Hsl)
 {
 	int h = 0, s = 0, l = 0, maxVal = 0, minVal = 0, difVal = 0;
@@ -51,17 +51,17 @@ static void RGBtoHSL(const COLOR_RGB *Rgb, COLOR_HSL *Hsl)
 
 	difVal = maxVal - minVal;
 
-	//计算亮度
+	// Calculate luminance
 	l = (maxVal + minVal) * 240 / 255 / 2;
 
-	if (maxVal == minVal) //若r=g=b
+	if (maxVal == minVal) // if r=g=b
 	{
 		h = 0;
 		s = 0;
 	}
 	else
 	{
-		//计算色调
+		// Calculate hue
 		if (maxVal == r)
 		{
 			if (g >= b)
@@ -73,7 +73,7 @@ static void RGBtoHSL(const COLOR_RGB *Rgb, COLOR_HSL *Hsl)
 			h = 40 * (b - r) / (difVal) + 80;
 		else if (maxVal == b)
 			h = 40 * (r - g) / (difVal) + 160;
-		//计算饱和度
+		// Calculate saturation
 		if (l == 0)
 			s = 0;
 		else if (l <= 120)
@@ -87,7 +87,7 @@ static void RGBtoHSL(const COLOR_RGB *Rgb, COLOR_HSL *Hsl)
 	Hsl->luminance = (unsigned char)(((l > 240) ? 240 : ((l < 0) ? 0 : l)));
 }
 
-//匹配颜色
+// Match color
 static int ColorMatch(const COLOR_HSL *Hsl, const TARGET_CONDI *Condition)
 {
 	if (
@@ -102,7 +102,7 @@ static int ColorMatch(const COLOR_HSL *Hsl, const TARGET_CONDI *Condition)
 		return 0;
 }
 
-//搜索腐蚀中心
+// Search for the erosion center
 static int SearchCentre(unsigned int *x, unsigned int *y, const TARGET_CONDI *Condition, const SEARCH_AREA *Area)
 {
 	unsigned int SpaceX, SpaceY, i, j, k, FailCount = 0;
@@ -141,7 +141,7 @@ static int SearchCentre(unsigned int *x, unsigned int *y, const TARGET_CONDI *Co
 	return 0;
 }
 
-//从腐蚀中心向外腐蚀，得到新的腐蚀中心
+// Corrode outward from the erosion center to obtain a new center
 static int Corrode(unsigned int oldx, unsigned int oldy, const TARGET_CONDI *Condition, RESULT *Resu)
 {
 	unsigned int Xmin, Xmax, Ymin, Ymax, i, FailCount = 0;
@@ -208,8 +208,8 @@ static int Corrode(unsigned int oldx, unsigned int oldy, const TARGET_CONDI *Con
 		return 0;
 }
 
-//唯一的API，用户将识别条件写入Condition指向的结构体中，该函数将返回目标的x，y坐标和长宽
-//返回1识别成功，返回1识别失败
+// The only API; the user writes the recognition condition into the struct pointed to by Condition, and the function returns the target x/y coordinates, width and height
+// Returns 1 on successful recognition, 1 on failure
 int Trace(const TARGET_CONDI *Condition, RESULT *Resu)
 {
 	unsigned int i;

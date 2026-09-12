@@ -11,32 +11,38 @@
 #include "freertos/task.h"
 
 /** Key press macro
-	*  When the button is pressed, the level is high，set up KEY_ON=1， KEY_OFF=0
-	*  If the button is pressed, it is low level，把宏set up成KEY_ON=0 ，KEY_OFF=1 That’s it
+	*  When the button is pressed the level is high: set KEY_ON=1 and KEY_OFF=0.
+	*  If the button is pressed at a low level: set KEY_ON=0 and KEY_OFF=1.
 	*/
 #define KEY_ON 1
 #define KEY_OFF 0
 
-#define BTN_NAME_MAX 32 //The maximum name is32byte
+#define BTN_NAME_MAX 32 //Maximum name length is 32 bytes
 
-/* 按键Debounce time40ms, 建议call cycle为20ms
- Only detected continuously40msIt is considered valid only if the status remains unchanged，Including two events: pop-up and press
+/* Button debounce time is 40 ms; the recommended call cycle is 20 ms.
+  A state is considered valid only if it remains unchanged for 40 ms continuously,
+  including both pop-up and press events.
 */
 
-/* 是否支持click&double click同时存在触发，If you choose to enable macro definition，Callback for both single and double clicks，But clicking will delay the response，
-   因为必须判断click之后是否触发了double clickotherwise，延迟时间是double click间隔时间 BUTTON_DOUBLE_TIME。
-   And if you do not enable this macro definition，建议工程中只存在click/double click中的一个，otherwise，A click will be triggered when double-clicking in response，
-   因为double click必须是有一次按下并且释放之后才产生的 */
+/* Whether single click and double click can both trigger. If this macro is enabled,
+   callbacks are registered for both single and double clicks, but the single-click
+   response is delayed because it must first determine whether a double click follows;
+   the delay is the double-click interval BUTTON_DOUBLE_TIME.
+   If this macro is disabled, it is recommended to use only one of single/double click in
+   the project; otherwise a single click is also triggered on the first click of a
+   double click, because a double click is only produced after one press and release. */
 
 #define SINGLE_AND_DOUBLE_TRIGGER 1
 
 //#define CONTINUOS_TRIGGER //Whether continuous triggering is supported. If it is triggered continuously, do not detect single, double clicks and long presses.
 
-/* Whether to support long press and release before triggering，If you open this macro definition，Then a single long press is triggered after the long press is released.，
-   otherwise在长按指定时间就一直触发长按，The trigger period is given by BUTTON_LONG_CYCLE Decide */
+/* Whether to trigger on long-press release. If this macro is enabled, a single long press
+   is triggered after the long press is released; otherwise the long press is triggered
+   continuously once the long-press time is reached, with the trigger period given by
+   BUTTON_LONG_CYCLE. */
 
 #define LONG_FREE_TRIGGER 0
-//Whether to support triggering a long press during a long press  最后松开再出发长按释放
+//Whether to trigger a long press during the hold and again on release
 #define LONG_FREE_ENABLE 1
 
 #ifndef BUTTON_DEBOUNCE_TIME
@@ -52,11 +58,11 @@
 #endif
 
 #ifndef BUTTON_DOUBLE_TIME
-#define BUTTON_DOUBLE_TIME 10 //double click间隔时间  (n-1)*call cycle  It is recommended to200-600ms
+#define BUTTON_DOUBLE_TIME 10 //Double-click interval (n-1)*call cycle; 200-600 ms recommended
 #endif
 
 #ifndef BUTTON_LONG_TIME
-#define BUTTON_LONG_TIME 20 /* continuednSecond((n-1)*call cycle ms)，Think long press event */
+#define BUTTON_LONG_TIME 20 /* Continued for n seconds ((n-1)*call cycle ms); considered a long-press event */
 #endif
 
 #define TRIGGER_CB(event)            \
@@ -85,17 +91,17 @@ typedef enum
 */
 typedef struct button
 {
-  /* Below is a function pointer，Points to the function that determines whether the button is pressed. */
+  /* Below is a function pointer to the function that determines whether the button is pressed. */
   uint8_t (*Read_Button_Level)(void); /* Reading the key level function requires the user to implement */
 
   char Name[BTN_NAME_MAX];
 
-  uint8_t Button_State : 4;         /* Current status of button（Press or pop up） */
-  uint8_t Button_Last_State : 4;    /* Last key press status，用于判断double click */
+  uint8_t Button_State : 4;         /* Current button state (press or pop up) */
+  uint8_t Button_Last_State : 4;    /* Previous button state, used to detect a double click */
   uint8_t Button_Trigger_Level : 2; /* Key trigger level */
   uint8_t Button_Last_Level : 2;    /* Current level of button */
 
-  uint8_t Button_Trigger_Event; /* Button trigger event，click，double click，Long press and wait */
+  uint8_t Button_Trigger_Event; /* Button trigger event: click, double click, long press, etc. */
 
   Button_CallBack CallBack_Function[number_of_event];
 

@@ -61,7 +61,7 @@ camera_fb_t *fb = NULL;
 
 lv_obj_t *label_speech;
 uint8_t cam_en = 0, color_en = 0, face_en = 0, baiduai_en = 0;
-/*根据屏幕尺寸决定显示大小*/
+/* Determine display size based on screen size */
 // #if LV_HOR_RES_MAX == 320
 // lv_img_dsc_t img_dsc = {
 // 	.header.always_zero = 0,
@@ -72,7 +72,7 @@ uint8_t cam_en = 0, color_en = 0, face_en = 0, baiduai_en = 0;
 // 	.data = NULL,
 // };
 // /*
-// 	读取画面中的每一个像素值
+// 	Read every pixel value in the image
 // */
 // uint16_t RGB_ReadBit16Point(unsigned short x, unsigned short y)
 // {
@@ -91,7 +91,7 @@ lv_img_dsc_t img_dsc = {
 	.data = NULL,
 };
 /*
-	读取画面中的每一个像素值
+	Read every pixel value in the image
 */
 uint16_t RGB_ReadBit16Point(unsigned short x, unsigned short y)
 {
@@ -289,13 +289,13 @@ void page_switch()
 				static uint8_t set = 1;
 				if (page.NowPage == Disp_Home)
 				{
-					ksdiy_sys_t.state.sys_button = 1; //使用lvgl按键机制
+					ksdiy_sys_t.state.sys_button = 1; // Use the LVGL button mechanism
 					page.PagePush(Disp_Menu);
 					set = 0;
 				}
 				else if (page.NowPage == Disp_Menu)
 				{
-					ksdiy_sys_t.state.sys_button = 0; //退出lvgl按键机制
+					ksdiy_sys_t.state.sys_button = 0; // Exit the LVGL button mechanism
 					page.PagePop();
 					set = 1;
 				}
@@ -328,30 +328,30 @@ SemaphoreHandle_t xGuiSemaphore;
 static void gui_task(void *arg)
 {
 	xGuiSemaphore = xSemaphoreCreateMutex();
-	lv_init(); // lvgl内核初始化
+	lv_init(); // Initialize the LVGL kernel
 
-	lvgl_driver_init(); // lvgl显示接口初始化
-	//申请两个buffer给刷屏用
-	/*外部PSRAM方式*/
+	lvgl_driver_init(); // Initialize the LVGL display interface
+	// Allocate two buffers for screen flushing
+	/* External PSRAM mode */
 	lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 	lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(DISP_BUF_SIZE * 2, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 
-	/*内部DMA方式*/
+	/* Internal DMA mode */
 	// lv_color_t *buf1 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
 	// lv_color_t *buf2 = heap_caps_malloc(DISP_BUF_SIZE * sizeof(lv_color_t), MALLOC_CAP_DMA);
 
 	// static lv_color_t buf1[DISP_BUF_SIZE];
 	// static lv_color_t buf2[DISP_BUF_SIZE];
 	static lv_disp_buf_t disp_buf;
-	uint32_t size_in_px = DISP_BUF_SIZE;//KV_CONF.H 改 LVGL  尺寸。
-	lv_disp_buf_init(&disp_buf, buf1, buf2, size_in_px);//初始化显示缓冲区
+	uint32_t size_in_px = DISP_BUF_SIZE;// LVGL size is configured in KV_CONF.H.
+	lv_disp_buf_init(&disp_buf, buf1, buf2, size_in_px);// Initialize the display buffer
 
 	lv_disp_drv_t disp_drv;
 	lv_disp_drv_init(&disp_drv);
 	disp_drv.flush_cb = disp_driver_flush;
 	disp_drv.buffer = &disp_buf;
 	lv_disp_drv_register(&disp_drv);
-    //初始化触摸板
+    // Initialize the touch panel
 	// lv_indev_drv_t indev_drv;
 	// lv_indev_drv_init(&indev_drv);
 	// indev_drv.read_cb = touch_driver_read;
@@ -366,7 +366,7 @@ static void gui_task(void *arg)
 	esp_timer_handle_t periodic_timer;
 	ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
 	ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, 10 * 1000));
-	//按键初始化
+	// Initialize buttons
 	lv_port_indev_init();
 
 	// lv_port_fs_init();
@@ -404,7 +404,7 @@ static void gui_task(void *arg)
 		}
 	}
 }
-/*显示spiffs的所有文件名*/
+/* Display all file names on SPIFFS */
 static void SPIFFS_Directory(char *path)
 {
 	DIR *dir = opendir(path);
@@ -421,7 +421,7 @@ static void SPIFFS_Directory(char *path)
 
 void app_main(void)
 {
-	/*初始化spiffs用于存放字体文件或者图片文件或者网页文件*/
+	/* Initialize SPIFFS for font, image, and web files */
 	ESP_LOGI(TAG, "Initializing SPIFFS");
 	esp_vfs_spiffs_conf_t conf = {
 		.base_path = "/spiffs",
@@ -439,10 +439,10 @@ void app_main(void)
 			ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
 		return;
 	}
-	/*显示spiffs里的文件列表*/
+	/* Display the file list on SPIFFS */
 	SPIFFS_Directory("/spiffs/");
 
-	// 初始化nvs用于存放wifi或者其他需要掉电保存的东西
+	// Initialize NVS for Wi-Fi credentials and other data that must persist across power loss
 	ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
 	{
@@ -451,23 +451,23 @@ void app_main(void)
 	}
 	ESP_ERROR_CHECK(ret);
 	s_wifi_event_group = xEventGroupCreate();
-	/*初始化ADC引脚  用于ADC按键*/
+	/* Initialize the ADC pin for ADC buttons */
 	adc_init();
-	/*初始化WS2812 */
+	/* Initialize WS2812 */
 	app_led_init(GPIO_RMT_LED);
 
 
-	/*创建lvgl任务显示*/
+	/* Create the LVGL display task */
 	xTaskCreatePinnedToCore(&gui_task, "gui task", 1024 * 5, NULL, 5, NULL, 1);
-	/*创建按键任务 定时扫描按键值*/
+	/* Create the button task to scan button values periodically */
 	xTaskCreatePinnedToCore(&button_task, "button_task", 1024 * 3, NULL, 8, NULL, 0);
 
-	/*初始化红外遥控引脚*/
+	/* Initialize the IR remote pin */
 	// IR_init();
 	// xTaskCreatePinnedToCore(&rmt_ir_txTask, "ir_tx", 1024 * 2, NULL, 5, &ir_tx_handle, 0);
-	/*进入阻塞态等待连接*/
+	/* Block until connected */
 	EventBits_t uxBits = xEventGroupWaitBits(s_wifi_event_group, BIT0, false, false, portMAX_DELAY);
-	/*初始化语音唤醒识别任务*/
+	/* Initialize the voice wake-up recognition task */
 	app_speech_wakeup_init();
 	g_state = WAIT_FOR_WAKEUP;
 	// printf("adc_value: %d\n", get_adc());

@@ -74,7 +74,7 @@ void Btn1_Long_Free_CallBack(void *btn)
 	printf("Button 1 Long_Free!\n");
 }
 ///////////////////////////////////////////////////////
-//按键二click
+//Button 2 click
 void Btn2_Down_CallBack(void *btn)
 {
 	Button_Value = BT2_DOWN;

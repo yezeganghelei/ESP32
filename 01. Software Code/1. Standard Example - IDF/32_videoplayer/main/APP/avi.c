@@ -21,7 +21,7 @@ char *const AVI_AUDS_FLAG_TBL[2] = {"00wb", "01wb"};  /* Audio encoding flag str
 /**
  * @brief       aviDecoding initialization
  * @param       buf  : Input buffer
- * @param       size : 缓冲区size
+ * @param       size : Buffer size
  * @retval      res
  *    @arg      OK,aviFile parsing successfully
  *    @arg      other,Error code
@@ -48,19 +48,19 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
 
     if (aviheader->AviID != AVI_AVI_ID)
     {
-        return AVI_AVI_ERR;         /* AVI IDmistake */
+        return AVI_AVI_ERR;         /* AVI ID error */
     }
 
     buf += sizeof(AVI_HEADER);      /* offset */
     listheader = (LIST_HEADER *)(buf);
     if (listheader->ListID != AVI_LIST_ID)
     {
-        return AVI_LIST_ERR;        /* LIST IDmistake */
+        return AVI_LIST_ERR;        /* LIST ID error */
     }
 
     if (listheader->ListType != AVI_HDRL_ID)
     {
-        return AVI_HDRL_ERR;        /* HDRL IDmistake */
+        return AVI_HDRL_ERR;        /* HDRL ID error */
     }
 
     buf += sizeof(LIST_HEADER);     /* offset */
@@ -70,13 +70,13 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
         return AVI_AVIH_ERR;        /* AVIH ID error */
     }
 
-    g_avix.SecPerFrame = avihheader->SecPerFrame;   /* get帧间隔时间 */
-    g_avix.TotalFrame = avihheader->TotalFrame;     /* get总帧数 */
+    g_avix.SecPerFrame = avihheader->SecPerFrame;   /* Get frame interval time */
+    g_avix.TotalFrame = avihheader->TotalFrame;     /* Get total frame count */
     buf += avihheader->BlockSize + 8;               /* offset */
     listheader = (LIST_HEADER *)(buf);
     if (listheader->ListID != AVI_LIST_ID)
     {
-        return AVI_LIST_ERR;        /* LIST IDmistake */
+        return AVI_LIST_ERR;        /* LIST ID error */
     }
 
     if (listheader->ListType != AVI_STRL_ID)
@@ -87,14 +87,14 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
     strhheader = (STRH_HEADER *)(buf + 12);
     if (strhheader->BlockID != AVI_STRH_ID)
     {
-        return AVI_STRH_ERR;        /* STRH IDmistake */
+        return AVI_STRH_ERR;        /* STRH ID error */
     }
 
     if (strhheader->StreamType == AVI_VIDS_STREAM)  /* Video frames ahead */
     {
         if (strhheader->Handler != AVI_FORMAT_MJPG)
         {
-            return AVI_FORMAT_ERR;  /* NoMJPGVideo streaming,Not supported */
+            return AVI_FORMAT_ERR;  /* Not MJPG video stream, not supported */
         }
 
         g_avix.VideoFLAG = AVI_VIDS_FLAG_TBL[0];    /* Video stream tag "00dc" */
@@ -102,7 +102,7 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
         bmpheader = (STRF_BMPHEADER *)(buf + 12 + strhheader->BlockSize + 8);   /* strf */
         if (bmpheader->BlockID != AVI_STRF_ID)
         {
-            return AVI_STRF_ERR;    /* STRF IDmistake */
+            return AVI_STRF_ERR;    /* STRF ID error */
         }
 
         g_avix.Width = bmpheader->bmiHeader.Width;
@@ -131,13 +131,13 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
 
             if (strhheader->StreamType != AVI_AUDS_STREAM)
             {
-                return AVI_FORMAT_ERR;  /* 格式mistake */
+                return AVI_FORMAT_ERR;  /* Format error */
             }
 
             wavheader = (STRF_WAVHEADER *)(buf + 12 + strhheader->BlockSize + 8);   /* strf */
             if (wavheader->BlockID != AVI_STRF_ID)
             {
-                return AVI_STRF_ERR;    /* STRF IDmistake */
+                return AVI_STRF_ERR;    /* STRF ID error */
             }
 
             g_avix.SampleRate = wavheader->SampleRate;      /* Audio sampling rate */
@@ -178,34 +178,34 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
 
         if (strhheader->StreamType != AVI_VIDS_STREAM)
         {
-            return AVI_FORMAT_ERR;  /* 格式mistake */
+            return AVI_FORMAT_ERR;  /* Format error */
         }
 
         bmpheader = (STRF_BMPHEADER *)(buf + 12 + strhheader->BlockSize + 8);   /* strf */
         if (bmpheader->BlockID != AVI_STRF_ID)
         {
-            return AVI_STRF_ERR;    /* STRF IDmistake */
+            return AVI_STRF_ERR;    /* STRF ID error */
         }
 
         if (bmpheader->bmiHeader.Compression != AVI_FORMAT_MJPG)
         {
-            return AVI_FORMAT_ERR;  /* 格式mistake */
+            return AVI_FORMAT_ERR;  /* Format error */
         }
 
         g_avix.Width = bmpheader->bmiHeader.Width;
         g_avix.Height = bmpheader->bmiHeader.Height;
     }
 
-    offset = avi_srarch_id(tbuf, size, "movi");     /* Findmovi ID */
+    offset = avi_srarch_id(tbuf, size, "movi");     /* Find movi ID */
     if (offset == 0)
     {
         return AVI_MOVI_ERR;        /* MOVI ID error */
     }
 
-    if (g_avix.SampleRate)          /* There is audio streaming,才Find */
+    if (g_avix.SampleRate)          /* Audio stream present, so search for it */
     {
         tbuf += offset;
-        offset = avi_srarch_id(tbuf, size, g_avix.AudioFLAG);   /* FindAudio Stream Tag */
+        offset = avi_srarch_id(tbuf, size, g_avix.AudioFLAG);   /* Find audio stream tag */
         if (offset == 0)
         {
             return AVI_STREAM_ERR;  /* Stream error */
@@ -232,8 +232,8 @@ AVISTATUS avi_init(uint8_t *buf, uint32_t size)
 /**
  * @brief       Find ID
  * @param       buf  : Input buffer
- * @param       size : 缓冲区size
- * @param       id   : 要Find的id, Must be4byte长度
+ * @param       size : Buffer size
+ * @param       id   : ID to find, must be 4 bytes long
  * @retval      Execution result
  *   @arg       0     , not found
  *   @arg       other  , movi IDOffset
@@ -250,7 +250,7 @@ uint32_t avi_srarch_id(uint8_t *buf, uint32_t size, char *id)
             (buf[i + 2] == id[2]) &&
             (buf[i + 3] == id[3]))
         {
-            idsize = MAKEDWORD(buf + i + 4);    /* get帧size,Must be greater than16byte,Return,Otherwise it is not valid data */
+            idsize = MAKEDWORD(buf + i + 4);    /* Get frame size; must be greater than 16 bytes to return, otherwise it is not valid data */
 
             if (idsize > 0X10)return i;         /* Find the location of "id" */
         }
@@ -268,8 +268,8 @@ uint32_t avi_srarch_id(uint8_t *buf, uint32_t size, char *id)
  */
 AVISTATUS avi_get_streaminfo(uint8_t *buf)
 {
-    g_avix.StreamID = MAKEWORD(buf + 2);    /* get流类型 */
-    g_avix.StreamSize = MAKEDWORD(buf + 4); /* get流size */
+    g_avix.StreamID = MAKEWORD(buf + 2);    /* Get stream type */
+    g_avix.StreamSize = MAKEDWORD(buf + 4); /* Get stream size */
 
     if (g_avix.StreamSize > AVI_MAX_FRAME_SIZE)   /* The frame size is too large, and the error is returned directly */
     {

@@ -17,15 +17,15 @@
 static const char *TAG="NVS";
 int save_nvs(const char * str,char * data)
 {
-    nvs_handle my_handle;//nvs句柄
-    esp_err_t err = nvs_open("info", NVS_READWRITE, &my_handle);//打开wifipass空间
+    nvs_handle my_handle;// NVS handle
+    esp_err_t err = nvs_open("info", NVS_READWRITE, &my_handle);// Open the wifipass namespace
     err = nvs_set_str(my_handle,str,data);
     err =nvs_commit(my_handle);
     if(err==ESP_OK) 
-        ESP_LOGI(TAG,"保存%s:%s",str,data);
+        ESP_LOGI(TAG,"Save %s:%s",str,data);
     else
     {
-        ESP_LOGI(TAG,"保存失败");  
+        ESP_LOGI(TAG,"Save failed");  
         return 0;
     }
     nvs_close(my_handle);
@@ -33,17 +33,17 @@ int save_nvs(const char * str,char * data)
 }
 int read_nvs(const char * str,char * data)
 {
-    /*打开wifipass工作区*/
+    /* Open the wifipass workspace */
     size_t len =100;
-    nvs_handle my_handle;//nvs句柄
-    esp_err_t err = nvs_open("info", NVS_READWRITE, &my_handle);//打开wifipass空间
-    /*从nvs中获取到ssid和密码*/
+    nvs_handle my_handle;// NVS handle
+    esp_err_t err = nvs_open("info", NVS_READWRITE, &my_handle);// Open the wifipass namespace
+    /* Get the SSID and password from NVS */
     err =nvs_get_str(my_handle,str,data,&len);
     if(err==ESP_OK)
-        ESP_LOGI(TAG,"读取%s:%s",str,data);
+        ESP_LOGI(TAG,"Read %s:%s",str,data);
     else
     {
-        ESP_LOGI(TAG,"读取失败"); 
+        ESP_LOGI(TAG,"Read failed"); 
         return 0;
     }  
     nvs_close(my_handle);
@@ -58,31 +58,31 @@ void save_web_data(char *data)
         which = cJSON_GetObjectItem(root, "n");
         if(which!=NULL)
         {
-            if(which->valueint==1)//必填项
+            if(which->valueint==1)// Required field
             {
-                cJSON *uid=cJSON_GetObjectItem(root,"uid");//获取哔哩哔哩uid
+                cJSON *uid=cJSON_GetObjectItem(root,"uid");// Get the Bilibili UID
                 save_nvs("uid",uid->valuestring);
-                cJSON *city=cJSON_GetObjectItem(root,"city");//获取城市
+                cJSON *city=cJSON_GetObjectItem(root,"city");// Get the city
                 save_nvs("city",city->valuestring);
             }
             else if(which->valueint==0)
             {
-                cJSON *pass=cJSON_GetObjectItem(root,"pass");//获取心知天气密匙
+                cJSON *pass=cJSON_GetObjectItem(root,"pass");// Get the Seniverse (Xinzhi) API key
                 save_nvs("pass",pass->valuestring);
 
             }else if(which->valueint==2)
             {
-				cJSON *img_client_id=cJSON_GetObjectItem(root,"img_client_id");//获取心知天气密匙
+				cJSON *img_client_id=cJSON_GetObjectItem(root,"img_client_id");// Get the Seniverse (Xinzhi) API key
                 save_nvs("img_client_id",img_client_id->valuestring);
-				cJSON *img_client_secret=cJSON_GetObjectItem(root,"img_client_secret");//获取心知天气密匙
+				cJSON *img_client_secret=cJSON_GetObjectItem(root,"img_client_secret");// Get the Seniverse (Xinzhi) API key
                 save_nvs("img_secret",img_client_secret->valuestring);
-				cJSON *img_token=cJSON_GetObjectItem(root,"img_token");//获取心知天气密匙
+				cJSON *img_token=cJSON_GetObjectItem(root,"img_token");// Get the Seniverse (Xinzhi) API key
                 save_nvs("img_token",img_token->valuestring);
-				cJSON *ocr_client_id=cJSON_GetObjectItem(root,"ocr_client_id");//获取心知天气密匙
+				cJSON *ocr_client_id=cJSON_GetObjectItem(root,"ocr_client_id");// Get the Seniverse (Xinzhi) API key
                 save_nvs("ocr_client_id",ocr_client_id->valuestring);
-				cJSON *ocr_client_secret=cJSON_GetObjectItem(root,"ocr_client_secret");//获取心知天气密匙
+				cJSON *ocr_client_secret=cJSON_GetObjectItem(root,"ocr_client_secret");// Get the Seniverse (Xinzhi) API key
                 save_nvs("ocr_secret",ocr_client_secret->valuestring);
-				cJSON *ocr_token=cJSON_GetObjectItem(root,"ocr_token");//获取心知天气密匙
+				cJSON *ocr_token=cJSON_GetObjectItem(root,"ocr_token");// Get the Seniverse (Xinzhi) API key
                 save_nvs("ocr_token",ocr_token->valuestring);
 
                 // FILE* fp = fopen("/spiffs/mqtt.txt", "w");

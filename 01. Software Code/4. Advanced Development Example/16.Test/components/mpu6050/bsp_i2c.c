@@ -19,7 +19,7 @@ function definition
  */
 esp_err_t bsp_i2c_master_init(void)
 {
-    //i2cConfiguration结构体
+    //i2c configuration structure
 
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
@@ -38,7 +38,7 @@ esp_err_t bsp_i2c_master_deinit(void)
 }
 
 /** 
- * Towardsoledwrite command
+ * Write a command to the OLED
  * @param[in]   command
  * @retval      
  *              - ESP_OK                              
@@ -52,14 +52,14 @@ esp_err_t bsp_i2c_master_deinit(void)
 int bsp_oled_write_cmd(uint8_t addr, uint8_t command)
 {
     int ret;
-    //Configurationoledregister
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();                            //New operationI2Chandle
+    //Configure the OLED register
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();                            //Create a new I2C operation handle
     ret = i2c_master_start(cmd);                                             //Start I2C
-    ret = i2c_master_write_byte(cmd, addr | WRITE_BIT, ACK_CHECK_EN);        //Send address+Write+examineack
+    ret = i2c_master_write_byte(cmd, addr | WRITE_BIT, ACK_CHECK_EN);        //Send address + write + check ack
     ret = i2c_master_write_byte(cmd, WRITE_CMD, ACK_CHECK_EN);               //Send high 8 bits of data + check ack
-    ret = i2c_master_write_byte(cmd, command, ACK_CHECK_EN);                 //Sending data is low8Bit+examineack
+    ret = i2c_master_write_byte(cmd, command, ACK_CHECK_EN);                 //Send low 8 bits of data + check ack
     ret = i2c_master_stop(cmd);                                              //Stop I2C
-    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 100 / portTICK_RATE_MS); //I2Csend
+    ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 100 / portTICK_RATE_MS); //I2C send
     i2c_cmd_link_delete(cmd);                                                //Delete I2C handle
     if (ret != ESP_OK)
     {
@@ -96,8 +96,8 @@ int bsp_oled_write_data(uint8_t addr, uint8_t data)
 }
 
 /** 
- * TowardsoledWrite长数据
- * @param[in]   data   要Write入的数据
+ * Write long data to the OLED
+ * @param[in]   data   Data to write
  * @param[in]   len     Data length
  * @retval      
  *              - ESP_OK                              

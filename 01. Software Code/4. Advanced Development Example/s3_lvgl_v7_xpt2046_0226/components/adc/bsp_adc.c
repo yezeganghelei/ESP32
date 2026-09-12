@@ -93,7 +93,7 @@ uint16_t get_adc(void)
     //Multisampling
     // for (int i = 0; i < NO_OF_SAMPLES; i++)
     // {
-    read_raw = adc1_get_raw(channel); //从单个通道获取ADC1读数。
+    read_raw = adc1_get_raw(channel); // Read ADC1 from a single channel.
     //     read_raw += read_raw;
     // }
     // read_raw /= NO_OF_SAMPLES;
@@ -114,7 +114,7 @@ uint16_t get_adc_vol(void)
     //Multisampling
     // for (int i = 0; i < NO_OF_SAMPLES; i++)
     // {
-    read_raw = adc1_get_raw(channel); //从单个通道获取ADC1读数。
+    read_raw = adc1_get_raw(channel); // Read ADC1 from a single channel.
     //     read_raw += read_raw;
     // }
     // read_raw /= NO_OF_SAMPLES;
@@ -147,11 +147,11 @@ uint16_t touch_chart[][3] =
         // {3, 36, 42},
         // {4, 210, 220},
 
-        {0, 2500, 2800}, //中键
-        {1, 1150, 1350}, //右键
-        {2, 1700, 2300}, //左键
-        {3, 600, 750},   //下键
-        {4, 3200, 3600}, //上键
+        {0, 2500, 2800}, // Middle key
+        {1, 1150, 1350}, // Right key
+        {2, 1700, 2300}, // Left key
+        {3, 600, 750},   // Down key
+        {4, 3200, 3600}, // Up key
 
 };
 
@@ -161,7 +161,7 @@ uint8_t Get_Adc_Button()
     // static uint64_t last_time = 0;
     for (uint8_t i = 0; i < 5; i++)
     {
-        // if (adc_value >= touch_chart[i][1] && adc_value <= touch_chart[i][2] && esp_timer_get_time() - last_time > 200000) //限制进入时间
+        // if (adc_value >= touch_chart[i][1] && adc_value <= touch_chart[i][2] && esp_timer_get_time() - last_time > 200000) // limit entry time
         if (adc1_get_raw(channel) >= touch_chart[i][1] && adc1_get_raw(channel) <= touch_chart[i][2])
         {
             // printf("adc_button: %d\n", i + 1);

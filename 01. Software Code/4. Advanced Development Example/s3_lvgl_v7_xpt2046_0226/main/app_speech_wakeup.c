@@ -57,7 +57,7 @@ QueueHandle_t sndQueue;
 extern lv_obj_t *label_speech;
 
 /*
- * 语音识别处理函数
+ * Speech recognition handler
  */
 static esp_err_t asr_multinet_control(int commit_id)
 {
@@ -70,67 +70,67 @@ static esp_err_t asr_multinet_control(int commit_id)
 			play_spiffs_name("haode.wav");
 			ac_set_temp(20);
 			ESP_LOGI(TAG, "ID0_TIAODAOERSHIDU");
-			lv_label_set_text(label_speech, "已调到20度");
+			lv_label_set_text(label_speech, "Set to 20°C");
 			break;
 		case ID1_TIAODAOERSHIYIDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(21);
 			ESP_LOGI(TAG, "ID1_TIAODAOERSHIYIDU");
-			lv_label_set_text(label_speech, "已调到21度");
+			lv_label_set_text(label_speech, "Set to 21°C");
 			break;
 		case ID2_TIAODAOERSHIERDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(22);
 			ESP_LOGI(TAG, "ID2_TIAODAOERSHIERDU");
-			lv_label_set_text(label_speech, "已调到22度");
+			lv_label_set_text(label_speech, "Set to 22°C");
 			break;
 		case ID3_TIAODAOERSHISANDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(23);
 			ESP_LOGI(TAG, "ID3_TIAODAOERSHISANDU");
-			lv_label_set_text(label_speech, "已调到23度");
+			lv_label_set_text(label_speech, "Set to 23°C");
 			break;
 		case ID4_TIAODAOERSHISIDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(24);
 			ESP_LOGI(TAG, "ID4_TIAODAOERSHISIDU");
-			lv_label_set_text(label_speech, "已调到24度");
+			lv_label_set_text(label_speech, "Set to 24°C");
 			break;
 		case ID5_TIAODAOERSHIWUDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(25);
 			ESP_LOGI(TAG, "ID5_TIAODAOERSHIWUDU");
-			lv_label_set_text(label_speech, "已调到25度");
+			lv_label_set_text(label_speech, "Set to 25°C");
 			break;
 		case ID6_TIAODAOERSHLIUIDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(26);
 			ESP_LOGI(TAG, "ID6_TIAODAOERSHLIUIDU");
-			lv_label_set_text(label_speech, "已调到26度");
+			lv_label_set_text(label_speech, "Set to 26°C");
 			break;
 		case ID7_TIAODAOERSHIQIDU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(27);
 			ESP_LOGI(TAG, "ID7_TIAODAOERSHIQIDU");
-			lv_label_set_text(label_speech, "已调到27度");
+			lv_label_set_text(label_speech, "Set to 27°C");
 			break;
 		case ID8_TIAODAOERSHIBADU:
 			play_spiffs_name("haode.wav");
 			ac_set_temp(28);
 			ESP_LOGI(TAG, "ID8_TIAODAOERSHIBADU");
-			lv_label_set_text(label_speech, "已调到28度");
+			lv_label_set_text(label_speech, "Set to 28°C");
 			break;
 		case ID9_QIDONGKONGTIAOSAOFENG:
 			play_spiffs_name("haode.wav");
 			ac_set_swing(true);
 			ESP_LOGI(TAG, "ID9_QIDONGKONGTIAOSAOFENG");
-			lv_label_set_text(label_speech, "已打开扫风");
+			lv_label_set_text(label_speech, "Swing on");
 			break;
 		case ID10_TINGZHIKONGTIAOSAOFENG:
 			play_spiffs_name("haode.wav");
 			ac_set_swing(false);
 			ESP_LOGI(TAG, "ID10_TINGZHIKONGTIAOSAOFENG");
-			lv_label_set_text(label_speech, "已关闭扫风");
+			lv_label_set_text(label_speech, "Swing off");
 			break;
 		case ID11_TIAODAOZIDONGFENGSU:
 			play_spiffs_name("haode.wav");
@@ -157,7 +157,7 @@ static esp_err_t asr_multinet_control(int commit_id)
 			// play_spiffs_name("airon.wav");
 			ac_open(1);
 			ESP_LOGI(TAG, "ID15_DAKAIKONGTIAO");
-			lv_label_set_text(label_speech, "已打开空调");
+			lv_label_set_text(label_speech, "AC on");
 
 			break;
 		case ID16_GUANBIKONGTIAO:
@@ -165,44 +165,44 @@ static esp_err_t asr_multinet_control(int commit_id)
 			// play_spiffs_name("airoff.wav");
 			ac_open(0);
 			ESP_LOGI(TAG, "ID16_GUANBIKONGTIAO");
-			lv_label_set_text(label_speech, "已关闭空调");
+			lv_label_set_text(label_speech, "AC off");
 
 			break;
 		case ID17_GELIKONGTIAO:
 			play_spiffs_name("haode.wav");
 			ac_set_type(0);
 			ESP_LOGI(TAG, "ID17_GELIKONGTIAO");
-			lv_label_set_text(label_speech, "已设置为格力空调");
+			lv_label_set_text(label_speech, "Set to Gree AC");
 			break;
 		case ID18_MEIDIKONGTIAO:
 			play_spiffs_name("haode.wav");
 			ac_set_type(1);
 			ESP_LOGI(TAG, "ID18_MEIDIKONGTIAO");
-			lv_label_set_text(label_speech, "已设置为美的空调");
+			lv_label_set_text(label_speech, "Set to Midea AC");
 			break;
 		case ID19_AOKESIKONGTIAO:
 			play_spiffs_name("haode.wav");
 			ac_set_type(6);
 			ESP_LOGI(TAG, "ID19_AOKESIKONGTIAO");
-			lv_label_set_text(label_speech, "已设置为奥克斯空调");
+			lv_label_set_text(label_speech, "Set to AUX AC");
 			break;
 		case ID20_HAIERKONGTIAO:
 			play_spiffs_name("haode.wav");
 			ac_set_type(4);
 			ESP_LOGI(TAG, "ID20_HAIERKONGTIAO");
-			lv_label_set_text(label_speech, "已设置为海尔空调");
+			lv_label_set_text(label_speech, "Set to Haier AC");
 			break;
 		case ID21_KAIDENG:
 			play_spiffs_name("haode.wav");
 			app_led_set_all(30, 30, 30);
 			ESP_LOGI(TAG, "ID21_KAIDENG");
-			lv_label_set_text(label_speech, "已开灯");
+			lv_label_set_text(label_speech, "Light on");
 			break;
 		case ID22_GUANDENG:
 			play_spiffs_name("haode.wav");
 			app_led_set_all(0, 0, 0);
 			ESP_LOGI(TAG, "ID22_GUANDENG");
-			lv_label_set_text(label_speech, "已关灯");
+			lv_label_set_text(label_speech, "Light off");
 			break;
 		default:
 			ESP_LOGI(TAG, "not supportint mode");
@@ -261,7 +261,7 @@ void nnTask(void *arg)
 				page_wakeup_start();
 				play_spiffs_name("wozai.wav");
 				detect_flag = 1;
-				lv_label_set_text(label_speech, "我在听呢！\n请说命令词叭");
+				lv_label_set_text(label_speech, "I'm listening!\nPlease say a command");
 				printf("-----------------LISTENING-----------------\n\n");
 				vTaskDelay(10);
 				
@@ -289,14 +289,14 @@ void nnTask(void *arg)
 				vTaskDelay(2);
 			}
 
-			/* 本地语音识别未能完成识别，交给语音在线识别*/
+			/* Local speech recognition failed; hand off to online speech recognition */
 			if (mn_chunks == chunk_num)
 			{
 				// asr_nothinf_control();
 				// xTaskCreatePinnedToCore(&asr_nothinf_control, "asr_nothinf_control", 5 * 1024, NULL, 14, NULL, 0);
 				playing = true;
 				vTaskDelay(100);
-				lv_label_set_text(label_speech, "刚刚没听清耶...");
+				lv_label_set_text(label_speech, "I didn't catch that...");
 				play_spiffs_name("what.wav");
 				printf("\n-----------awaits to be waken up-----------\n");
 				page_wakeup_end();
@@ -323,14 +323,14 @@ void nnTask(void *arg)
 			// 		detect_flag = 0;
 			// 		// printf("\n-----------awaits to be waken up-----------\n");
 			// 		// page_wakeup_end();
-			// 		// lv_label_set_text(label_speech, "请说 Hi LeXin 唤醒我吧");
+			// 		// lv_label_set_text(label_speech, "Please say Hi LeXin to wake me up");
 			// 	}
 			// 	else
 			// 	{
 			// 		playing = true;
 			// 		vTaskDelay(100);
 			// 		ESP_LOGE(TAG, "can not recognize any speech commands");
-			// 		lv_label_set_text(label_speech, "刚刚没听清耶...");
+			// 		lv_label_set_text(label_speech, "I didn't catch that...");
 			// 		play_spiffs_name("what.wav");
 			// 		mn_chunks = 0;
 			// 		detect_flag = 0;

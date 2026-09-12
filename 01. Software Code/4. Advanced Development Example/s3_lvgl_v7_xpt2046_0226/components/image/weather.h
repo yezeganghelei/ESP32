@@ -1,8 +1,8 @@
 #ifndef WEATHER_H_
 #define WEATHER_H_
-#define JINTIAN "今天"
-#define MINGTIAN "明天"
-#define HOUTIAN "后天"
+#define JINTIAN "Today"
+#define MINGTIAN "Tomorrow"
+#define HOUTIAN "Day After Tomorrow"
 #include "lvgl/lvgl.h"
 struct WEATHER{
     char * weathername;

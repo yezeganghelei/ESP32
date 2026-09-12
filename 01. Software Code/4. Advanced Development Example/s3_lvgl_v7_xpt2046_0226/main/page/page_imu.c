@@ -20,14 +20,14 @@
 
 #define TAG "mpu6050"
 
-/*此页面窗口*/
+/*This page's window*/
 static lv_obj_t *appWindow;
-/*标题栏*/
+/*Title bar*/
 static lv_obj_t *labelTitle;
 
-/*标题栏分隔线*/
+/*Title bar separator line*/
 static lv_obj_t *lineTitle;
-/*图标显示容器，用于裁剪显示*/
+/*Icon display container, used for clipped display*/
 static lv_obj_t *contDisp;
 
 uint8_t imu_en = 0;
@@ -45,7 +45,7 @@ void Imu_Task(void *pvParameters)
 	vTaskDelay(100);
 	mpu6050_init();
 	vTaskDelay(100);
-	// /* 入口处检测一次 */
+	// /* Detect once at entry */
 	ESP_LOGI("Imu_Task", "Imu_Task uxHighWaterMark = %d", uxTaskGetStackHighWaterMark(NULL));
 	
 	ESP_LOGI(TAG, "connection:%d", mpu6050_test_connection());
@@ -57,7 +57,7 @@ void Imu_Task(void *pvParameters)
 	ESP_LOGI(TAG, "dlpf_mode:%d", mpu6050_get_dlpf_mode());
 	ESP_LOGI(TAG, "full_scale_gyro_range:%d", mpu6050_get_full_scale_gyro_range());
 	printf("\n mpu6050_test_connection:%d\n", mpu6050_test_connection());
-	// 定义变量
+	// Define variables
 	mpu6050_acceleration_t accel = {
 		.accel_x = 0,
 		.accel_y = 0,
@@ -76,17 +76,17 @@ void Imu_Task(void *pvParameters)
 
 			mpu6050_get_motion(&accel, &gyro);
 			//printf("ax:%d;ay:%d;az:%d", accel.accel_x, accel.accel_y, accel.accel_z);
-			Gyro_deg.x = gyro.gyro_x * 0.0610361f; //  /65535 * 4000; +-2000度
+			Gyro_deg.x = gyro.gyro_x * 0.0610361f; //  /65535 * 4000; +-2000 degrees
 			Gyro_deg.y = gyro.gyro_y * 0.0610361f;
 			Gyro_deg.z = gyro.gyro_z * 0.0610361f;
 
-			/*加速度计转换到毫米每平方秒*/
+			/*Convert accelerometer readings to millimeters per second squared*/
 			Acc_mmss.x = accel.accel_x * 2.392615f; //   /65535 * 16*9800; +-8G
 			Acc_mmss.y = accel.accel_y * 2.392615f;
 			Acc_mmss.z = accel.accel_z * 2.392615f;
 			// printf("ax:%7.2f;ay:%7.2f;az:%7.2f", Acc_mmss.x, Acc_mmss.y, Acc_mmss.z);
 			// printf("gx:%7.2f;gy:%7.2f;gz:%7.2f", Gyro_deg.x, Gyro_deg.y, Gyro_deg.z);
-			IMU_update(0.005f, &Gyro_deg, &Acc_mmss, &imu_data); //姿态解算
+			IMU_update(0.005f, &Gyro_deg, &Acc_mmss, &imu_data); //Attitude estimation
 
 			// printf("pitch:%3.2f, yaw:%3.2f, roll:%3.2f\n", imu_data.pit, imu_data.yaw, imu_data.rol);
 			lv_chart_set_next(chart_imu, series, imu_data.pit);
@@ -102,9 +102,9 @@ void Imu_Task(void *pvParameters)
 	}
 }
 /**
-  * @brief  创建标题栏
-  * @param  无
-  * @retval 无
+  * @brief  Create the title bar
+  * @param  None
+  * @retval None
   */
 static void Title_Create()
 {
@@ -117,7 +117,7 @@ static void Title_Create()
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(appWindow, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_pos(appWindow, 0, 0);
 	lv_obj_set_size(appWindow, APP_WIN_WIDTH, APP_WIN_HEIGHT);
@@ -148,7 +148,7 @@ static void Title_Create()
 	lv_obj_set_size(labelTitle, APP_WIN_WIDTH, 55);
 	lv_label_set_recolor(labelTitle, true);
 
-	/*默认选中的是第二个图标*/
+	/*The second icon is selected by default*/
 	lv_label_set_static_text(labelTitle, "IMU");
 	lv_obj_align(labelTitle, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 	lv_obj_set_auto_realign(labelTitle, true);
@@ -166,7 +166,7 @@ static void Title_Create()
 	lv_line_set_points(lineTitle, screen_line3, 2);
 }
 
-//创建菜单界面
+//Create the menu screen
 static void Cont_create(void)
 {
 
@@ -178,7 +178,7 @@ static void Cont_create(void)
 	lv_style_set_border_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 	lv_style_set_border_width(&style_cont, LV_STATE_DEFAULT, 0);
 	lv_style_set_border_opa(&style_cont, LV_STATE_DEFAULT, 255);
-	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //设置屏幕背景
+	lv_style_set_bg_color(&style_cont, LV_STATE_DEFAULT, LV_COLOR_BLACK); //Set the screen background
 	lv_obj_add_style(contDisp, LV_BTN_PART_MAIN, &style_cont);			  /*Default button style*/
 	lv_obj_set_size(contDisp, APP_WIN_WIDTH, APP_WIN_HEIGHT - 60);
 	lv_obj_set_pos(contDisp, 0, 60);
@@ -205,7 +205,7 @@ static void Cont_create(void)
 	lv_obj_set_style_local_bg_main_stop(chart_imu, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, 0); /*Max opa on the top*/
 	lv_obj_set_style_local_bg_grad_stop(chart_imu, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, 0); /*Transparent on the bottom*/
 
-	//6.13 设置 y 轴的主刻度标题和每个主刻度标题间的刻度数
+	//6.13 Set the y-axis major tick labels and the number of ticks between them
 
 	lv_chart_set_y_tick_texts(chart_imu, "180\n150\n120\n90\n60\n30\n0", 7, LV_CHART_AXIS_DRAW_LAST_TICK);
 	series = lv_chart_add_series(chart_imu, LV_COLOR_RED);
@@ -224,7 +224,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 			break;
 		case LV_GESTURE_DIR_BOTTOM:
 			printf("LV_GESTURE_DIR_BOTTOM.\n\r");
-			/*长按OK，退出上一个页面*/
+			/*Long press OK to exit to the previous page*/
 			// page.PagePop();
 			break;
 		case LV_GESTURE_DIR_RIGHT:
@@ -241,7 +241,7 @@ static void event_handler_touch(lv_obj_t *obj, lv_event_t event)
 	}
 	switch (event)
 	{
-	case LV_EVENT_LONG_PRESSED: /* 长按 */
+	case LV_EVENT_LONG_PRESSED: /* Long press */
 		page.PagePop();
 		printf("Long press\n");
 		break;
@@ -255,12 +255,12 @@ void page_imu_load()
 	Title_Create();
 	Cont_create();
 	obj_add_anim(
-		appWindow,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		APP_WIN_WIDTH,					   //起始值
-		0,								   //结束值
-		lv_anim_path_linear				   //动画特效:模拟弹性物体下落
+		appWindow,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		APP_WIN_WIDTH,					   //Start value
+		0,								   //End value
+		lv_anim_path_linear				   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	xTaskCreatePinnedToCore(&Imu_Task, "Imu_Task", 1024 * 3, NULL, 17, NULL, 0);
@@ -270,12 +270,12 @@ static void Exit(void)
 {
 	imu_en = 0;
 	obj_add_anim(
-		appWindow,						   //动画对象
-		(lv_anim_exec_xcb_t)lv_obj_set_x,  //动画函数
-		lv_anim_speed_to_time(300, 0, 50), //动画速度
-		0,								   //起始值
-		APP_WIN_WIDTH,					   //结束值
-		lv_anim_path_linear				   //动画特效:模拟弹性物体下落
+		appWindow,						   //Animation object
+		(lv_anim_exec_xcb_t)lv_obj_set_x,  //Animation function
+		lv_anim_speed_to_time(300, 0, 50), //Animation speed
+		0,								   //Start value
+		APP_WIN_WIDTH,					   //End value
+		lv_anim_path_linear				   //Animation effect: simulate a bouncing object falling
 	);
 	ANIEND
 	lv_obj_del(appWindow);
@@ -285,9 +285,9 @@ static void Exit(void)
 
 static void Setup(void)
 {
-	//获取芯片可用内存
+	//Get the available heap size
 	printf(" page_imu_start    esp_get_free_heap_size : %d  \n", esp_get_free_heap_size());
-	//获取从未使用过的最小内存
+	//Get the minimum free heap size ever
 	printf(" page_imu_start    esp_get_minimum_free_heap_size : %d  \n", esp_get_minimum_free_heap_size());
 	printf("%s !Dram: %d bytes\r\n", __func__, heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
 	page_imu_load();
@@ -295,26 +295,26 @@ static void Setup(void)
 	lv_obj_set_event_cb(lv_layer_top(), event_handler_touch);
 }
 /**
-  * @brief  页面事件
-  * @param  btn:发出事件的按键
-  * @param  event:事件编号
-  * @retval 无
+  * @brief  Page event
+  * @param  btn:button that raised the event
+  * @param  event:event ID
+  * @retval None
   */
 static void Event(void *btn, int event)
 {
 }
 
 /**
-  * @brief  页面注册
-  * @param  pageID:为此页面分配的ID号
-  * @retval 无
+  * @brief  Page registration
+  * @param  pageID:ID assigned to this page
+  * @retval None
   */
 void PageRegister_IMU(uint8_t pageID)
 {
-	/*获取分配给此页面的窗口*/
+	/*Get the window assigned to this page*/
 	// appWindow = AppWindow_GetCont(pageID);
 
-	/*注册至页面调度器*/
+	/*Register with the page scheduler*/
 	page.PageRegister(pageID, Setup, NULL, Exit, NULL);
-	printf("/*注册IMU至页面调度器*/\r\n");
+	printf("/* Register IMU with the page scheduler */\r\n");
 }
