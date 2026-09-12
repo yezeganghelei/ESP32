@@ -5,11 +5,11 @@
 
 <table>
   <tr>
-    <td align="center"><img src="./Products/ESP32.jpg" width="250"><a href="https://www.amazon.com/dp/B0GJR32VF1?th=1">Click1:ESP32</a> </td>
-    <td align="center"><img src="./Products/ESP32 S3.jpg" width="250"><a href="https://www.amazon.com/dp/B0GDWTP1NT?th=1">Click2:ESP32 S3</a></td>
-    <td align="center"><img src="./Products/ESP32 S3 Camera.jpg" width="250"><a href="https://www.amazon.com/dp/B0GJPZC2VF?th=1">Click3:ESP32 S3 Camera</a></td>
-    <td align="center"><img src="./Products/Breadboard kits.jpg" width="250"><a href="https://www.amazon.com/dp/B0GX6ZXDSD">Click4:Breadboard kits</a></td>
-    <td align="center"><img src="./Products/PCB kits.jpg" width="250"><a href="https://www.amazon.com/dp/B0GX7KDDZ3">Click5:PCB kits</a></td>
+    <td align="center"><img src="./Products/ESP32.jpg" width="250"></td>
+    <td align="center"><img src="./Products/ESP32 S3.jpg" width="250"></td>
+    <td align="center"><img src="./Products/ESP32 S3 Camera.jpg" width="250"></td>
+    <td align="center"><img src="./Products/Breadboard kits.jpg" width="250"></td>
+    <td align="center"><img src="./Products/PCB kits.jpg" width="250"></td>
   </tr>
 </table>
 ---
@@ -18,8 +18,8 @@
 
 - [01. Software Code/](#01-software-code)
 - [02. Hardware Reource/](#02-hardware-reource)
-- [03. Learning Resource/](#03-learning-resource)
-- [04. ESP32-S3 Reference Resource/](#04-esp32-s3-reference-resource)
+- [03. ESP32-Tutorials/](#03-esp32-tutorials)
+- [04. ESP32 Series Reference Resource/](#04-esp32-series-reference-resource)
 - [05. Common Tools/](#05-common-tools)
 - [06.ESP32-S3 Camera Reference Resource/](#06esp32-s3-camera-reference-resource)
 - [07.Breadboard Power Supply Board/](#07breadboard-power-supply-board)
@@ -233,9 +233,22 @@ SCCB bus specification, hardware/software development guides, datasheet
 
 ---
 
-## 03. Learning Resource/
+## 03. ESP32-Tutorials/
 
-### 1. Arduino software packages/
+### 1. ESP32-Tutorials-MD-EN/
+
+English Markdown tutorial series (`index.md` + `assets/images/`).
+
+| Directory | Contents |
+|-----------|----------|
+| ESP32-Arduino-Tutorials/ | Arduino IDE setup, basics, digital/analog I/O, PWM, UART/I2C/SPI, WiFi, web server, BLE, LVGL, and 6 fun projects (20 docs) |
+| ESP32-ESP-IDF-Tutorials/ | IDF installation, project creation, components, partition table, FreeRTOS, clock tree, debug, Wi-Fi, BLE, peripherals (13 docs) |
+| ESP32-ESPHome-Tutorials/ | Home Assistant setup/installation, ESPHome add-on, first device, extending config, RLCD voice example (6 docs) |
+| ESP32-MicroPython-Tutorials/ | Getting started, basics, digital/analog I/O, PWM, UART/I2C/SPI, WiFi, web server, BLE, and 6 fun projects (19 docs) |
+| ESP32-Peripheral-Tutorials/ | Display topics — AMOLED, LCD, OLED, E-Paper, RLCD, LED Matrix, Touch, GUI, display basics (10 docs) |
+| ESP32-Tutorials/ | Getting to know ESP32 |
+
+### 2. Arduino software package/
 
 | File | Description |
 |------|-------------|
@@ -243,7 +256,7 @@ SCCB bus specification, hardware/software development guides, datasheet
 | esp8266-oled-ssd1306-master.zip | OLED SSD1306 library |
 | IRremoteESP8266-master.zip | IR remote control library |
 
-### 2. FreeRTOS Learning Resources/
+### 3. FreeRTOS Learning Resources/
 
 | Document | Description |
 |----------|-------------|
@@ -252,7 +265,7 @@ SCCB bus specification, hardware/software development guides, datasheet
 | Mastering-the-FreeRTOS-Real-Time-Kernel.v1.1.0 | Advanced kernel guide |
 | Using_the_FreeRTOS_Real_Time_Kernel_A_Practical_Guide_for_M3 | M3 practical guide |
 
-### 3. LVGL Learning Resources/
+### 4. LVGL Learning Resources/
 
 | File | Description |
 |------|-------------|
@@ -264,11 +277,11 @@ SCCB bus specification, hardware/software development guides, datasheet
 | ALiHanYiZhiNengHeiTi.zip | Ali Hanyi smart bold font |
 | WuBinCPP-MCU_Font_Release-master.zip | MCU font tool |
 
-### 4. FAT & FATFS/ (9 documents)
+### 5. FAT & FATFS/ (9 documents)
 
 FAT file system principles and design (FAT12/FAT16/FAT32), file system organization and management
 
-### 5. lwIP Learning/
+### 6. lwIP Learning/
 
 | File | Description |
 |------|-------------|
@@ -279,7 +292,7 @@ FAT file system principles and design (FAT12/FAT16/FAT32), file system organizat
 | LAN8720A / RTL8201BL / SR8201F / YT8512C | PHY chip datasheets |
 | Network testing tools/ | Network test tools (jperf) |
 
-### 6. BLE Learning/
+### 7. BLE Learning/
 
 | Document | Description |
 |----------|-------------|
@@ -291,19 +304,26 @@ FAT file system principles and design (FAT12/FAT16/FAT32), file system organizat
 
 ---
 
-## 04. ESP32-S3 Reference Resource/
+## 04. ESP32 Series Reference Resource/
 
 | PDF File | Description |
 |----------|-------------|
+| esp32_datasheet_en.pdf | ESP32 datasheet |
+| esp32-wroom-32_datasheet_en.pdf | ESP32-WROOM-32 module datasheet |
 | esp32-s3_datasheet_en.pdf | ESP32-S3 datasheet |
-| esp32-s3_technical_reference_manual.pdf | Technical Reference Manual (TRM) |
-| esp32-s3_hardware_design_guidelines_en.pdf | Hardware design guidelines |
+| esp32-s3_technical_reference_manual.pdf | ESP32-S3 Technical Reference Manual (TRM) |
+| esp32-s3_hardware_design_guidelines_en.pdf | ESP32-S3 hardware design guidelines |
 | esp32-s3-wroom-1_wroom-1u_datasheet.pdf | WROOM-1/WROOM-1U module datasheet |
 | esp-hardware-design-guidelines-en-master-esp32.pdf | ESP32 hardware design guidelines |
-| esp-chip-errata-en-master-esp32s3.pdf | Chip errata |
+| esp-chip-errata-en-master-esp32s3.pdf | ESP32-S3 chip errata |
+| esp-dev-kits-en-master-esp32.pdf | ESP development kits guide |
+| esp-matter-en-master-esp32.pdf | ESP-Matter SDK documentation |
+| esp-test-tools-en-master-esp32.pdf | ESP test tools documentation |
+| ESP-IDF-VSCode-Extension-Docs.pdf | ESP-IDF VS Code extension docs |
 | ESP32-S3-inch.pdf / ESP32-S3-Metric.pdf | Package dimensions (inch/metric) |
 | espressif_chip_packaging_information.pdf | Chip packaging info |
 | isa-summary.pdf | ISA instruction set summary |
+| the-complete-esp32-projects-guide-ebook.pdf | ESP32 projects guide (ebook) |
 | YD-ESP32-S3-SCH-V1.4.pdf | YD-ESP32-S3 dev board schematic V1.4 |
 
 ---
@@ -369,3 +389,9 @@ FAT file system principles and design (FAT12/FAT16/FAT32), file system organizat
 ---
 
 > This repository is a full-stack ESP32, ESP32-S3，ESP32-S3 Camera development resource collection, covering everything from basic peripheral drivers to advanced applications (LVGL GUI, camera, speech recognition, USB, networking, face recognition) with complete example code and supporting hardware documentation.
+
+---
+
+## Disclaimer
+
+Some content is sourced from the Internet. If there is any infringement, please contact us for removal at: wocreamservice@gmail.com
