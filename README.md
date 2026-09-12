@@ -12,7 +12,7 @@
     <td align="center"><img src="./Products/PCB kits.jpg" width="250"></td>
   </tr>
 </table>
----
+
 
 ## Table of Contents
 
@@ -21,10 +21,8 @@
 - [03. ESP32-Tutorials/](#03-esp32-tutorials)
 - [04. ESP32 Series Reference Resource/](#04-esp32-series-reference-resource)
 - [05. Common Tools/](#05-common-tools)
-- [06.ESP32-S3 Camera Reference Resource/](#06esp32-s3-camera-reference-resource)
-- [07.Breadboard Power Supply Board/](#07breadboard-power-supply-board)
-
----
+- [06. ESP32-S3 Camera Reference Resource/](#06esp32-s3-camera-reference-resource)
+- [07. Breadboard Power Supply Board/](#07breadboard-power-supply-board)
 
 ## 01. Software Code/
 
