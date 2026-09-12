@@ -1,0 +1,5 @@
+{
+    "ModelName": "embed-gemma",
+    "ModelType": "embedder",
+    "PluginId": "npu"
+}
