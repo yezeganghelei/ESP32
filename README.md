@@ -2,6 +2,7 @@
 
 > A comprehensive collection of embedded development learning resources and example code for the Espressif ESP32, ESP32-S3, ESP32-S3 Camera chip.
 > Includes standard examples across three platforms (IDF, MicroPython, Arduino), plus advanced projects featuring LVGL GUI, camera, USB, speech recognition, and more.
+> Also includes an ESP32-AI-Agent (esp-rag) retrieval-augmented generation (RAG) skill for AI-powered semantic search over the ESP32 documentation knowledge base.
 
 <table>
   <tr>
@@ -23,6 +24,7 @@
 - [05. Common Tools/](#05-common-tools)
 - [06. ESP32-S3 Camera Reference Resource/](#06esp32-s3-camera-reference-resource)
 - [07. Breadboard Power Supply Board/](#07breadboard-power-supply-board)
+- [08. ESP32-AI-Agent-RAG/](#08-esp32-ai-agent-rag)
 
 ## 01. Software Code/
 
@@ -386,7 +388,83 @@ FAT file system principles and design (FAT12/FAT16/FAT32), file system organizat
 
 ---
 
-> This repository is a full-stack ESP32, ESP32-S3，ESP32-S3 Camera development resource collection, covering everything from basic peripheral drivers to advanced applications (LVGL GUI, camera, speech recognition, USB, networking, face recognition) with complete example code and supporting hardware documentation.
+## 08. ESP32-AI-Agent-RAG/
+
+### esp-rag/ — ESP32 RAG Skill (Index Building and Retrieval Engine)
+
+A retrieval-augmented generation (RAG) system for an ESP32 documentation knowledge base. It lets an AI assistant (opencode and other AI environments) perform semantic search and question answering across ESP32 datasheets, technical reference manuals (TRMs), hardware design guidelines, chip errata, and other technical documents — strictly following the source documents and citing sources, with no AI speculation.
+
+> **Note**: AI retrieval is sourced from the `ESP32` materials folder (excluding `01. Software Code`).
+>
+> **IMPORTANT**: Because the RAG data is very large, download `esp-rag.7z.00*` from the [ESP32-AI-Agent-RAG release](https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-AI-Agent-RAG). After extracting, import `SKILL.md` into opencode or another AI environment and it can be used directly.
+
+#### Skill directory structure
+
+```
+<skill_dir>/
+├── SKILL.md                                       # Skill definition (including Workflow instructions)
+├── config.yaml                                    # Document classification, weights, models, SoC→Datasheet mapping, etc.
+├── requirements.txt                               # Python dependency list
+├── scripts/
+│   ├── main.py                                    # ChromaDB RAG engine (core implementation)
+│   ├── agent.py                                   # One-shot query entry point (single Bash call)
+│   ├── build/
+│   │   └── run.py                                 # Index build entry script (supports the --model parameter)
+│   └── __init__.py
+├── models/                                        # Self-contained model files (usable offline)
+│   ├── dense/                                     # Embedding models (bge-base-en-v1.5 default, all-MiniLM-L6-v2, gte-base-en-v1.5, embeddinggemma-300m-npu)
+│   └── cross-encoder/                             # Reranking model (cross-encoder-ms-marco-MiniLM-L6-v2)
+├── source/                                        # Raw source documents (PDF, ZIP, XLSX, DOCX, MD)
+└── .chroma_esp32_all/                             # ChromaDB persisted vector database (+ _bm25_cache.pkl)
+```
+
+#### Retrieval architecture
+
+Three-stage retrieval path of **ChromaDB dense vector retrieval + BM25 hybrid fusion + cross-encoder reranking**:
+
+1. **Document extraction** — read raw PDF/ZIP/XLSX/DOCX/Markdown source files
+2. **Format conversion** — PDF→Markdown (PyMuPDF), HTML→Markdown, XLSX→Markdown (openpyxl), DOCX→Markdown, native Markdown
+3. **Text cleaning** — remove footer noise, page numbers, "CONFIDENTIAL" markers, orphan fragments
+4. **Semantic chunking** — heading-hierarchy-based chunking with table integrity protection
+5. **Vectorization** — 768-dim embeddings using `bge-base-en-v1.5` (switchable via config.yaml or `--model`)
+6. **Index storage** — persisted in ChromaDB with cosine similarity search
+
+#### Querying
+
+```bash
+cd <skill_dir>/scripts
+python3 agent.py "<query>" [--top N] [--type <doc_type>] [--raw]
+
+# Structured spec lookup
+python3 agent.py --spec "<SoC name>"          # e.g. "esp32-s3"
+
+# Chip comparison
+python3 agent.py --compare "<SoC_A>,<SoC_B>"  # e.g. "esp32-s3,esp32"
+```
+
+Parameters: `--top N` (default 10), `--type <doc_type>` (datasheet, trm, guide, api, safety, release_notes, specification, docs), `--raw` (JSON lines).
+
+#### Building / updating the index
+
+```bash
+# Incremental build (only added/changed/deleted docs)
+python -m scripts.build.run
+
+# Specify embedding model
+python -m scripts.build.run --model gte-base-en-v1.5
+```
+
+- **Incremental**: compares MD5 content hash against the existing index
+- **Streaming**: processes one document at a time to avoid OOM
+- **Full rebuild**: delete the entire `.chroma_esp32_all/` directory first, then run the build
+
+#### Registering as an opencode Skill
+
+The repository itself is a standard skill directory layout (`SKILL.md` at the repository root). opencode's skill loader recursively scans `**/SKILL.md` in the global skills directory (`~/.config/opencode/skills/`), the project skills directory (`.opencode/skills/`), and any path listed under `skills.paths` in `opencode.json`. Once registered, opencode loads the skill automatically and uses `scripts/agent.py` to query the knowledge base.
+
+---
+
+> This repository is a full-stack ESP32, ESP32-S3，ESP32-S3 Camera development resource collection, covering everything from basic peripheral drivers to advanced applications (LVGL GUI, camera, speech recognition, USB, networking, face recognition) with complete example code and supporting hardware documentation. It also provides an ESP32-AI-Agent (esp-rag) RAG skill for AI-powered semantic search and question answering over the documentation knowledge base.
 
 ---
 

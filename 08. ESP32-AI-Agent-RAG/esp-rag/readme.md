@@ -2,6 +2,9 @@
 
 > **Note**: AI retrieval is sourced from the `ESP32` materials folder (excluding `01.Software Code`). To ensure answer accuracy, it strictly follows the original descriptions in the source documents and cites the content sources, with no AI speculation!
 
+> **IMPORTANT:** Because the esp-rag RAG data is very large, you need to download `esp-rag.7z.00*` from https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-AI-Agent-RAG. After extracting, import `skill.md` into opencode or another AI environment, and it can be used directly.
+
+
 ## 1. Overview
 
 This skill is a retrieval-augmented generation (RAG) system for an ESP32 documentation knowledge base. It lets an AI assistant perform semantic search and question answering across a large collection of ESP32 datasheets, technical reference manuals (TRMs), hardware design guidelines, chip errata, and other technical documents.
