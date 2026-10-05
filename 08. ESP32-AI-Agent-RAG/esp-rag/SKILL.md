@@ -39,7 +39,7 @@ Search the ESP32 documentation knowledge base using a ChromaDB-powered RAG index
 
    Then run:
    ```bash
-   # General search
+   # General search (searches BOTH the documentation DB and the code DB, merged)
    python <skill_dir>/scripts/agent.py "<query>" [--top N] [--type <doc_type>]
 
    # Structured spec lookup (e.g. "esp32-s3 GPU specs")
@@ -56,6 +56,10 @@ Search the ESP32 documentation knowledge base using a ChromaDB-powered RAG index
    - `--raw` : JSON lines output (machine-readable)
    - `--spec <name>` : look up structured spec data for a SoC (e.g. "esp32-s3")
    - `--compare <A,B>` : compare the specs of two SoCs (e.g. "esp32-s3,esp32")
+   - `--code` : query **only** the source-code database (uses `code.docs_dir` / `code.chroma_dir` from config.yaml); doc type defaults to `code`.
+   - `--docs-only` : query **only** the documentation database (the default behavior before the code DB was added).
+
+   **Default behavior** (no `--code` / `--docs-only`): a normal query searches **both** databases and merges the results by reciprocal-rank fusion, so code chunks (tagged `[code]`) appear automatically even when the query has no explicit "code" keyword (e.g. "how to configure LEDC PWM"). Spec/comparison routes (`--spec`, `--compare`) and any `--type` filter other than `code` remain documentation-only. Use `--docs-only` for pure spec/register questions where code results would be noise, and `--code` when only code is wanted.
 
    **Examples:**
    ```bash
@@ -90,7 +94,10 @@ Search the ESP32 documentation knowledge base using a ChromaDB-powered RAG index
    ```
    ① The chunk text returned by the agent (the `text` field) is sufficient -> answer directly, citing the chunk source title
    ② Chunk text insufficient -> use the source excerpt included by the agent (`> _Excerpt from source file:_`)
-   ③ Excerpt still insufficient -> read the corresponding source file under the `source/` directory, **using a relative path**: `Read(<skill_dir>/source/<relative path>)`; do not use absolute paths
+   ③ Excerpt still insufficient -> read the source file by resolving the base directory from the CURRENT config each time (never reuse an absolute path seen earlier in the conversation):
+     - documentation: `RAG_DOCS_DIR` env var, or `<skill_dir>/source/`
+     - source code: `code.docs_dir` from `config.yaml` (e.g. `source_code/`)
+     then read `<base>/<relative path>`; do not use absolute paths
    ④ Source file not found either -> clearly tell the user the answer cannot be obtained from the documents
    ```
 
@@ -102,7 +109,7 @@ All document-related configuration is centralized in `<skill_dir>/config.yaml`:
 
 - **`models`** — default and available embedding and reranking models.
   - `models.dense.default`: default embedding model (`bge-base-en-v1.5`); can be temporarily switched with the build `--model` parameter
-  - `models.cross_encoder.default`: default reranking model (`cross-encoder-ms-marco-MiniLM-L6-v2`); change only via config.yaml
+  - `models.cross_encoder.default`: default reranking model (`cross-encoder-ms-marco-MiniLM-L-6-v2`); change only via config.yaml
 - **`soc_to_datasheet`** — SoC name to datasheet number mapping, used for comparison and spec queries.
 - **`doc_type_rules`** — document type classification rules (matched by subpath keywords).
 - **`weight_rules`** — document weight rules, affecting recall ranking.
@@ -132,7 +139,7 @@ python -m scripts.build.run --model all-MiniLM-L6-v2
 - **Hybrid retrieval**: when `hybrid=True`, BM25 keyword retrieval complements dense vector retrieval. For queries containing hexadecimal error codes, the system automatically detects them and boosts matching BM25 results, ensuring error-code queries prioritize reference tables containing error codes.
 - **Query expansion**: domain synonyms are expanded automatically (e.g. `errcode` -> `errcode, error_code, error id`).
 - **Low-value content filtering**: register dumps, hex-dense lines, bare "Table N" headings and other low-information content are filtered out automatically.
-- **BM25 persistent cache**: the BM25 index is rebuilt from ChromaDB on first search and cached as `.chroma_esp32_all/_bm25_cache.pkl` (~50MB); subsequent searches load the cache directly (~1s). The cache is refreshed incrementally when the index is updated. On load, the cache validates document-count consistency and rebuilds if inconsistent (solving the stale-cache problem).
+- **BM25 persistent cache**: the BM25 index is rebuilt from ChromaDB on first search and cached as `.chroma_esp32_all/_bm25_cache.pkl` (size varies with the corpus); subsequent searches load the cache directly (~1s). The cache is refreshed incrementally when the index is updated. On load, the cache validates document-count consistency and rebuilds if inconsistent (solving the stale-cache problem).
 - **XLSX blank-row filtering**: when processing XLSX tables, all-empty rows and pure decoration rows (e.g. `---|---|---`) are filtered out, reducing invalid chunks.
 - **Comparison queries**: queries like "esp32-s3 vs esp32" are detected automatically, and structured spec data is extracted directly from the `spec_summary` collection for comparison.
 
@@ -181,14 +188,15 @@ Key dependencies: sentence-transformers, chromadb, PyMuPDF, rank-bm25, Beautiful
 
 ## Directory structure
 
-- `<skill_dir>/source/` — raw source documents (PDF, ZIP, XLSX), organized by SoC series and document type
-- `<skill_dir>/.chroma_esp32_all/` — ChromaDB dense vector index (persisted, with file_hash (MD5) tracking + BM25 cache `_bm25_cache.pkl`)
+- `<skill_dir>/source/` — raw source documents (PDF, ZIP, XLSX), organized by SoC series and document type (empty by default; the corpus is pointed to via `RAG_DOCS_DIR` / `code.docs_dir`)
+- `<skill_dir>/.chroma_esp32_all/` — ChromaDB vector index for **documentation** (persisted, with file_hash (MD5) tracking + BM25 cache `_bm25_cache.pkl`)
+- `<skill_dir>/.chroma_esp32_code/` — ChromaDB vector index for **source code** (opt-in, see the `code:` block in config.yaml)
 - `<skill_dir>/config.yaml` — document classification, weights, SoC->datasheet mapping, etc.
 - `<skill_dir>/scripts/main.py` — RAG engine implementation (index build, search, comparison, hex boosting, BM25 cache)
 - `<skill_dir>/scripts/agent.py` — one-shot query entry point (a single Bash call completes search + output, avoiding repeated permission prompts)
 - `<skill_dir>/models/` — local offline models
   - `models/dense/` — bi-encoder embedding models (bge-base-en-v1.5 is the default; alternatives: all-MiniLM-L6-v2, gte-base-en-v1.5, embeddinggemma-300m-npu)
-  - `models/cross-encoder/` — cross-encoder reranking model (cross-encoder-ms-marco-MiniLM-L6-v2)
+  - `models/cross-encoder/` — cross-encoder reranking model (cross-encoder-ms-marco-MiniLM-L-6-v2)
 
 ## Build/rebuild the index
 
@@ -213,7 +221,7 @@ python -m scripts.build.run --model gte-base-en-v1.5   # specified model
 This will:
 1. **Incremental** — compare file content MD5 against the existing index and only re-index added/changed/deleted documents
 2. **Streaming** — process one document at a time (especially ZIP files: extract each inner sub-file one by one -> chunk -> vectorize -> index, freeing memory immediately afterward, without loading the whole ZIP into memory at once)
-3. **Monitoring** — print index status (document count, chunk count) automatically every 10 minutes
+3. **Monitoring** — print index status (document count, chunk count) automatically every 5 minutes
 
 Build a specific file or directory (after activation):
 ```bash

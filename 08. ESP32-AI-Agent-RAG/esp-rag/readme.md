@@ -370,7 +370,7 @@ export RAG_EXCLUDE_DIRS="01. Software Code"
 
 Windows (PowerShell):
 ```powershell
-$env:RAG_DOCS_DIR="D:\01.亚马逊\ESP32\esp\ESP32"
+$env:RAG_DOCS_DIR="D:\01.Amazon\ESP32\esp\ESP32"
 $env:RAG_CHROMA_DIR="D:\09.WorkSpace\esp-rag\.chroma_esp32_all"
 $env:RAG_EXCLUDE_DIRS="01. Software Code"
 .\.venv\Scripts\python.exe -m scripts.build.run

@@ -11,6 +11,7 @@
     <td align="center"><img src="./Products/ESP32 S3 Camera.jpg" width="250"></td>
     <td align="center"><img src="./Products/Breadboard kits.jpg" width="250"></td>
     <td align="center"><img src="./Products/PCB kits.jpg" width="250"></td>
+    <td align="center"><img src="./Products/AI_1.gif" width="250"></td>
   </tr>
 </table>
 
