@@ -11,7 +11,23 @@
     <td align="center"><img src="./Products/ESP32 S3 Camera.jpg" width="250"></td>
     <td align="center"><img src="./Products/Breadboard kits.jpg" width="250"></td>
     <td align="center"><img src="./Products/PCB kits.jpg" width="250"></td>
-    <td align="center"><img src="./Products/AI_1.gif" width="250"></td>
+  </tr>
+</table>
+
+We provide an AI knowledge base([08. ESP32-AI-Agent-RAG](#08-esp32-ai-agent-rag)). The database has been pre-trained and includes all tutorial content — no AI hallucination, accurate results guaranteed.
+**Example**
+1. **E.g**.: "Compare the digital interfaces of ESP32 and ESP32-S3, and what are the differences?"
+
+<table>
+  <tr>
+    <td align="center"><img src="./Products/AI_1.gif" ></td>
+  </tr>
+</table>
+
+2. **E.g** ：“What SPIs does ESP32-S3 support, and how to configure SPI to light up the LCD using arduino or micropython”
+<table>
+  <tr>
+    <td align="center"><img src="./Products/AI_2.gif" ></td>
   </tr>
 </table>
 
