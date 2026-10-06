@@ -411,28 +411,58 @@ FAT file system principles and design (FAT12/FAT16/FAT32), file system organizat
 
 A retrieval-augmented generation (RAG) system for an ESP32 documentation knowledge base. It lets an AI assistant (opencode and other AI environments) perform semantic search and question answering across ESP32 datasheets, technical reference manuals (TRMs), hardware design guidelines, chip errata, and other technical documents — strictly following the source documents and citing sources, with no AI speculation.
 
-> **Note**: AI retrieval is sourced from the `ESP32` materials folder (excluding `01. Software Code`).
->
-> **IMPORTANT**: Because the RAG data is very large, download `esp-rag.7z.00*` from the [ESP32-AI-Agent-RAG release](https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-AI-Agent-RAG). After extracting, import `SKILL.md` into opencode or another AI environment and it can be used directly.
+> **Note**: AI retrieval is sourced from the `source` and `source_code` materials folder. To ensure answer accuracy, it strictly follows the original descriptions in the source documents and cites the content sources, with no AI speculation!
+
+> **IMPORTANT:** Because the esp-rag RAG data is very large, you need to download `esp-rag.7z.00*` from https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-AI-Agent-RAG-v1.1.0. After extracting, import `skill.md` into opencode or another AI environment, and it can be used directly.
+
+> **Usage:** 
+        1. Download *.7z files
+        2. Extract those files
+        3. Import skill.md to LLM
+        4. Start a conversation
+
+<table>
+  <tr>
+    <td align="center"><img src="./Products/AI_1.gif" ></td>
+  </tr>
+</table>
+
 
 #### Skill directory structure
 
 ```
 <skill_dir>/
 ├── SKILL.md                                       # Skill definition (including Workflow instructions)
+├── readme.md                                      # This document
 ├── config.yaml                                    # Document classification, weights, models, SoC→Datasheet mapping, etc.
+├── opencode.json                                  # Skill registration (skills.paths points at this repo)
 ├── requirements.txt                               # Python dependency list
 ├── scripts/
 │   ├── main.py                                    # ChromaDB RAG engine (core implementation)
-│   ├── agent.py                                   # One-shot query entry point (single Bash call)
-│   ├── build/
-│   │   └── run.py                                 # Index build entry script (supports the --model parameter)
-│   └── __init__.py
+│   ├── agent.py                                   # One-shot query entry point (single Bash call, avoids repeated permission prompts)
+│   ├── pre-build.sh.bak                           # Legacy build script backup
+│   ├── __init__.py
+│   └── build/
+│       ├── run.py                                 # Index build entry script (supports the --model parameter)
+│       └── __init__.py
 ├── models/                                        # Self-contained model files (usable offline)
-│   ├── dense/                                     # Embedding models (bge-base-en-v1.5 default, all-MiniLM-L6-v2, gte-base-en-v1.5, embeddinggemma-300m-npu)
-│   └── cross-encoder/                             # Reranking model (cross-encoder-ms-marco-MiniLM-L6-v2)
+│   ├── dense/
+│   │   ├── bge-base-en-v1.5/                      # ~1.2GB, 768-dim, default embedding model
+│   │   ├── all-MiniLM-L6-v2/                      # ~0.9GB, 384-dim, lightweight alternative
+│   │   ├── gte-base-en-v1.5/                      # ~2.0GB, GTE base 768-dim
+│   │   └── embeddinggemma-300m-npu/               # ~0.9GB, Google Gemma 300M NPU-optimized
+│   └── cross-encoder/
+│       └── cross-encoder-ms-marco-MiniLM-L-6-v2/  # ~0.85GB, reranking model
 ├── source/                                        # Raw source documents (PDF, ZIP, XLSX, DOCX, MD)
-└── .chroma_esp32_all/                             # ChromaDB persisted vector database (+ _bm25_cache.pkl)
+│   └── (empty by default; corpus pointed to via RAG_DOCS_DIR / code.docs_dir)
+├── .chroma_esp32_all/                             # ChromaDB persisted vector database (documentation)
+│   ├── chroma.sqlite3                             # ChromaDB metadata store
+│   ├── _bm25_cache.pkl                            # BM25 index persistence cache
+│   └── <uuid>/                                    # ChromaDB segment directory
+└── .chroma_esp32_code/                            # ChromaDB persisted vector database (source code, see §6.5)
+    ├── chroma.sqlite3                             # ChromaDB metadata store
+    ├── _bm25_cache.pkl                            # BM25 index persistence cache
+    └── <uuid>/                                    # ChromaDB segment directory
 ```
 
 #### Retrieval architecture
