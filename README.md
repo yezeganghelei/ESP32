@@ -42,6 +42,7 @@ We provide an AI knowledge base([08. ESP32-AI-Agent-RAG](#08-esp32-ai-agent-rag)
 - [06. ESP32-S3 Camera Reference Resource/](#06esp32-s3-camera-reference-resource)
 - [07. Breadboard Power Supply Board/](#07breadboard-power-supply-board)
 - [08. ESP32-AI-Agent-RAG/](#08-esp32-ai-agent-rag)
+- [09. Arduino-Tutorial/](#09-arduino-uno)
 
 ## 01. Software Code/
 
@@ -508,6 +509,105 @@ python -m scripts.build.run --model gte-base-en-v1.5
 #### Registering as an opencode Skill
 
 The repository itself is a standard skill directory layout (`SKILL.md` at the repository root). opencode's skill loader recursively scans `**/SKILL.md` in the global skills directory (`~/.config/opencode/skills/`), the project skills directory (`.opencode/skills/`), and any path listed under `skills.paths` in `opencode.json`. Once registered, opencode loads the skill automatically and uses `scripts/agent.py` to query the knowledge base.
+
+---
+
+## 09. Arduino UNO/
+
+Arduino UNO / Mega2560 learning resources, including getting-started tutorials, component introductions, example projects, and PictoBlox (Scratch-based) graphical programming.
+
+### 1. arduino_start/ — Getting Started
+
+Arduino basics and IDE tutorials:
+
+| Document | Description |
+|----------|-------------|
+| introduce_arduino | What is Arduino and what it can do |
+| install_arduino_ide | Install the Arduino IDE |
+| introduce_ide | Arduino IDE interface introduction |
+| get_start | Quick start guide |
+| create_project | Create a new project |
+| create_save | Create & save a sketch |
+| basic_code_struct | Basic code structure |
+| basic_variable | Variables |
+| basic_further_syntax | Advanced syntax |
+| basic_circuit | Basic circuit |
+| basic_upload | Upload a sketch to the board |
+| add_libraries | Add third-party libraries |
+
+### 2. components/ — Component Introduction (30 components)
+
+Operating principles and corresponding projects for each component:
+
+| Component | Description |
+|-----------|-------------|
+| uno / mega | Arduino UNO / Mega2560 board |
+| breadboard / wire / resistor / capacitor / diode / transistor | Basic electronics |
+| led / rgb_led / buzzer / button / tilt_switch / relay | Basic output/input |
+| potentiometer / photoresistor / thermistor | Analog sensors |
+| servo / motor / stepper_motor / l293d | Motors & drivers |
+| lcd / 7_segment / 4_digit / 74hc595 | Display & shift register |
+| ultrasonic_sensor / humiture_sensor / receive (IR) / joystick | Sensors & input |
+| power_module | Power module |
+
+### 3. uno/ & mega2560/ — Example Projects (23 projects each)
+
+Complete example projects for the Arduino UNO and Arduino Mega2560 respectively (`.md` tutorials with `img/`).
+
+| No. | Project | Description |
+|-----|---------|-------------|
+| 1 | blinking_led | Blinking LED |
+| 2 | flowing_led_lights | Flowing LED lights |
+| 3 | controlling_led_by_button | LED controlled by button |
+| 4 | doorbell | Doorbell |
+| 5 | tilt_switch | Tilt switch |
+| 6 | relay | Relay control |
+| 7 | rgb_led | RGB LED |
+| 8 | controlling_an_led_by_potentiometer | LED controlled by potentiometer |
+| 9 | photo_resistor | Photo resistor |
+| 10 | servo | Servo motor |
+| 11 | lcd1602 | LCD1602 display |
+| 12 | thermistor | Thermistor |
+| 13 | ultrasonic | Ultrasonic distance sensor |
+| 14 | infrared_Receiver | Infrared receiver |
+| 15 | humiture_sensor | DHT11 humidity & temperature sensor |
+| 16 | joystick_ps2 | PS2 joystick |
+| 17 | 7_segment_display | 7-segment display |
+| 18 | 74HC595 | 74HC595 shift register |
+| 19 | stepper_motor | Stepper motor |
+| 20 | simple_creation_stopwatch | Stopwatch |
+| 21 | simple_creation_answer_machine | Answer machine |
+| 22 | simple_creation_small_fan | Small fan |
+| 23 | simple_creation_digital_dice | Digital dice |
+
+### 4. pictoblox/ — PictoBlox Graphical Programming (18 projects)
+
+Scratch-based graphical programming with PictoBlox:
+
+| Document | Description |
+|----------|-------------|
+| install_and_introduce | Install PictoBlox & interface introduction |
+| play_with_scratch | Play with Scratch |
+| projects | Project overview |
+| 1_hello_pictoblox | Hello PictoBlox |
+| 2_table_lamp | Table lamp |
+| 3_breathing | Breathing LED |
+| 4_colorful_ball | Colorful ball (RGB) |
+| 5_lcd1602 | LCD1602 display |
+| 6_moving_mouse | Moving mouse |
+| 7_doorbell | Doorbell |
+| 8_tumbler | Tumbler |
+| 9_temperature | Temperature sensor |
+| 10_alarm_clock | Alarm clock |
+| 11_dht11 | DHT11 sensor |
+| 12_pendulum | Pendulum |
+| 12_rotating_fan | Rotating fan |
+| 13_rocket | Rocket |
+| 14_apple | Apple game |
+| 15_parrot | Parrot |
+| 16_brick | Brick game |
+| 17_fish | Fish game |
+| 18_dragon | Dragon game |
 
 ---
 
