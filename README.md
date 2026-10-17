@@ -42,7 +42,7 @@ We provide an AI knowledge base([08. ESP32-AI-Agent-RAG](#08-esp32-ai-agent-rag)
 - [06. ESP32-S3 Camera Reference Resource/](#06esp32-s3-camera-reference-resource)
 - [07. Breadboard Power Supply Board/](#07breadboard-power-supply-board)
 - [08. ESP32-AI-Agent-RAG/](#08-esp32-ai-agent-rag)
-- [09. Arduino-Tutorial/](#09-arduino-uno)
+- [09. Arduino-UNO-Tutorial/](#09-arduino-uno-tutorial)
 
 ## 01. Software Code/
 
@@ -512,7 +512,7 @@ The repository itself is a standard skill directory layout (`SKILL.md` at the re
 
 ---
 
-## 09. Arduino UNO/
+## 09. Arduino UNO Tutorial/
 
 Arduino UNO / Mega2560 learning resources, including getting-started tutorials, component introductions, example projects, and PictoBlox (Scratch-based) graphical programming.
 
@@ -611,7 +611,7 @@ Scratch-based graphical programming with PictoBlox:
 
 ---
 
-> This repository is a full-stack ESP32, ESP32-S3，ESP32-S3 Camera development resource collection, covering everything from basic peripheral drivers to advanced applications (LVGL GUI, camera, speech recognition, USB, networking, face recognition) with complete example code and supporting hardware documentation. It also provides an ESP32-AI-Agent (esp-rag) RAG skill for AI-powered semantic search and question answering over the documentation knowledge base.
+> This repository is a full-stack ESP32, ESP32-S3，ESP32-S3 Camera Arduino UNO R3 development resource collection, covering everything from basic peripheral drivers to advanced applications (LVGL GUI, camera, speech recognition, USB, networking, face recognition) with complete example code and supporting hardware documentation. It also provides an ESP32-AI-Agent (esp-rag) RAG skill for AI-powered semantic search and question answering over the documentation knowledge base.
 
 ---
 
