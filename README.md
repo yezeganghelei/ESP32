@@ -1,6 +1,6 @@
 # ESP32 Tutorial - Project Overview
 
-> A comprehensive collection of embedded development learning resources and example code for the Espressif ESP32, ESP32-S3, ESP32-S3 Camera chip.
+> A comprehensive collection of embedded development learning resources and example code for the Espressif ESP32, ESP32-S3, ESP32-S3 Camera chip, Arduino Uno R3.
 > Includes standard examples across three platforms (IDF, MicroPython, Arduino), plus advanced projects featuring LVGL GUI, camera, USB, speech recognition, and more.
 > Also includes an ESP32-AI-Agent (esp-rag) retrieval-augmented generation (RAG) skill for AI-powered semantic search over the ESP32 documentation knowledge base.
 
@@ -10,7 +10,15 @@
     <td align="center"><img src="./Products/ESP32 S3.jpg" width="250"></td>
     <td align="center"><img src="./Products/ESP32 S3 Camera.jpg" width="250"></td>
     <td align="center"><img src="./Products/Breadboard kits.jpg" width="250"></td>
-    <td align="center"><img src="./Products/PCB kits.jpg" width="250"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center"><img src="./Products/esp32-s3-start-kits.jpg" width="250"></td>
+    <td align="center"><img src="./Products/uno_r3.jpg" width="250"></td>
+    <td align="center"><img src="./Products/Esp32_cam_.jpg" width="250"></td>
+    <td align="center"><img src="./Products/breadboard_jumper65.jpg" width="250"></td>
   </tr>
 </table>
 
