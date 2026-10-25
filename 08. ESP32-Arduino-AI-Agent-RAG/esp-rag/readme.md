@@ -1,8 +1,8 @@
-# ESP32 RAG Skill — Index Building and Retrieval Engine
+# ESP32 and Arduino RAG Skill — Index Building and Retrieval Engine
 
 > **Note**: AI retrieval is sourced from the `source` and `source_code` materials folder. To ensure answer accuracy, it strictly follows the original descriptions in the source documents and cites the content sources, with no AI speculation!
 
-> **IMPORTANT:** Because the esp-rag RAG data is very large, you need to download `esp-rag.7z.00*` from https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-AI-Agent-RAG-v1.1.0. After extracting, import `skill.md` into opencode or another AI environment, and it can be used directly.
+> **IMPORTANT:** Because the esp-rag RAG data is very large, you need to download `esp-rag.7z.00*` from https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-Arduino-AI-Agent-RAG-v1.2.0. After extracting, import `skill.md` into opencode or another AI environment, and it can be used directly.
 
 > **Usage:** 
         1. Download *.7z files
