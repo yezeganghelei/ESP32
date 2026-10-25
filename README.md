@@ -43,7 +43,7 @@ We provide an AI knowledge base([08. ESP32-AI-Agent-RAG](#08-esp32-ai-agent-rag)
 ## Table of Contents
 
 - [01. Software Code/](#01-software-code)
-- [02. Hardware Reource/](#02-hardware-reource)
+- [02. Hardware Documents/](#02-hardware-documents)
 - [03. ESP32-Tutorials/](#03-esp32-tutorials)
 - [04. ESP32 Series Reference Resource/](#04-esp32-series-reference-resource)
 - [05. Common Tools/](#05-common-tools)
@@ -206,7 +206,7 @@ Comprehensive advanced projects combining LVGL graphics, camera, speech recognit
 
 ---
 
-## 02. Hardware Reource/
+## 02. Hardware Documents/
 
 ### 1. Development board and module component package library/
 
@@ -256,6 +256,22 @@ SCCB bus specification, auto-focus app notes, hardware/software development guid
 ### 6. OV2640 information/ (4 documents)
 
 SCCB bus specification, hardware/software development guides, datasheet
+
+### 7. Components/ (30 components)
+
+Operating principles and corresponding projects for each electronic component (Markdown docs with `img/`, plus datasheet PDFs).
+
+| Category | Components |
+|----------|------------|
+| Basic | uno, mega, breadboard, wire, resistor, transistor, capacitor, diode |
+| Chip | 74hc595, l293d |
+| Display | led, rgb_led, 7_segment, 4_digit, lcd |
+| Sound | buzzer |
+| Driver | motor, stepper_motor, servo, relay, power_module |
+| Controller | button, potentiometer, joystick |
+| Sensor | photoresistor, thermistor, tilt_switch, receive (IR), ultrasonic_sensor, humiture_sensor |
+
+- Datasheets: `cd74hc595.pdf`, `l293d.pdf`, `DHT11-Temperature-Sensor.pdf`
 
 ---
 
@@ -522,7 +538,7 @@ The repository itself is a standard skill directory layout (`SKILL.md` at the re
 
 ## 09. Arduino UNO Tutorial/
 
-Arduino UNO / Mega2560 learning resources, including getting-started tutorials, component introductions, example projects, and PictoBlox (Scratch-based) graphical programming.
+Arduino UNO / Mega2560 learning resources, including getting-started tutorials, example projects, and PictoBlox (Scratch-based) graphical programming. Component introductions have been moved to [02. Hardware Documents/7. Components/](#02-hardware-documents).
 
 ### 1. arduino_start/ — Getting Started
 
@@ -543,22 +559,7 @@ Arduino basics and IDE tutorials:
 | basic_upload | Upload a sketch to the board |
 | add_libraries | Add third-party libraries |
 
-### 2. components/ — Component Introduction (30 components)
-
-Operating principles and corresponding projects for each component:
-
-| Component | Description |
-|-----------|-------------|
-| uno / mega | Arduino UNO / Mega2560 board |
-| breadboard / wire / resistor / capacitor / diode / transistor | Basic electronics |
-| led / rgb_led / buzzer / button / tilt_switch / relay | Basic output/input |
-| potentiometer / photoresistor / thermistor | Analog sensors |
-| servo / motor / stepper_motor / l293d | Motors & drivers |
-| lcd / 7_segment / 4_digit / 74hc595 | Display & shift register |
-| ultrasonic_sensor / humiture_sensor / receive (IR) / joystick | Sensors & input |
-| power_module | Power module |
-
-### 3. uno/ & mega2560/ — Example Projects (23 projects each)
+### 2. uno/ & mega2560/ — Example Projects (23 projects each)
 
 Complete example projects for the Arduino UNO and Arduino Mega2560 respectively (`.md` tutorials with `img/`).
 
@@ -588,7 +589,7 @@ Complete example projects for the Arduino UNO and Arduino Mega2560 respectively 
 | 22 | simple_creation_small_fan | Small fan |
 | 23 | simple_creation_digital_dice | Digital dice |
 
-### 4. pictoblox/ — PictoBlox Graphical Programming (18 projects)
+### 3. pictoblox/ — PictoBlox Graphical Programming (18 projects)
 
 Scratch-based graphical programming with PictoBlox:
 
