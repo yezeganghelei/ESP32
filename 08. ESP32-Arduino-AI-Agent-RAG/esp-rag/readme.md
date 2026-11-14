@@ -1,20 +1,171 @@
-# ESP32 and Arduino RAG Skill — Index Building and Retrieval Engine
+# ESP32 Arduino RAG Skill — Index Building and Retrieval Engine
 
-> **Note**: AI retrieval is sourced from the `source` and `source_code` materials folder. To ensure answer accuracy, it strictly follows the original descriptions in the source documents and cites the content sources, with no AI speculation!
+> **Note**: By default, retrieval searches the documentation corpus in `source/`. Source code (for example the `01. Software Code` materials) can additionally be indexed into a **separate** database (see §6.5). Answers are generated from the retrieved source text and cite their sources; the model is instructed not to speculate, but critical details should still be verified.
 
-> **IMPORTANT:** Because the esp-rag RAG data is very large, you need to download `esp-rag.7z.00*` from https://github.com/yezeganghelei/ESP32/releases/tag/ESP32-Arduino-AI-Agent-RAG-v1.2.0. After extracting, import `skill.md` into opencode or another AI environment, and it can be used directly.
+> **What is (and isn't) in this repository**: this repo ships **code + config only**. The `models/`, `source/`, `source_code/`, `.chroma_*` directories and `.env` are **not** committed (see `.gitignore`). The `setup` helper downloads the models and prebuilt vector databases, or you can provide your own corpus and build the index locally. See Quick Start below.
 
-> **Usage:** 
-        1. Download *.7z files
-        2. Extract those files
-        3. Import skill.md to LLM
-        4. Start a conversation
+## Quick Start
 
+> First time here? Four steps from clone to a running chat UI (requires Docker).
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yezeganghelei/esp32-arduino-rag.git
+   cd esp32-arduino-rag
+   ```
+2. **Download models, prebuilt vector DBs and the corpus**
+   ```bash
+   bash setup.sh --db all --corpus      # Windows: .\setup.ps1 --db all --corpus
+   ```
+3. **Configure the LLM** in `.env` (created by setup): set `LLM_API_KEY`.
+   `LLM_BASE_URL` and `LLM_MODEL` already default to DeepSeek.
+4. **Build and start**
+   ```bash
+   docker build -t ghcr.io/yezeganghelei/esp32-arduino-rag:latest .
+   docker compose up -d --force-recreate --pull never
+   ```
+
+- Web UI: http://localhost:7860
+- API docs: http://localhost:8000/docs
+- MCP (SSE): http://localhost:8001/sse
+
+> Retrieval works without `LLM_API_KEY`; chat generation needs it. After editing
+> `.env`, apply it with `docker compose up -d --force-recreate`. If you prefer the
+> published image, skip the build and run `docker compose up -d` directly. For a
+> manual/offline setup see §6; Docker details are in §10.
+
+> The `source/` and `source_code/` documents are Espressif materials and are **not** included; obtain them from Espressif and comply with their licenses.
+
+## Interface
+
+### 1. Web chat
 <table>
   <tr>
-    <td align="center"><img src="../../Products/AI_1.gif" ></td>
+    <td align="center"><img src="./assets/images/RAG Assistant.gif" ></td>
   </tr>
 </table>
+
+Open http://localhost:7860 and chat with the knowledge base. The Gradio UI calls
+the FastAPI backend on http://localhost:8000. Chat needs `LLM_API_KEY`; pure
+retrieval does not.
+
+### 2. MCP
+
+MCP lets AI clients (Claude Desktop, Cursor, etc.) search this knowledge base.
+
+It is **already running** after `docker compose up -d`. The address is:
+
+```
+http://localhost:8001/sse
+```
+
+Add it to your client, e.g. Claude Desktop `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "esp-rag": { "url": "http://localhost:8001/sse" }
+  }
+}
+```
+
+The client can then call these tools:
+
+- `search_esp_docs` — search the documentation
+- `search_esp_code` — search the source code
+- `search_esp` — search both
+
+**Quick commands**
+
+```bash
+# start 
+docker exec -w /app esp-rag python scripts/mcp/test_client.py --tool search_esp_code --query "esp_camera_init camera_config_t" --top 5
+```
+
+MCP only returns retrieved snippets, so it does **not** need `LLM_API_KEY`.
+More client examples: [`docs/mcp-client-config.md`](docs/mcp-client-config.md).
+
+### 3. opencode skill
+<table>
+  <tr>
+    <td align="center"><img src="./assets/images/AI_2.gif" ></td>
+  </tr>
+</table>
+This repository is itself an opencode skill (`SKILL.md` at the root). With
+`opencode.json` → `skills.paths: ["."]`, starting opencode in this directory
+auto-discovers the skill `esp-rag`; an ESP32 question then triggers
+`scripts/agent.py`. To use it from any directory, junction this repo into
+`~/.config/opencode/skills/esp-rag` or add its path to the global
+`skills.paths` (see §9).
+
+### 4. CLI
+
+Run a one-shot query inside the container (no local Python needed):
+
+```bash
+docker compose run --rm esp-rag "ESP32-S3 boot process" --top 5
+```
+
+Or on the host with a Python environment (see §5/§6):
+
+```bash
+python scripts/agent.py "ESP32-S3 boot process" --top 5
+```
+
+Flags: `--top N`, `--type <doc_type>`, `--docs-only`, `--code`, `--raw` (JSON).
+See §5 for details.
+
+## Setup Details
+
+The `setup` helper downloads the models configured in `config.yaml` into
+`models/`, downloads and extracts `.chroma_esp32_all/` (and optionally
+`.chroma_esp32_code/`) from the `data-v1` GitHub Release, and creates `.env`
+from `.env.example` if it is missing. Building the indexes yourself is much
+slower (the source-code corpus can take hours), so the prebuilt data is
+recommended.
+
+Options: `--db none` (models only), `--corpus` (also fetch the source corpus,
+see below), `--mirror` (HuggingFace mirror), `--force` (overwrite existing DBs),
+`--model <name>`. The prebuilt DBs use the default embedding model
+(`bge-base-en-v1.5`); if you switch models, rebuild (§6).
+
+**Optional corpus** (needed only for deeper source-file excerpts in answers;
+retrieval works without it). The corpus lives in a single repo
+(`yezeganghelei/ESP32`), so `setup --corpus` downloads it and splits it:
+
+```powershell
+.\setup.ps1 --db all --corpus      # Windows
+./setup.sh --db all --corpus       # Linux/macOS
+```
+
+Split rule: `01. Software Code` → `source_code/`; every other top-level
+directory → `source/`. By default `05. Common Tools`,
+`08. ESP32-Arduino-AI-Agent-RAG` and `Products` are skipped (root files such
+as `readme.md` are never moved); use `--exclude-dir NAME` to skip additional
+directories.
+
+If no prebuilt release is available, or you use a custom corpus, build locally
+after placing documents in `source/` (see §6):
+```bash
+python -m scripts.build.run
+```
+
+### Maintaining the data release (maintainer)
+
+`scripts/package_data.py` creates split archives (each part < 2 GB, the GitHub
+Release asset limit) plus a manifest, then you upload them to a Release tagged
+`data-v1`:
+
+```bash
+python scripts/package_data.py --kind docs       # ~0.8 GB (documentation DB)
+python scripts/package_data.py --kind code       # ~5.5 GB (split into parts)
+# or both:
+python scripts/package_data.py --kind all --version data-v1
+```
+
+Upload every file under `dist/docs/` and `dist/code/` (the `*-manifest.json`
+and all `.partNN` files) to that Release. `scripts/setup_data.py` reads the
+manifests, verifies SHA-256, reassembles the parts and extracts them.
 
 ## 1. Overview
 
@@ -31,13 +182,13 @@ Skill directory structure:
 ├── requirements.txt                               # Python dependency list
 ├── scripts/
 │   ├── main.py                                    # ChromaDB RAG engine (core implementation)
-│   ├── agent.py                                   # One-shot query entry point (single Bash call, avoids repeated permission prompts)
-│   ├── pre-build.sh.bak                           # Legacy build script backup
+│   ├── agent.py                                    # One-shot query entry point (single Bash call, avoids repeated permission prompts)
+│   ├── download_models.py                          # Download models from HuggingFace (run once)
 │   ├── __init__.py
 │   └── build/
 │       ├── run.py                                 # Index build entry script (supports the --model parameter)
 │       └── __init__.py
-├── models/                                        # Self-contained model files (usable offline)
+├── models/                                        # NOT in Git: download locally (see Quick Start)
 │   ├── dense/
 │   │   ├── bge-base-en-v1.5/                      # ~1.2GB, 768-dim, default embedding model
 │   │   ├── all-MiniLM-L6-v2/                      # ~0.9GB, 384-dim, lightweight alternative
@@ -45,13 +196,13 @@ Skill directory structure:
 │   │   └── embeddinggemma-300m-npu/               # ~0.9GB, Google Gemma 300M NPU-optimized
 │   └── cross-encoder/
 │       └── cross-encoder-ms-marco-MiniLM-L-6-v2/  # ~0.85GB, reranking model
-├── source/                                        # Raw source documents (PDF, ZIP, XLSX, DOCX, MD)
+├── source/                                        # NOT in Git: your raw documents (PDF/ZIP/XLSX/DOCX/MD)
 │   └── (empty by default; corpus pointed to via RAG_DOCS_DIR / code.docs_dir)
-├── .chroma_esp32_all/                             # ChromaDB persisted vector database (documentation)
+├── .chroma_esp32_all/                             # NOT in Git: generated by the build
 │   ├── chroma.sqlite3                             # ChromaDB metadata store
 │   ├── _bm25_cache.pkl                            # BM25 index persistence cache
 │   └── <uuid>/                                    # ChromaDB segment directory
-└── .chroma_esp32_code/                            # ChromaDB persisted vector database (source code, see §6.5)
+└── .chroma_esp32_code/                            # NOT in Git: generated by the code build (see §6.5)
     ├── chroma.sqlite3                             # ChromaDB metadata store
     ├── _bm25_cache.pkl                            # BM25 index persistence cache
     └── <uuid>/                                    # ChromaDB segment directory
@@ -154,17 +305,6 @@ When no document type is specified, all collections are searched and the results
 RRF_score(d) = Σ 1/(60 + rank(d, collection_i))
 ```
 
-### 3.6 Cross-document Spec Comparison
-
-Structured spec extraction is implemented for datasheets:
-
-- Automatically detect the "SoC Features" table
-- Extract key-value pairs for CPU, memory, peripheral interfaces, and other key specs
-- Store them in a separate `spec_summary` collection
-- Support queries in the form "esp32 vs esp32-s3", generating a Markdown comparison table automatically
-
-The SoC name to datasheet number mapping is configured under `soc_to_datasheet` in `config.yaml`.
-
 ### 3.7 Three-stage Retrieval Pipeline
 
 **Phase 1 — Dense Retrieval**: vectorize the query with `bge-base-en-v1.5` (configurable via `models.dense.default` in config.yaml or switched at build time with `--model`), search across the ChromaDB collections, fuse multi-collection results with RRF, and expand the candidate set to `n_results × 3~4`.
@@ -260,19 +400,17 @@ Searching, formatting, and source-file reading are wrapped into a single Bash ca
 
 ```bash
 cd <skill_dir>/scripts
-python3 agent.py "<query>" [--top N] [--type <doc_type>] [--raw] [--spec <SoC>] [--compare <A,B>] [--code] [--docs-only]
+python3 agent.py "<query>" [--top N] [--type <doc_type>] [--raw] [--code] [--docs-only]
 ```
 
 Parameters:
 - `--top N` : return the top N results (default 10)
 - `--type <doc_type>` : filter by document type (datasheet, trm, guide, api, safety, release_notes, specification, docs)
 - `--raw` : JSON lines output (machine-readable)
-- `--spec <name>` : look up structured spec data for a SoC (e.g. `esp32-s3`)
-- `--compare <A,B>` : compare the specs of two SoCs (e.g. `esp32-s3,esp32`)
 - `--code` : query **only** the source-code database (see §6.5); doc type defaults to `code`
 - `--docs-only` : query **only** the documentation database
 
-**Default behavior** (no `--code` / `--docs-only`): a normal query searches **both** databases and merges the results by reciprocal-rank fusion, so code chunks (tagged `[code]`) surface automatically even when the query contains no explicit "code" keyword (e.g. "how to configure LEDC PWM"). `--spec` / `--compare` and any `--type` other than `code` remain documentation-only. Use `--docs-only` to suppress code noise for pure spec/register questions, and `--code` when only code is wanted.
+**Default behavior** (no `--code` / `--docs-only`): a normal query searches **both** databases and merges the results by reciprocal-rank fusion, so code chunks (tagged `[code]`) surface automatically even when the query contains no explicit "code" keyword (e.g. "how to configure LEDC PWM"). Any `--type` other than `code` remains documentation-only. Use `--docs-only` to suppress code noise for pure spec/register questions, and `--code` when only code is wanted.
 
 **Output notes**: the agent outputs in human-readable form by default; each result contains the chunk text (the `text` field) plus an excerpt from the corresponding non-PDF/ZIP/XLSX source file. If the agent output already includes an excerpt, prefer it over digging into the source file directly.
 
@@ -514,7 +652,6 @@ All document-related configuration is managed centrally in `config.yaml`:
 | Config item | Description | Purpose |
 |--------|------|------|
 | `models` | Embedding and reranking model configuration | Specify the default model in `config.yaml`; switch at build time with `--model` |
-| `soc_to_datasheet` | SoC name → Datasheet number mapping | Find the corresponding datasheet by SoC name for comparison and spec queries |
 | `doc_type_rules` | Path keyword → document type rules | Automatic classification during document extraction |
 | `weight_rules` | Path keyword → search weight | Affects BM25/vector retrieval ranking |
 | `collection_map` | Document type → ChromaDB collection name | Multi-collection routing isolation |
@@ -567,7 +704,6 @@ To add a new SoC or adjust classification rules or weights, just edit `config.ya
 | Table handling | Standalone chunks + metadata markers + Table-to-Text serialization | Tables are information-dense and need special protection; NL serialization improves embedding comprehension |
 | Retrieval enhancement | BM25 + Dense Hybrid + Cross-Encoder Reranker | Three stages: dense semantics → BM25 exactness → cross-encoder fine ranking |
 | Error-code search | Automatic BM25 boost for hex codes + forced result injection | Dense vectors cannot match hex error codes/register patterns; BM25 matches tokens exactly and then weights them |
-| Cross-document comparison | Structured spec extraction + spec_summary | Datasheet feature tables have a stable structure, enabling automated comparison |
 | Incremental build | MD5 content hash + deletion detection | No need to re-index unchanged documents; MD5 is more reliable than mtime |
 | Build-stage separation | File inventory scan → compare → stream processing | Phase 1 is pure filesystem work (<1s); only Phase 3 does the expensive extraction + embedding |
 | Memory management | Streaming, one document at a time | Avoids OOM on large corpora |
@@ -636,3 +772,91 @@ Add the following to the global config `%USERPROFILE%\.config\opencode\opencode.
 
 - After modifying `opencode.json`, `SKILL.md`, or skill files, you must **exit and restart opencode** — configuration is loaded only at startup and is not hot-reloaded
 - After restarting, the skill should appear in the available skills list (skill name `esp-rag`); triggering it in a conversation should call `scripts/agent.py` normally to perform retrieval
+
+## 10. Docker Deployment
+
+The image contains **code + Python dependencies only** (Scheme A): models, documents and vector DBs are mounted from the host, so no large data is baked into the image.
+
+### 10.1 Prerequisites
+
+- Docker Engine + Docker Compose v2 (`docker compose ...`)
+- Prepare the same host directories as in Quick Start — `models/`, `source/` (and optionally `source_code/`), plus the vector DB dirs:
+  ```bash
+  mkdir -p models source .chroma_esp32_all .chroma_esp32_code
+  python -m scripts.download_models            # populate models/ on the host
+  ```
+- `docker compose` reads `.env` automatically; copy and edit it:
+  ```bash
+  cp .env.example .env   # set LLM_API_KEY, LLM_BASE_URL, LLM_MODEL
+  ```
+
+### 10.2 Start the stack
+
+`docker compose` uses the published GHCR image and pulls it if it is not
+present locally. Make sure `LLM_API_KEY` is already set in `.env` (it is read
+at container start):
+
+```bash
+docker compose pull         # optional: force the latest image
+docker compose up -d
+```
+
+> Changed `LLM_API_KEY` (or other env values) after starting? Apply them with
+> `docker compose up -d --force-recreate`.
+
+To build the image from source instead (maintainers / local code changes):
+```bash
+docker build -t ghcr.io/yezeganghelei/esp32-arduino-rag:latest .
+docker compose up -d
+```
+
+| URL | Service |
+|-----|---------|
+| http://localhost:7860 | Gradio web chat UI |
+| http://localhost:8000/docs | FastAPI docs / HTTP API |
+| http://localhost:8001/sse | MCP server (SSE) |
+
+The vector DBs are mounted read-write, so the first run can build/update them. Startup can take a while (the model loads on the first request); the healthcheck allows a 120s grace period.
+
+### 10.3 Common commands
+
+```bash
+docker compose logs -f                                            # follow logs
+docker compose down                                               # stop the stack
+docker compose pull && docker compose up -d                       # update to latest image
+docker compose run --rm esp-rag "ESP32-S3 boot process" --top 5   # one-off query
+docker compose run --rm esp-rag build                             # (re)build the index
+```
+
+### 10.4 Without Compose (plain docker)
+
+```bash
+docker pull ghcr.io/yezeganghelei/esp32-arduino-rag:latest
+
+docker run --rm -p 8000:8000 -p 7860:7860 -p 8001:8001 \
+  --env-file .env \
+  -v "$PWD/models:/app/models:ro" \
+  -v "$PWD/source:/app/source:ro" \
+  -v "$PWD/.chroma_esp32_all:/app/.chroma_esp32_all" \
+  -v "$PWD/config.yaml:/app/config.yaml:ro" \
+  ghcr.io/yezeganghelei/esp32-arduino-rag:latest all
+```
+
+To build locally instead:
+```bash
+docker build -t ghcr.io/yezeganghelei/esp32-arduino-rag:latest .
+```
+
+Entrypoint modes: `server` (API only), `web` (UI only), `mcp` (MCP only), `all` (all three), `build` (index build); any other string is passed to `agent.py` as a query.
+
+### 10.5 Notes
+
+- On Windows, prefer `docker compose` (it handles path conversion); with plain `docker run` use PowerShell `${PWD}` for host paths.
+- Only mount `source_code` / `.chroma_esp32_code` if you use code search (see §6.5).
+- The `Dockerfile` uses the Tsinghua PyPI mirror (`-i https://pypi.tuna.tsinghua.edu.cn/simple`); change it if you are outside China.
+
+## 11. License
+
+This project is released under the [MIT License](LICENSE).
+
+The embedding / reranking models and the ESP32 documentation corpus are **not** bundled in this repository and remain under their respective licenses.
