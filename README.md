@@ -24,8 +24,9 @@
 
 We provide an AI knowledge base([08. ESP32-AI-Agent-RAG](#08-esp32-ai-agent-rag)). The database has been pre-trained and includes all tutorial content — no AI hallucination, accurate results guaranteed.
 
+--------------------------------------------
 ## Interface
-### 1. Web chat
+**1. Web chat**
 <table>
   <tr>
     <td align="center"><img src="./Products/RAG Assistant.gif" ></td>
@@ -36,7 +37,7 @@ Open http://localhost:7860 and chat with the knowledge base. The Gradio UI calls
 the FastAPI backend on http://localhost:8000. Chat needs `LLM_API_KEY`; pure
 retrieval does not.
 
-### 2. MCP
+**2. MCP**
 
 MCP lets AI clients (Claude Desktop, Cursor, etc.) search this knowledge base.
 
@@ -62,7 +63,7 @@ The client can then call these tools:
 - `search_esp_code` — search the source code
 - `search_esp` — search both
 
-**Quick commands**
+Quick commands
 
 ```bash
 # start 
@@ -72,7 +73,7 @@ docker exec -w /app esp-rag python scripts/mcp/test_client.py --tool search_esp_
 MCP only returns retrieved snippets, so it does **not** need `LLM_API_KEY`.
 More client examples: [`docs/mcp-client-config.md`](docs/mcp-client-config.md).
 
-### 3. opencode skill
+**3. opencode skill**
 <table>
   <tr>
     <td align="center"><img src="./Products/AI_2.gif" ></td>
@@ -85,7 +86,7 @@ auto-discovers the skill `esp-rag`; an ESP32 question then triggers
 `~/.config/opencode/skills/esp-rag` or add its path to the global
 `skills.paths` (see §9).
 
-### 4. CLI
+**4. CLI**
 
 Run a one-shot query inside the container (no local Python needed):
 
@@ -101,7 +102,7 @@ python scripts/agent.py "ESP32-S3 boot process" --top 5
 
 Flags: `--top N`, `--type <doc_type>`, `--docs-only`, `--code`, `--raw` (JSON).
 
-
+--------------------------------------------
 
 ## Table of Contents
 
