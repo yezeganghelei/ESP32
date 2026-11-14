@@ -23,21 +23,84 @@
 </table>
 
 We provide an AI knowledge base([08. ESP32-AI-Agent-RAG](#08-esp32-ai-agent-rag)). The database has been pre-trained and includes all tutorial content — no AI hallucination, accurate results guaranteed.
-**Example**
-1. **E.g**.: "Compare the digital interfaces of ESP32 and ESP32-S3, and what are the differences?"
 
+## Interface
+### 1. Web chat
 <table>
   <tr>
-    <td align="center"><img src="./Products/AI_1.gif" ></td>
+    <td align="center"><img src="./Products/RAG Assistant.gif" ></td>
   </tr>
 </table>
 
-2. **E.g** ：“What SPIs does ESP32-S3 support, and how to configure SPI to light up the LCD using arduino or micropython”
+Open http://localhost:7860 and chat with the knowledge base. The Gradio UI calls
+the FastAPI backend on http://localhost:8000. Chat needs `LLM_API_KEY`; pure
+retrieval does not.
+
+### 2. MCP
+
+MCP lets AI clients (Claude Desktop, Cursor, etc.) search this knowledge base.
+
+It is **already running** after `docker compose up -d`. The address is:
+
+```
+http://localhost:8001/sse
+```
+
+Add it to your client, e.g. Claude Desktop `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "esp-rag": { "url": "http://localhost:8001/sse" }
+  }
+}
+```
+
+The client can then call these tools:
+
+- `search_esp_docs` — search the documentation
+- `search_esp_code` — search the source code
+- `search_esp` — search both
+
+**Quick commands**
+
+```bash
+# start 
+docker exec -w /app esp-rag python scripts/mcp/test_client.py --tool search_esp_code --query "esp_camera_init camera_config_t" --top 5
+```
+
+MCP only returns retrieved snippets, so it does **not** need `LLM_API_KEY`.
+More client examples: [`docs/mcp-client-config.md`](docs/mcp-client-config.md).
+
+### 3. opencode skill
 <table>
   <tr>
     <td align="center"><img src="./Products/AI_2.gif" ></td>
   </tr>
 </table>
+This repository is itself an opencode skill (`SKILL.md` at the root). With
+`opencode.json` → `skills.paths: ["."]`, starting opencode in this directory
+auto-discovers the skill `esp-rag`; an ESP32 question then triggers
+`scripts/agent.py`. To use it from any directory, junction this repo into
+`~/.config/opencode/skills/esp-rag` or add its path to the global
+`skills.paths` (see §9).
+
+### 4. CLI
+
+Run a one-shot query inside the container (no local Python needed):
+
+```bash
+docker compose run --rm esp-rag "ESP32-S3 boot process" --top 5
+```
+
+Or on the host with a Python environment (see §5/§6):
+
+```bash
+python scripts/agent.py "ESP32-S3 boot process" --top 5
+```
+
+Flags: `--top N`, `--type <doc_type>`, `--docs-only`, `--code`, `--raw` (JSON).
+
 
 
 ## Table of Contents
