@@ -41,7 +41,7 @@
 ### 1. Web chat
 <table>
   <tr>
-    <td align="center"><img src="./assets/images/RAG Assistant.gif" ></td>
+    <td align="center"><img src="../../Products/AI_1.gif" ></td>
   </tr>
 </table>
 
@@ -88,7 +88,7 @@ More client examples: [`docs/mcp-client-config.md`](docs/mcp-client-config.md).
 ### 3. opencode skill
 <table>
   <tr>
-    <td align="center"><img src="./assets/images/AI_2.gif" ></td>
+    <td align="center"><img src="../../Products/RAG Assistant.gif" ></td>
   </tr>
 </table>
 This repository is itself an opencode skill (`SKILL.md` at the root). With
